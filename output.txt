@@ -1,0 +1,47 @@
+Det : Type
+inst✝ : Ontology Det
+n : Nat
+h : n % 2 = 0
+⊢ {Det : Type} → [inst : Ontology Det] → Trajectory Det → Nat → Prop
+Goals accomplished!
+
+=======================================================
+ ✅ ONTO-PHASE 4 : CADRE UNIFIÉ (post-CR v3)
+=======================================================
+ AXIOMATIQUE DE LA DISSOLUTION (tronc ∎) :
+ [THM] step_without_incorp         : DÉRIVÉ (I-β + IV)
+ [THM] XV_pressure                 : DÉRIVÉ (III + bridge) — pression relationnelle
+ [THM] IX_bis                      : DÉRIVÉ (III + I-α) — pression constitutive
+ [THM] IX_bis_pressure             : DÉRIVÉ — Tout → altération destructurante
+ [THM] XXVII_positive              : PROUVÉ — persistance ⇒ compensation
+ [THM] XXVII_complete              : PROUVÉ — disjonction inconditionnelle
+ [THM] XXXIX_constitutive           : PROUVÉ — dissolution si pas de compensation
+ [THM] aggregate_dissolves         : PROUVÉ — agrégat pur se dissout
+
+ CONSTRUCTIBILITÉ DE LA COMPENSATION (◇) :
+ [WIT] V_bis_witness               : ThreeDet (mid→high, incorp=2)
+ [MOD] ThreeDetDiss_no_persistence : sans compensation, tout se dissout
+
+ CLÔTURE COMME EXCEPTION :
+ [THM] R_XVI_dichotomy             : PROUVÉ — persistant = clôture ∨ portage
+ [THM] oscillating_persists        : PROUVÉ — témoin de clôture
+ [THM] oscillating_is_closed       : PROUVÉ — compensation après destruction
+-------------------------------------------------------
+ SORRY : 0
+ AXIOMES LEAN : 5 (fidèle au texte) — IX-bis DÉRIVÉ, pas axiome
+ DEUX PRESSIONS : constitutive (IX-bis) + relationnelle (XV)
+ ASYMÉTRIE : dissolution = défaut (∎), clôture = exception (◇)
+=======================================================
+
+'OntoUnified.XXVII_positive' depends on axioms: [propext, Classical.choice, Quot.sound]
+'OntoUnified.XXXVIII_partition' depends on axioms: [propext, Quot.sound]
+'OntoUnified.XXXIX_constitutive' depends on axioms: [propext, Quot.sound]
+'OntoUnified.R_XVI_dichotomy' depends on axioms: [propext, Classical.choice, Quot.sound]
+'OntoUnified.step_without_incorp' depends on axioms: [propext, Quot.sound]
+'OntoUnified.XV_pressure' depends on axioms: [propext, Quot.sound]
+'OntoUnified.IX_bis' does not depend on any axioms
+'OntoUnified.IX_bis_pressure' depends on axioms: [propext, Quot.sound]
+'OntoUnified.oscillating_persists' depends on axioms: [propext, Quot.sound]
+'OntoUnified.oscillating_is_closed' depends on axioms: [propext, Quot.sound]
+'OntoUnified.V_bis_witness' depends on axioms: [propext]
+'OntoUnified.ThreeDetDiss_no_persistence' depends on axioms: [propext, Quot.sound]
