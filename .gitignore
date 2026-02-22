@@ -4,3 +4,5 @@ venv/
 output.txt
 __pycache__/
 *.py[cod]
+MDSINE2/
+MDSINE2_Paper/
