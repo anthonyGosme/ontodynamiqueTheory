@@ -1,0 +1,6 @@
+venv/
+.venv/
+.idea/
+output.txt
+__pycache__/
+*.py[cod]
