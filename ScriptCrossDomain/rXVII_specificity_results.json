@@ -1,0 +1,29 @@
+{
+  "n_domains": 3,
+  "domains": [
+    "reef",
+    "gdsc",
+    "micro"
+  ],
+  "rxvii_ratios": {
+    "reef": 1.7946471773224428,
+    "gdsc": 1.8311589230217205,
+    "micro": 1.276589608836272
+  },
+  "intensity_ratios": {
+    "reef": 2.141829902887476,
+    "gdsc": 0.8882003011891503,
+    "micro": 2.8246409333658606
+  },
+  "sigma_rxvii": 0.25325961121960094,
+  "sigma_intensity": 0.8019157896730245,
+  "cv_rxvii": 0.15498113141621933,
+  "cv_intensity": 0.41091076040694285,
+  "p_convergence_rxvii": 0.9963,
+  "p_convergence_intensity": 1.0,
+  "null_sigma_mean": 0.06020563532891035,
+  "null_sigma_std": 0.04395996487956189,
+  "null_sigma_95pct": 0.14230100958981615,
+  "null_sigma_5pct": 0.010828008072941443,
+  "n_permutations": 10000
+}
