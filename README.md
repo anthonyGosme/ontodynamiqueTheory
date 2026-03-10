@@ -10,7 +10,9 @@
 The central empirical prediction is **R-XVII**: perturbations targeting the *structure* of a system (its self-maintenance machinery) produce systematically larger displacement than perturbations targeting its *input* (its metabolic flow), at matched intensity. This asymmetry is indexed on the topological target of the perturbation, not on its amplitude.
 
 📖 **Manuscript**: [ontodynamique.com](https://www.ontodynamique.com/)  
-🧪 **Interactive notebook**: [Google Colab](https://colab.research.google.com/drive/1LWbOqywO5o6AtePQRu3plooqwuOtzJrN?usp=sharing)
+🧪 **Interactive notebook**: [Google Colab](https://colab.research.google.com/drive/1LWbOqywO5o6AtePQRu3plooqwuOtzJrN?usp=sharing)  
+📄 **Empirical paper**: [arXiv:2512.09352](https://arxiv.org/abs/2512.09352)  
+🔬 **DPDR pre-registration**: [OSF: 10.17605/OSF.IO/ZMH54](https://doi.org/10.17605/OSF.IO/ZMH54)
 
 ---
 
@@ -144,8 +146,8 @@ The R-XVII asymmetry has been tested for robustness along multiple axes:
 - Gibson, T.E. et al. (2025). Ecosystem-scale dynamics from microbiome data with MDSINE2. *Nature Microbiology*.
 - van Woesik, R. & Kratochwill, C. (2022). Global coral bleaching and environmental data. *BCO-DMO*. DOI: 10.26008/1912/bco-dmo.773466.2
 - Iorio, F. et al. (2016). A landscape of pharmacogenomic interactions in cancer. *Cell*, 166(3), 740–754.
-- Gosme, A. (2025). Causal symmetrization as empirical signature of operational autonomy. *arXiv:2512.09352*.
-- Gosme, A. (2026). DPDR protocol — pre-registered. *OSF*. DOI: 10.17605/OSF.IO/ZMH54
+- Gosme, A. (2025). Causal symmetrization as empirical signature of operational autonomy. [arXiv:2512.09352](https://arxiv.org/abs/2512.09352).
+- Gosme, A. (2026). DPDR protocol — pre-registered. [OSF: 10.17605/OSF.IO/ZMH54](https://doi.org/10.17605/OSF.IO/ZMH54).
 
 ---
 
