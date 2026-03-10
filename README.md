@@ -147,7 +147,7 @@ The R-XVII asymmetry has been tested for robustness along multiple axes:
 - van Woesik, R. & Kratochwill, C. (2022). Global coral bleaching and environmental data. *BCO-DMO*. DOI: 10.26008/1912/bco-dmo.773466.2
 - Iorio, F. et al. (2016). A landscape of pharmacogenomic interactions in cancer. *Cell*, 166(3), 740–754.
 - Gosme, A. (2025). Causal symmetrization as empirical signature of operational autonomy. [arXiv:2512.09352](https://arxiv.org/abs/2512.09352).
-- Gosme, A. (2026). DPDR protocol — pre-registered. [OSF: 10.17605/OSF.IO/ZMH54](https://doi.org/10.17605/OSF.IO/ZMH54).
+- Gosme, A. (2026). DPDR protocol — pre-registered. [OSF: 10.17605/OSF.IO/ZMH54](https://osf.io/zmh54/overview?view_only=047d4de473114d54888784867c0f4fe5).
 
 ---
 
