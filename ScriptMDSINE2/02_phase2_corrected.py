@@ -24,7 +24,60 @@ PROJECT_ROOT = _Path(__file__).resolve().parent.parent
 OUTPUT_DIR = PROJECT_ROOT / 'output'
 OUTPUT_DIR.mkdir(exist_ok=True)
 _data_base = PROJECT_ROOT / 'MDSINE2_Paper' / 'datasets' / 'gibson'
+# --- PATCH LLVMLITE/NUMBA ---
+import sys, types, ctypes
 
+def _patch_llvmlite():
+    try:
+        import llvmlite.binding
+        return
+    except (ImportError, OSError):
+        pass
+
+    for mod_name in [
+        'llvmlite', 'llvmlite.binding', 'llvmlite.binding.dylib',
+        'llvmlite.binding.ffi', 'llvmlite.ir', 'llvmlite.binding.module',
+        'llvmlite.binding.value', 'llvmlite.binding.executionengine',
+        'llvmlite.binding.targets', 'llvmlite.binding.initfini',
+        'llvmlite.binding.linker', 'llvmlite.binding.context',
+        'llvmlite.binding.passmanagers', 'llvmlite.binding.transforms',
+        'llvmlite.binding.analysis', 'llvmlite.binding.object_file',
+        'llvmlite.utils',
+    ]:
+        if mod_name not in sys.modules:
+            m = types.ModuleType(mod_name)
+            m.__path__ = []
+            sys.modules[mod_name] = m
+
+    numba_stubs = [
+        'numba', 'numba.core', 'numba.core.config', 'numba.core.types',
+        'numba.core.typing', 'numba.core.errors', 'numba.core.decorators',
+        'numba.np', 'numba.np.ufunc', 'numba.typed', 'numba.typed.typedlist',
+        'numba.typed.typeddict', 'numba.experimental',
+    ]
+    for mod_name in numba_stubs:
+        if mod_name not in sys.modules:
+            m = types.ModuleType(mod_name)
+            m.__path__ = []
+            sys.modules[mod_name] = m
+
+    def _noop_decorator(*args, **kwargs):
+        if len(args) == 1 and callable(args[0]):
+            return args[0]
+        return lambda f: f
+
+    numba_mod = sys.modules['numba']
+    numba_mod.njit = _noop_decorator
+    numba_mod.jit = _noop_decorator
+    numba_mod.vectorize = _noop_decorator
+    numba_mod.prange = range
+    numba_mod.float64 = float
+    numba_mod.int64 = int
+    numba_mod.boolean = bool
+    numba_mod.types = sys.modules['numba.core.types']
+
+_patch_llvmlite()
+# ----------------------------
 import mdsine2 as md2
 import numpy as np
 import pandas as pd

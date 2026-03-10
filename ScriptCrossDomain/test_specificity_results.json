@@ -1,0 +1,60 @@
+{
+  "test1": {
+    "published_ratios": {
+      "micro": 1.86,
+      "reef": 1.8,
+      "gdsc": 1.85
+    },
+    "obs_cv": 0.014290395415629435,
+    "obs_mean_ratio": 1.8366666666666667,
+    "p_cv_only": 0.21999,
+    "p_joint": 0.0,
+    "p_strict": 0.0,
+    "p_constrained_joint": 0.0,
+    "n_asymmetric": 0,
+    "max_mean_ratio": 1.2270801023090836,
+    "joint_results": {
+      "1.1": {
+        "p": 0.00013,
+        "n_above": 6072
+      },
+      "1.2": {
+        "p": 0.0,
+        "n_above": 9
+      },
+      "1.3": {
+        "p": 0.0,
+        "n_above": 0
+      },
+      "1.5": {
+        "p": 0.0,
+        "n_above": 0
+      },
+      "1.8": {
+        "p": 0.0,
+        "n_above": 0
+      }
+    },
+    "pct_cv": 21.999,
+    "n_perm": 100000,
+    "null_cv_mean": 0.0355923753581856,
+    "null_cv_median": 0.028007749930547936
+  },
+  "test2": {
+    "d_rxvii_all": 0.5094676208853943,
+    "d_reversibility_all": 0.18485271848196821,
+    "d_rxvii_dissociated": 0.3240717577937991,
+    "n_dissociated": 35218,
+    "verdict": "R-XVII_DOMINATES + R-XVII holds in dissociated cases"
+  },
+  "test3": {
+    "ratio_target": 0.7383768995546294,
+    "cross_domain_applicable": false,
+    "verdict": "NOT_APPLICABLE_CROSS_DOMAIN \u2014 GDSC ratio=0.74 \u2260 1.85 (no within-domain confound)"
+  },
+  "data_sources": {
+    "gdsc": "REAL",
+    "reef": "REAL",
+    "micro": "SIMULATED"
+  }
+}
