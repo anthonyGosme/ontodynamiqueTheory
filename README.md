@@ -1,4 +1,5 @@
 # Ontodynamique — MDSINE2 Empirical Validation
+COLAB : https://colab.research.google.com/drive/1LWbOqywO5o6AtePQRu3plooqwuOtzJrN?usp=sharing
 
 Validation empirique des prédictions ontodynamiques (R-XVII, Γ, diversité effective)
 sur le dataset MDSINE2 (Gibson et al. 2025, Nature Microbiology).
@@ -121,3 +122,6 @@ DataSet : https://www.bco-dmo.org/dataset/773466#data-files
 =======
 analyse GDSC
 https://github.com/rahiuhn/GDSC_datasets/tree/maindatasets/blob/main/sanger-dose-response.zip
+
+
+BLOG :https://www.ontodynamique.com/
