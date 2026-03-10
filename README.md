@@ -108,3 +108,16 @@ Les figures sont générées dans `output/`.
 
 - Gibson et al. (2025). Learning ecosystem-scale dynamics from microbiome data with MDSINE2. *Nature Microbiology*.
 - Gosme (2025). Causal symmetrization as empirical signature of operational autonomy. *arXiv:2512.09352*.
+
+
+=========
+
+analyse Corail bimodality
+
+Dataset: Bleaching and environmental data for global coral reef sites from 1980-2020
+DataSet : https://www.bco-dmo.org/dataset/773466#data-files
+10.26008/1912/bco-dmo.773466.2
+
+=======
+analyse GDSC
+https://github.com/rahiuhn/GDSC_datasets/tree/maindatasets/blob/main/sanger-dose-response.zip
