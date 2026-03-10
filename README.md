@@ -1,127 +1,159 @@
-# Ontodynamique — MDSINE2 Empirical Validation
-COLAB : https://colab.research.google.com/drive/1LWbOqywO5o6AtePQRu3plooqwuOtzJrN?usp=sharing
+# Ontodynamique — Formal System and Empirical Validation
 
-Validation empirique des prédictions ontodynamiques (R-XVII, Γ, diversité effective)
-sur le dataset MDSINE2 (Gibson et al. 2025, Nature Microbiology).
+[![Lean 4](https://img.shields.io/badge/Lean_4-504_theorems-blue)]()
+[![sorry](https://img.shields.io/badge/sorry-0-brightgreen)]()
+[![Domains](https://img.shields.io/badge/domains-4_validated-orange)]()
+[![License: CC BY 4.0](https://img.shields.io/badge/License-CC_BY_4.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
 
-## Résultats clés
+**Ontodynamique** is a formal ontological framework built from two independent axioms — *Axiom I* (being = doing: every entity is an act of self-maintenance whose cost is drawn from the very structure it maintains) and *Axiom V* (exteriority admits degrees) — from which it derives finitude, irreversibility, operational closure, constitutive normativity, and a compositional gradient that classifies any finite system as *closure* (endogenous cost-bearing), *normative carriage* (externalized cost), or *aggregate* (no cycle).
 
-| Test | Résultat | Statut |
-|------|----------|--------|
-| R-XVII input/hardware asymétrie | p = 0.0006, d = 1.16 (dysbiotique) | ✓ Confirmé |
-| Diversité effective H vs D | 14.7 ± 2.6 vs 9.6 ± 2.0 | ✓ Confirmé |
-| Γ_corrected (recovery_3) | H > D, p = 0.006 | ✓ Confirmé |
-| Ratio de variance | H = 0.50× vs D = 2.03× | ✓ Exploitable |
+The central empirical prediction is **R-XVII**: perturbations targeting the *structure* of a system (its self-maintenance machinery) produce systematically larger displacement than perturbations targeting its *input* (its metabolic flow), at matched intensity. This asymmetry is indexed on the topological target of the perturbation, not on its amplitude.
 
-## Installation
+📖 **Manuscript**: [ontodynamique.com](https://www.ontodynamique.com/)  
+🧪 **Interactive notebook**: [Google Colab](https://colab.research.google.com/drive/1LWbOqywO5o6AtePQRu3plooqwuOtzJrN?usp=sharing)
 
-```bash
-# 1. Cloner ce repo
-git clone https://github.com/anthonyGosme/ontodynamiqueTheory
-cd ontodynamiqueTheory
+---
 
-# 2. Créer un environnement virtuel
-python3 -m venv venv
-source venv/bin/activate
+## Cross-Domain Results
 
-# 3. Installer les dépendances
-pip install -r requirements.txt
+The R-XVII signature converges across three causally disjoint biological domains:
 
-# 4. Cloner MDSINE2 et installer
-git clone https://github.com/gerberlab/MDSINE2.git
+| Domain | Dataset | n | Cohen's *d* | Ratio S/I | *p* |
+|--------|---------|---|------------|-----------|-----|
+| Gut microbiome | MDSINE2 (Gibson et al. 2025) | 9 subjects | 1.16 | 1.61× | 0.0006 |
+| Coral reefs | GCBD (van Woesik & Kratochwill 2022) | 34,393 obs | 0.39 | 1.80× | 1.96 × 10⁻⁴⁸ |
+| Cancer pharmacology | GDSC (Iorio et al. 2016) | 216,764 obs | 0.52 | 1.85× | < 10⁻³⁰⁰ |
 
-pip install MDSINE2/.
+**Cross-domain convergence**: ratio S/I ≈ 1.8×, CV = 7.2%.  
+**Specificity**: under intensity-based classification, ratios diverge (CV = 33%). Over 100,000 random binary partitions, none achieves a mean ratio ≥ 1.3 (*p* < 10⁻⁵).
 
+Validation splits:
+- **Coral reefs (CR-02A)**: temporal split at 2010 — *d*_TEST = 0.400, ratio S/I = 2.18×, *d*_TEST within bootstrap CI of TRAIN.
+- **Cancer (CR-02B)**: 70/30 cell-line split, 10 seeds — median ratio = 1.846×, CV = 1.3%, 10/10 significant.
 
-MAC:
-pip install ete3 --no-deps
-pip install llvmlite --only-binary=:all:
-pip install numba --only-binary=:all:
-pip install PyQt5 --only-binary=:all:
-pip install ./MDSINE2 --no-build-isolation
+---
 
+## Lean 4 Formalization
 
+The deductive core is mechanized in Lean 4 across 14 files:
 
+- **504 theorems, 0 `sorry`**, no domain axiom beyond Lean's standard logical axioms (`propext`, `Quot.sound`)
+- **2 axioms** (I = α + β, V) + **1 corollary** (IV)
+- I-γ ("no act without mode"), II, III, VII **derived** as theorems
+- **10 separating models** proving inter-axiom independence (I ⊥ V)
+- **6 separating models** proving mutual independence of I-β components
+- R-XVIII asymmetry derived via `template_saving`
 
+Key files:
+| File | Content |
+|------|---------|
+| `Lean/Autodynamique.lean` | Structural trunk (101 theorems) |
+| `Lean/gradient.lean` | R-XVII/R-XVIII compositional gradient |
+| `Lean/Conscience.lean` | Subjectivity chain, valence, paliers |
+| `Lean/DPDRDerived.lean` | DPDR predictions (20 theorems) |
+| `Lean/InterAxiomIndependence.lean` | Separating models |
+| `Lean/SeparatingModels.lean` | I-β component independence |
+| `Lean/DomainRestriction.lean` | I-β weakening map (94 theorems classified) |
+| `Lean/Bridjes.lean` | Bridge hypotheses (microbiome, software debt) |
 
+---
 
-
-
-
-
-
-# 5. Cloner le repo MDSINE2_Paper (contient les données)
-git clone https://github.com/gerberlab/MDSINE2_Paper.git
-```
-
-## Structure des données attendue
+## Repository Structure
 
 ```
 ontodynamiqueTheory/
-├── MDSINE2_Paper/
-│   └── datasets/gibson/
-│       ├── healthy/preprocessed/gibson_healthy_agg_filtered.pkl
-│       └── uc/preprocessed/gibson_uc_agg_filtered.pkl
-├── scripts/
-│   ├── 01_phase1_raw_metrics.py      # Exploration initiale (problèmes méthodologiques documentés)
-│   ├── 02_phase2_corrected.py        # *** Résultats publiables ***
-│   └── 03_phase3_interaction_matrix.py # Tentative gLV ridge (non concluant — nécessite MCMC)
-├── output/                            # Figures et résultats générés ici
+├── Lean/                      # Lean 4 formalization (14 files)
+├── ScriptMDSINE2/             # Microbiome analysis (MDSINE2)
+│   ├── 01_phase1_raw_metrics.py
+│   ├── 02_phase2_corrected.py
+│   ├── 03_phase3_interaction_matrix.py
+│   └── 04_robustness_metrics.py
+├── ScriptCorail/              # Coral reef analysis (GCBD)
+│   ├── corail.py              # Core R-XVII asymmetry test
+│   ├── robustness_reef.py     # 4 response transformations
+│   └── reef_temporal_split.py # CR-02A temporal validation
+├── ScriptGDSC/                # Cancer pharmacology (GDSC)
+│   ├── GDSC1.py               # Full analysis with sensitivity sweep
+│   ├── GDSC2.py               # Pathway-only classification (v2)
+│   └── gdsc_cellline_split.py # CR-02B cell-line validation
+├── ScriptCrossDomain/         # Specificity & cross-domain tests
+│   ├── SpecifityCheck.py      # 100k permutations, reversibility, target count
+│   └── Sentsivity.py          # Sensitivity analysis
+├── output/                    # Generated figures and JSON results
+├── Ontoaudit4.lean            # Standalone audit file
 ├── requirements.txt
 ├── run_all.sh
 └── README.md
 ```
 
-## Exécution
+---
+
+## Quick Start
+
+### Option A: Google Colab (recommended)
+
+Open the [Colab notebook](https://colab.research.google.com/drive/1LWbOqywO5o6AtePQRu3plooqwuOtzJrN?usp=sharing) — it handles all dependencies, data download, Lean installation, and runs every script with full output.
+
+### Option B: Local installation
 
 ```bash
-# Tout lancer d'un coup
-bash run_all.sh
+# 1. Clone
+git clone https://github.com/anthonyGosme/ontodynamiqueTheory
+cd ontodynamiqueTheory
 
-# Ou script par script
-python scripts/01_phase1_raw_metrics.py
-python scripts/02_phase2_corrected.py
-python scripts/03_phase3_interaction_matrix.py
+# 2. Python environment
+python3 -m venv venv && source venv/bin/activate
+pip install -r requirements.txt
+
+# 3. MDSINE2 (microbiome scripts only)
+git clone https://github.com/gerberlab/MDSINE2.git
+pip install MDSINE2/.
+git clone https://github.com/gerberlab/MDSINE2_Paper.git
+
+# 4. Lean 4 (formalization verification)
+curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y --default-toolchain stable
+export PATH="$HOME/.elan/bin:$PATH"
+
+# 5. Run everything
+bash run_all.sh
 ```
 
-Les figures sont générées dans `output/`.
+### Data Sources
 
-## Notes méthodologiques
+| Domain | Dataset | Source |
+|--------|---------|--------|
+| Microbiome | MDSINE2 | [gerberlab/MDSINE2_Paper](https://github.com/gerberlab/MDSINE2_Paper) |
+| Coral reefs | GCBD | [BCO-DMO 773466](https://www.bco-dmo.org/dataset/773466) (DOI: 10.26008/1912/bco-dmo.773466.2) |
+| Cancer | GDSC | [Sanger dose-response](https://github.com/rahiuhn/GDSC_datasets) |
 
-### Phase 1 — Problèmes identifiés et corrigés en Phase 2
-- Γ inversé : artefact de faible diversité (systèmes pauvres = rangs trivialement stables)
-- R-XVII non significatif : baselines séquentielles → dérive entre comparaisons
-- Granger sous-puissé : n=4-5 sujets, 8-15 points par phase
+---
 
-### Phase 2 — Corrections appliquées
-- Γ normalisé par diversité effective : `Γ = (rank_persistence × log(eff_diversity)) / (1 + activity_flux)`
-- R-XVII avec baseline globale unique (pré-perturbation, t=15-21.5)
-- VAR Granger sur composantes PCA (toujours sous-puissé mais pattern qualitatif)
+## Robustness
 
-### Phase 3 — Pourquoi la ridge regression ne remplace pas MCMC
-- 50 régresseurs pour 70-75 points → R² ≈ 0.75 dans les deux cohorts (overfitting)
-- Phases individuelles : R² > 0.95 = bruit capturé autant que signal
-- Topologie (réciprocité ≈ 0.09) identique entre cohorts
-- **Conclusion** : le Γ topologique nécessite les posteriors bayésiens de MDSINE2 (~300 Go sur Zenodo)
-  ou un dataset avec n >> 9 sujets
+The R-XVII asymmetry has been tested for robustness along multiple axes:
 
-## Références
+- **Microbiome**: 5/5 distance metrics significant (Bray-Curtis, Jensen-Shannon, Aitchison, Hellinger, Canberra; all *p* < 0.001)
+- **Coral reefs**: 23/23 DHW thresholds, 9/10 ocean regions, 4/4 response transformations significant; sigmoid threshold stable at DHW ≈ 7.9
+- **Cancer**: stable from IC30 to IC70; 9/9 pathways significant; dose-matched control preserves ratio (1.81×)
+- **Cross-domain specificity**: no random partition (n = 100,000) achieves mean ratio ≥ 1.3; reversibility partition dominated 2.8× by R-XVII; target-count partition not operable cross-domain
 
-- Gibson et al. (2025). Learning ecosystem-scale dynamics from microbiome data with MDSINE2. *Nature Microbiology*.
-- Gosme (2025). Causal symmetrization as empirical signature of operational autonomy. *arXiv:2512.09352*.
+---
 
+## References
 
-=========
+- Gibson, T.E. et al. (2025). Ecosystem-scale dynamics from microbiome data with MDSINE2. *Nature Microbiology*.
+- van Woesik, R. & Kratochwill, C. (2022). Global coral bleaching and environmental data. *BCO-DMO*. DOI: 10.26008/1912/bco-dmo.773466.2
+- Iorio, F. et al. (2016). A landscape of pharmacogenomic interactions in cancer. *Cell*, 166(3), 740–754.
+- Gosme, A. (2025). Causal symmetrization as empirical signature of operational autonomy. *arXiv:2512.09352*.
+- Gosme, A. (2026). DPDR protocol — pre-registered. *OSF*. DOI: 10.17605/OSF.IO/ZMH54
 
-analyse Corail bimodality
+---
 
-Dataset: Bleaching and environmental data for global coral reef sites from 1980-2020
-DataSet : https://www.bco-dmo.org/dataset/773466#data-files
-10.26008/1912/bco-dmo.773466.2
+## Author
 
-=======
-analyse GDSC
-https://github.com/rahiuhn/GDSC_datasets/tree/maindatasets/blob/main/sanger-dose-response.zip
+**Anthony Gosme** — Independent researcher  
+[ontodynamique.com](https://www.ontodynamique.com/)
 
+## License
 
-BLOG :https://www.ontodynamique.com/
+This work is licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
