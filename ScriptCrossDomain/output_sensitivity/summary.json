@@ -1,39 +1,11 @@
 {
-  "seed": 20240601,
-  "n_perm": 10000,
-  "n_boot": 10000,
-  "elapsed_seconds": 493.05101227760315,
-  "tests_run": [
-    "t4",
-    "t2",
-    "t1",
-    "t3"
+  "elapsed": 611.2903077602386,
+  "domains": [
+    "GDSC",
+    "GCBD",
+    "MDSINE2",
+    "YEAST"
   ],
-  "files": [
-    "T1_operationalization.csv",
-    "T1_operationalization.png",
-    "T2_null_pipeline.csv",
-    "T2_null_pipeline.png",
-    "T3_hierarchical.json",
-    "T3_hierarchical.png",
-    "T4_metrological_audit.csv",
-    "T4_metrological_audit.png",
-    "summary.json"
-  ],
-  "t4_cv_intra": {
-    "GDSC": 13.44100038426814,
-    "GCBD": 62.65916893353391,
-    "MDSINE2": 173.20507446745245
-  },
-  "t1_rho_range": [
-    1.451216468156306,
-    1.9850465090874123
-  ],
-  "t1_cv": 11.062790642851757,
-  "t3_tau_mean": 0.15408234389773773,
-  "t3_mu_mean": 1.7810888048598854,
-  "t3_pp_interval": [
-    1.2028753739380773,
-    2.2751990023050475
-  ]
+  "tau_mean": 0.2824038150420081,
+  "mu_mean": 1.6646406371046267
 }

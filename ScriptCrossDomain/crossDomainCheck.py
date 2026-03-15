@@ -18,6 +18,8 @@ v2 fix: THREE complementary null models:
 Also fixes: microbiome uses DYSBIOTIC COHORT ONLY (Phase 2 published
 result: hw_bc=0.52, input_bc=0.28, d=1.16, p=0.0006).
 
+v2.1: Full yeast integration (hom exploratory + het confirmatory).
+
 =============================================================================
 """
 
@@ -36,6 +38,61 @@ plt.rcParams.update({
     'font.size': 10, 'axes.titlesize': 12, 'axes.labelsize': 11,
     'figure.dpi': 150, 'savefig.dpi': 300, 'savefig.bbox': 'tight',
 })
+
+# --- PATCH LLVMLITE/NUMBA (mdsine2 depends on numba which needs llvmlite) ---
+import types
+
+def _patch_llvmlite():
+    try:
+        import llvmlite.binding
+        return  # works fine, no patch needed
+    except (ImportError, OSError):
+        pass
+
+    for mod_name in [
+        'llvmlite', 'llvmlite.binding', 'llvmlite.binding.dylib',
+        'llvmlite.binding.ffi', 'llvmlite.ir', 'llvmlite.binding.module',
+        'llvmlite.binding.value', 'llvmlite.binding.executionengine',
+        'llvmlite.binding.targets', 'llvmlite.binding.initfini',
+        'llvmlite.binding.linker', 'llvmlite.binding.context',
+        'llvmlite.binding.passmanagers', 'llvmlite.binding.transforms',
+        'llvmlite.binding.analysis', 'llvmlite.binding.object_file',
+        'llvmlite.utils',
+    ]:
+        if mod_name not in sys.modules:
+            m = types.ModuleType(mod_name)
+            m.__path__ = []
+            sys.modules[mod_name] = m
+
+    numba_stubs = [
+        'numba', 'numba.core', 'numba.core.config', 'numba.core.types',
+        'numba.core.typing', 'numba.core.errors', 'numba.core.decorators',
+        'numba.np', 'numba.np.ufunc', 'numba.typed', 'numba.typed.typedlist',
+        'numba.typed.typeddict', 'numba.experimental',
+    ]
+    for mod_name in numba_stubs:
+        if mod_name not in sys.modules:
+            m = types.ModuleType(mod_name)
+            m.__path__ = []
+            sys.modules[mod_name] = m
+
+    def _noop_decorator(*args, **kwargs):
+        if len(args) == 1 and callable(args[0]):
+            return args[0]
+        return lambda f: f
+
+    numba_mod = sys.modules['numba']
+    numba_mod.njit = _noop_decorator
+    numba_mod.jit = _noop_decorator
+    numba_mod.vectorize = _noop_decorator
+    numba_mod.prange = range
+    numba_mod.float64 = float
+    numba_mod.int64 = int
+    numba_mod.boolean = bool
+    numba_mod.types = sys.modules['numba.core.types']
+
+_patch_llvmlite()
+# --- END PATCH ---
 
 N_PERM = 10_000
 N_BOOT = 5_000
@@ -63,7 +120,6 @@ def load_reef(path='../ScriptCorail/global_bleaching_environmental.csv'):
 
 
 def reef_classify_rxvii(df):
-    """Returns (input_values, structure_values) under R-XVII."""
     dhw = df['dhw'].fillna(0)
     cyc = df['cyclone_freq'].fillna(0)
     cyc_med = cyc[cyc > 0].median() if (cyc > 0).any() else 999
@@ -73,7 +129,6 @@ def reef_classify_rxvii(df):
 
 
 def reef_classify_intensity(df):
-    """Returns (low_intensity, high_intensity) — median DHW split."""
     stressed = df[df['dhw'] > 0]
     if len(stressed) < 100:
         return np.array([]), np.array([])
@@ -83,7 +138,6 @@ def reef_classify_intensity(df):
 
 
 def reef_ratio(input_vals, struct_vals):
-    """Compute effect ratio: mean(struct) / mean(input)."""
     if len(input_vals) < 30 or len(struct_vals) < 30:
         return None
     mi, ms = np.mean(input_vals), np.mean(struct_vals)
@@ -236,13 +290,11 @@ def load_gdsc(path='../ScriptGDSC/sanger-dose-response.csv'):
 
 
 def gdsc_classify_rxvii(df):
-    """Returns (input_auc, structure_auc)."""
     return (df.loc[df['PTYPE'] == 'INPUT', '_auc'].values,
             df.loc[df['PTYPE'] == 'STRUCTURE', '_auc'].values)
 
 
 def gdsc_classify_intensity(df):
-    """Returns (low_dose_auc, high_dose_auc)."""
     valid = df.dropna(subset=['_max_conc'])
     if len(valid) < 100: return np.array([]), np.array([])
     med = valid['_max_conc'].median()
@@ -251,7 +303,6 @@ def gdsc_classify_intensity(df):
 
 
 def gdsc_ratio(input_auc, struct_auc):
-    """Magnitude ratio: (1-AUC_struct) / (1-AUC_input)."""
     if len(input_auc) < 30 or len(struct_auc) < 30:
         return None
     mi = 1.0 - np.mean(input_auc)
@@ -264,7 +315,6 @@ def gdsc_ratio(input_auc, struct_auc):
 # ============================================================================
 
 def load_microbiome():
-    """Load MDSINE2 data. Filter to DYSBIOTIC cohort for R-XVII."""
     try:
         from pathlib import Path
         import mdsine2 as md2
@@ -279,13 +329,12 @@ def load_microbiome():
         study_u = md2.Study.load(str(u_pkl))
         print(f"  [MICROBIOME] Loaded MDSINE2 data")
         return _compute_micro_raw(study_h, study_u)
-    except (ImportError, FileNotFoundError) as e:
+    except (ImportError, FileNotFoundError, OSError) as e:
         print(f"  [MICROBIOME] MDSINE2 not available ({e}), using Phase 2 published values")
         return _micro_published()
 
 
 def _micro_published():
-    """Phase 2 dysbiotic cohort results: p=0.0006, d=1.16."""
     return {
         'available': True, 'has_raw': False,
         'hw_bc_mean': 0.52, 'input_bc_mean': 0.28,
@@ -296,11 +345,6 @@ def _micro_published():
 
 
 def _compute_micro_raw(study_h, study_u):
-    """
-    Compute from raw data. TWO cohort reports:
-      - dysbiotic_only: the Phase 2 published result
-      - both_cohorts: for robustness check
-    """
     def _extract(study, label):
         records = []
         for subj in study:
@@ -317,22 +361,17 @@ def _compute_micro_raw(study_h, study_u):
     u_data = _extract(study_u, 'dysbiotic')
 
     def _recovery_bcs(data, cohort_filter=None):
-        """Compute late-recovery BCs from global baseline."""
         if cohort_filter:
             data = [r for r in data if r['cohort'] == cohort_filter]
-
         input_bcs, hw_bcs = [], []
         subjects = sorted(set(r['subject'] for r in data))
-
         for subj in subjects:
             sdata = sorted([r for r in data if r['subject'] == subj], key=lambda x: x['time'])
             baseline_samples = [r for r in sdata if 15 <= r['time'] < 21.5]
             if len(baseline_samples) < 3:
                 continue
-
             baseline = np.mean([r['rel_profile'] for r in baseline_samples], axis=0)
             baseline = baseline / (baseline.sum() + 1e-15)
-
             recovery_map = {
                 'HFD': (28.5 + 4, 35.5, 'input'),
                 'vancomycin': (42.5 + 4, 50.5, 'hardware'),
@@ -347,12 +386,9 @@ def _compute_micro_raw(study_h, study_u):
                         input_bcs.append(bc)
                     else:
                         hw_bcs.append(bc)
-
         return np.array(input_bcs), np.array(hw_bcs)
 
-    # Dysbiotic only (Phase 2 published analysis)
     in_bc_d, hw_bc_d = _recovery_bcs(u_data, cohort_filter='dysbiotic')
-    # Both cohorts (robustness)
     in_bc_all, hw_bc_all = _recovery_bcs(h_data + u_data, cohort_filter=None)
 
     print(f"    Dysbiotic: input n={len(in_bc_d)}, hw n={len(hw_bc_d)}")
@@ -372,7 +408,6 @@ def _compute_micro_raw(study_h, study_u):
 
     return {
         'available': True, 'has_raw': True,
-        # Primary: dysbiotic (matches Phase 2)
         'input_bcs': in_bc_d, 'hw_bcs': hw_bc_d,
         'hw_bc_mean': np.mean(hw_bc_d) if len(hw_bc_d) > 0 else 0.52,
         'input_bc_mean': np.mean(in_bc_d) if len(in_bc_d) > 0 else 0.28,
@@ -380,7 +415,6 @@ def _compute_micro_raw(study_h, study_u):
         'hw_bc_std': np.std(hw_bc_d) if len(hw_bc_d) > 0 else 0.15,
         'input_bc_std': np.std(in_bc_d) if len(in_bc_d) > 0 else 0.10,
         'n_hw': len(hw_bc_d), 'n_input': len(in_bc_d),
-        # Secondary: both cohorts
         'all_input_bcs': in_bc_all, 'all_hw_bcs': hw_bc_all,
         'ratio_both': ratio_all,
     }
@@ -392,9 +426,7 @@ def micro_ratio_rxvii(m):
 
 
 def micro_ratio_intensity(m):
-    """Intensity split: median BC displacement regardless of perturbation type."""
     if not m['available']: return None
-
     if m['has_raw']:
         all_bcs = np.concatenate([m['input_bcs'], m['hw_bcs']])
         if len(all_bcs) < 10: return None
@@ -403,7 +435,6 @@ def micro_ratio_intensity(m):
         low = all_bcs[all_bcs <= med]
         return np.mean(high) / max(np.mean(low), 0.001)
     else:
-        # Parametric approximation
         hw = np.random.RandomState(42).normal(m['hw_bc_mean'], m['hw_bc_std'], m['n_hw'])
         inp = np.random.RandomState(42).normal(m['input_bc_mean'], m['input_bc_std'], m['n_input'])
         all_v = np.concatenate([hw, inp])
@@ -412,14 +443,153 @@ def micro_ratio_intensity(m):
 
 
 # ============================================================================
+# DOMAIN 4: YEAST (Saccharomyces cerevisiae)
+# ============================================================================
+
+YEAST_STRUCTURE_TERMS = {
+    'GO:0006281','GO:0043161','GO:0006457','GO:0030433',
+    'GO:0000278','GO:0000280','GO:0000281','GO:0051726','GO:0007346',
+    'GO:0000082','GO:0000086','GO:0051301','GO:0006260','GO:0006261',
+    'GO:0009272','GO:0071555','GO:0007005',
+    'GO:0042254','GO:0042273','GO:0042274',
+    'GO:0006325','GO:0006265','GO:0007059',
+}
+YEAST_INPUT_TERMS = {
+    'GO:0007165','GO:0000165','GO:0007264','GO:0007186',
+    'GO:0031929','GO:0032008','GO:0038202','GO:0006468',
+    'GO:0055085','GO:0006811','GO:0006812','GO:0006813','GO:0006814',
+    'GO:0006826','GO:0006865','GO:0015078','GO:0034220','GO:0055072',
+    'GO:0006970','GO:0009408','GO:0034599',
+    'GO:0071470','GO:0071472','GO:0071474',
+}
+
+
+def _load_yeast_gaf(gaf_path):
+    """Load GAF → ORF classification."""
+    gene_go = defaultdict(set)
+    gene_to_orf = {}
+    with open(gaf_path, 'r') as f:
+        for line in f:
+            if line.startswith('!'): continue
+            parts = line.strip().split('\t')
+            if len(parts) < 15: continue
+            gene, qual, go_id, syns = parts[2], parts[3], parts[4], parts[10]
+            if 'NOT' in qual: continue
+            gene_go[gene].add(go_id)
+            if syns:
+                for s in syns.split('|'):
+                    s = s.strip()
+                    if s.startswith('Y') and len(s) >= 7 and s[1] in 'ABCDEFGHIJKLMNOP':
+                        gene_to_orf[gene] = s
+                        break
+    orf_class = {}
+    for gene, gos in gene_go.items():
+        orf = gene_to_orf.get(gene)
+        if not orf: continue
+        is_s = bool(gos & YEAST_STRUCTURE_TERMS)
+        is_i = bool(gos & YEAST_INPUT_TERMS)
+        if is_s and not is_i: orf_class[orf] = 'STRUCTURE'
+        elif is_i and not is_s: orf_class[orf] = 'INPUT'
+    return orf_class
+
+
+def _load_yeast_matrix(matrix_path, screens_path, orf_class):
+    """Load matrix + select screens → return severity arrays."""
+    screens_df = pd.read_csv(screens_path, sep='\t')
+
+    # Hillenmeyer screens (hom only)
+    hill_mask = screens_df['paper'].str.contains('Hillenmeyer', case=False, na=False)
+    hill_hom = screens_df[hill_mask & screens_df['collection'].str.contains('hom', case=False, na=False)]
+
+    if len(hill_hom) > 0:
+        screen_ids = set(hill_hom['id'].astype(str))
+        source = 'Hillenmeyer'
+    else:
+        # Fallback: all chemical screens
+        growth = screens_df[screens_df['phenotype'].str.contains('growth', case=False, na=False)]
+        std_kw = ['standard', 'control', 'untreated', 'DMSO']
+        chem = growth[~growth['conditionset'].str.lower().str.contains('|'.join(std_kw), na=True)]
+        has_conc = chem[chem['conditionset'].str.contains(r'\[.*[uUnNmMg%]', na=False)]
+        screen_ids = set(has_conc['id'].astype(str))
+        source = 'All chemical'
+
+    mat = pd.read_csv(matrix_path, sep='\t', index_col=0, low_memory=False)
+    cols = [c for c in mat.columns if str(c) in screen_ids]
+
+    s_orfs = [o for o in mat.index if o in orf_class and orf_class[o] == 'STRUCTURE']
+    i_orfs = [o for o in mat.index if o in orf_class and orf_class[o] == 'INPUT']
+
+    s_sev = mat.loc[s_orfs, cols].abs().mean(axis=1).dropna().values
+    i_sev = mat.loc[i_orfs, cols].abs().mean(axis=1).dropna().values
+
+    return s_sev, i_sev, source, len(cols)
+
+
+def load_yeast(gaf_path='../ScriptYeast/gene_association.sgd.20251124.gaf',
+               hom_matrix='../ScriptYeast/yp_matrix_z_haphom_20221025.txt',
+               hom_screens='../ScriptYeast/yp_screens_haphom_20221025.txt',
+               het_matrix='../ScriptYeast/yp_matrix_het_z_20221018.txt',
+               het_screens='../ScriptYeast/yp_screens_het_20221018.txt'):
+    """Load yeast data for both hom and het collections."""
+
+    if not os.path.exists(gaf_path):
+        print(f"  [YEAST] GAF not found: {gaf_path}")
+        return None
+
+    orf_class = _load_yeast_gaf(gaf_path)
+    result = {'available': False}
+
+    # HOM (exploratory, primary for cross-domain)
+    if os.path.exists(hom_matrix) and os.path.exists(hom_screens):
+        print(f"  [YEAST-HOM] Loading matrix...")
+        s_sev, i_sev, source, n_scr = _load_yeast_matrix(hom_matrix, hom_screens, orf_class)
+        print(f"  [YEAST-HOM] {source}: {n_scr} screens, S={len(s_sev)}, I={len(i_sev)}")
+        result['hom'] = {'s_sev': s_sev, 'i_sev': i_sev, 'source': source}
+        result['available'] = True
+    else:
+        print(f"  [YEAST-HOM] Not found: {hom_matrix}")
+
+    # HET (confirmatory)
+    if os.path.exists(het_matrix) and os.path.exists(het_screens):
+        print(f"  [YEAST-HET] Loading matrix...")
+        s_sev, i_sev, source, n_scr = _load_yeast_matrix(het_matrix, het_screens, orf_class)
+        print(f"  [YEAST-HET] {source}: {n_scr} screens, S={len(s_sev)}, I={len(i_sev)}")
+        result['het'] = {'s_sev': s_sev, 'i_sev': i_sev, 'source': source}
+        result['available'] = True
+    else:
+        print(f"  [YEAST-HET] Not found (optional): {het_matrix}")
+
+    return result
+
+
+def yeast_classify_rxvii(yeast, collection='hom'):
+    """Returns (input_severity, structure_severity)."""
+    data = yeast.get(collection)
+    if not data:
+        return np.array([]), np.array([])
+    return data['i_sev'], data['s_sev']
+
+
+def yeast_classify_intensity(yeast, collection='hom'):
+    """Intensity split: median severity regardless of S/I class."""
+    data = yeast.get(collection)
+    if not data:
+        return np.array([]), np.array([])
+    all_sev = np.concatenate([data['s_sev'], data['i_sev']])
+    med = np.median(all_sev)
+    return all_sev[all_sev <= med], all_sev[all_sev > med]
+
+
+def yeast_ratio(input_sev, struct_sev):
+    if len(input_sev) < 30 or len(struct_sev) < 30: return None
+    return np.mean(struct_sev) / max(np.mean(input_sev), 0.0001)
+
+
+# ============================================================================
 # BOOTSTRAP ENGINE
 # ============================================================================
 
 def bootstrap_ratio(input_vals, struct_vals, ratio_fn, n_boot, rng):
-    """
-    Bootstrap a ratio by resampling both groups independently.
-    ratio_fn(input_sample, struct_sample) → float
-    """
     ratios = []
     for _ in range(n_boot):
         bi = rng.choice(input_vals, len(input_vals), replace=True)
@@ -431,13 +601,11 @@ def bootstrap_ratio(input_vals, struct_vals, ratio_fn, n_boot, rng):
 
 
 def cross_domain_sigma(ratios):
-    """σ of ratios across domains (lower = more convergent)."""
     valid = [r for r in ratios if r is not None and np.isfinite(r)]
     return np.std(valid) if len(valid) >= 2 else np.nan
 
 
 def cross_domain_cv(ratios):
-    """Coefficient of variation."""
     valid = [r for r in ratios if r is not None and np.isfinite(r)]
     if len(valid) < 2: return np.nan
     m = np.mean(valid)
@@ -453,8 +621,8 @@ def main():
     rng = np.random.RandomState(SEED)
 
     print("=" * 80)
-    print("  R-XVII CROSS-DOMAIN SPECIFICITY TEST v2")
-    print("  Corrected null model + dysbiotic-only microbiome")
+    print("  R-XVII CROSS-DOMAIN SPECIFICITY TEST v2.1")
+    print("  Corrected null model + dysbiotic-only microbiome + yeast (hom+het)")
     print("=" * 80)
 
     # ── Load ──
@@ -464,22 +632,55 @@ def main():
     reef = load_reef()
     gdsc = load_gdsc()
     micro = load_microbiome()
+    yeast = load_yeast()
 
     domains = []
     if reef is not None: domains.append('reef')
     if gdsc is not None: domains.append('gdsc')
     if micro['available']: domains.append('micro')
-    print(f"\n  Domains: {domains} (n={len(domains)})")
+    if yeast and yeast['available'] and 'hom' in yeast: domains.append('yeast')
+    print(f"\n  Primary domains: {domains} (n={len(domains)})")
+    if yeast and 'het' in yeast:
+        print(f"  Confirmatory: yeast-het available")
 
     if len(domains) < 2:
         print("  ERROR: need ≥2 domains"); sys.exit(1)
+
+    # ── Domain colors ──
+    C_D = {
+        'reef': '#26A69A', 'gdsc': '#AB47BC',
+        'micro': '#EF5350', 'yeast': '#F9A825',
+    }
+
+    # ── Ratio functions ──
+    def _reef_ratio_fn(inp, stc):
+        if len(inp) < 5 or len(stc) < 5: return None
+        return np.mean(stc) / max(np.mean(inp), 0.01)
+
+    def _gdsc_ratio_fn(inp, stc):
+        if len(inp) < 5 or len(stc) < 5: return None
+        mi = 1.0 - np.mean(inp); ms = 1.0 - np.mean(stc)
+        return ms / max(mi, 0.001)
+
+    def _micro_ratio_fn(inp, hw):
+        if len(inp) < 3 or len(hw) < 3: return None
+        return np.mean(hw) / max(np.mean(inp), 0.001)
+
+    def _yeast_ratio_fn(inp, stc):
+        if len(inp) < 5 or len(stc) < 5: return None
+        return np.mean(stc) / max(np.mean(inp), 0.0001)
+
+    ratio_fns = {
+        'reef': _reef_ratio_fn, 'gdsc': _gdsc_ratio_fn,
+        'micro': _micro_ratio_fn, 'yeast': _yeast_ratio_fn,
+    }
 
     # ── Condition 1: R-XVII ──
     print("\n[2/6] CONDITION 1: R-XVII CLASSIFICATION")
     print("-" * 50)
 
     rxvii = {}
-    rxvii_groups = {}  # store (input, struct) for bootstrapping
+    rxvii_groups = {}
 
     if 'reef' in domains:
         inp, stc = reef_classify_rxvii(reef)
@@ -501,6 +702,19 @@ def main():
         if micro['has_raw']:
             rxvii_groups['micro'] = (micro['input_bcs'], micro['hw_bcs'])
         print(f"  Micro: hw={micro['hw_bc_mean']:.3f}  in={micro['input_bc_mean']:.3f}  ratio={r:.3f}")
+
+    if 'yeast' in domains:
+        inp, stc = yeast_classify_rxvii(yeast, 'hom')
+        r = yeast_ratio(inp, stc)
+        rxvii['yeast'] = r
+        rxvii_groups['yeast'] = (inp, stc)
+        print(f"  Yeast: struct_mean={np.mean(stc):.4f}  input_mean={np.mean(inp):.4f}  ratio={r:.3f}")
+
+    # Confirmatory het (reported separately, not in cross-domain σ)
+    if yeast and 'het' in yeast:
+        inp_h, stc_h = yeast_classify_rxvii(yeast, 'het')
+        r_het = yeast_ratio(inp_h, stc_h)
+        print(f"  Yeast-het (confirmatory): ratio={r_het:.3f}")
 
     sigma_rxvii = cross_domain_sigma(list(rxvii.values()))
     cv_rxvii = cross_domain_cv(list(rxvii.values()))
@@ -534,6 +748,13 @@ def main():
         intensity['micro'] = r
         if r: print(f"  Micro: intensity ratio={r:.3f}")
 
+    if 'yeast' in domains:
+        lo, hi = yeast_classify_intensity(yeast, 'hom')
+        r = yeast_ratio(lo, hi)
+        intensity['yeast'] = r
+        intensity_groups['yeast'] = (lo, hi)
+        if r: print(f"  Yeast: high={np.mean(hi):.4f}  low={np.mean(lo):.4f}  ratio={r:.3f}")
+
     sigma_intensity = cross_domain_sigma(list(intensity.values()))
     cv_intensity = cross_domain_cv(list(intensity.values()))
     mean_intensity = np.mean([v for v in intensity.values() if v])
@@ -543,24 +764,7 @@ def main():
     # ── Null model A: Bootstrap σ comparison ──
     print(f"\n[4/6] NULL MODEL A: BOOTSTRAP σ COMPARISON (n={N_BOOT})")
     print("-" * 50)
-    print("  Testing: σ_R-XVII < σ_intensity under resampling")
 
-    def _reef_ratio_fn(inp, stc):
-        if len(inp) < 5 or len(stc) < 5: return None
-        return np.mean(stc) / max(np.mean(inp), 0.01)
-
-    def _gdsc_ratio_fn(inp, stc):
-        if len(inp) < 5 or len(stc) < 5: return None
-        mi = 1.0 - np.mean(inp); ms = 1.0 - np.mean(stc)
-        return ms / max(mi, 0.001)
-
-    def _micro_ratio_fn(inp, hw):
-        if len(inp) < 3 or len(hw) < 3: return None
-        return np.mean(hw) / max(np.mean(inp), 0.001)
-
-    ratio_fns = {'reef': _reef_ratio_fn, 'gdsc': _gdsc_ratio_fn, 'micro': _micro_ratio_fn}
-
-    # Bootstrap each domain's ratio under each classification
     boot_rxvii_sigmas = []
     boot_intens_sigmas = []
 
@@ -568,7 +772,6 @@ def main():
         if (b + 1) % 1000 == 0:
             print(f"  ... {b+1}/{N_BOOT}")
 
-        # Sample R-XVII ratios
         rxvii_sample = {}
         for d in domains:
             if d in rxvii_groups:
@@ -579,7 +782,6 @@ def main():
                 if r and np.isfinite(r):
                     rxvii_sample[d] = r
             elif d == 'micro' and not micro['has_raw']:
-                # Parametric bootstrap for microbiome
                 hw_boot = rng.normal(micro['hw_bc_mean'], micro['hw_bc_std'], micro['n_hw'])
                 in_boot = rng.normal(micro['input_bc_mean'], micro['input_bc_std'], micro['n_input'])
                 r = np.mean(hw_boot) / max(np.mean(in_boot), 0.001)
@@ -588,7 +790,6 @@ def main():
         if len(rxvii_sample) >= 2:
             boot_rxvii_sigmas.append(cross_domain_sigma(list(rxvii_sample.values())))
 
-        # Sample intensity ratios
         intens_sample = {}
         for d in domains:
             if d in intensity_groups:
@@ -606,8 +807,6 @@ def main():
     boot_rxvii_sigmas = np.array(boot_rxvii_sigmas)
     boot_intens_sigmas = np.array(boot_intens_sigmas)
 
-    # p-value: is σ_R-XVII consistently < σ_intensity?
-    # For each bootstrap pair, check if rxvii_σ < intensity_σ
     n_compare = min(len(boot_rxvii_sigmas), len(boot_intens_sigmas))
     if n_compare > 0:
         p_rxvii_less = np.mean(boot_rxvii_sigmas[:n_compare] < boot_intens_sigmas[:n_compare])
@@ -623,8 +822,6 @@ def main():
     # ── Null model B: Cross-classification permutation ──
     print(f"\n[5/6] NULL MODEL B: CROSS-CLASSIFICATION PERMUTATION")
     print("-" * 50)
-    print("  For each iteration: randomly assign each domain to R-XVII or intensity")
-    print("  Then compute cross-domain σ. Tests if MIXING schemes increases spread.")
 
     cross_class_sigmas = []
     for _ in range(N_PERM):
@@ -640,15 +837,13 @@ def main():
             cross_class_sigmas.append(np.std(valid))
 
     cross_class_sigmas = np.array(cross_class_sigmas)
-
-    # p-value: is observed R-XVII σ in the lower tail of mixed σ?
     p_cross_class = np.mean(cross_class_sigmas <= sigma_rxvii) if len(cross_class_sigmas) > 0 else np.nan
 
     print(f"  Mixed σ: {np.mean(cross_class_sigmas):.4f} ± {np.std(cross_class_sigmas):.4f}")
     print(f"  R-XVII σ = {sigma_rxvii:.4f}")
     print(f"  P(mixed_σ ≤ σ_R-XVII) = {p_cross_class:.4f}")
 
-    # ── Null model C: within-domain permutation (original, for reference) ──
+    # ── Within-domain permutation (reference) ──
     print(f"\n  [Reference] Within-domain permutation null (n={N_PERM})")
 
     perm_ratios_per_domain = {d: [] for d in domains}
@@ -691,13 +886,21 @@ def main():
             perm_ratios_per_domain['micro'].append(r)
             perm_r['micro'] = r
 
+        if 'yeast' in domains:
+            inp, stc = rxvii_groups['yeast']
+            pool = np.concatenate([inp, stc])
+            idx = rng.permutation(len(pool))
+            pi, ps = pool[idx[:len(inp)]], pool[idx[len(inp):]]
+            r = _yeast_ratio_fn(pi, ps)
+            perm_ratios_per_domain['yeast'].append(r)
+            perm_r['yeast'] = r
+
         valid = [v for v in perm_r.values() if v is not None and np.isfinite(v)]
         if len(valid) >= 2:
             perm_sigmas.append(np.std(valid))
 
     perm_sigmas = np.array(perm_sigmas)
 
-    # Per-domain p-values: is observed ratio extreme vs permutation?
     domain_pvals = {}
     for d in domains:
         obs = rxvii.get(d)
@@ -713,8 +916,8 @@ def main():
 
     print(f"\n  {'Condition':<30s}", end='')
     for d in domains: print(f" {d:>10s}", end='')
-    print(f" {'σ':>8s} {'CV':>8s} {'p':>10s}")
-    print("  " + "-" * (30 + 10*len(domains) + 30))
+    print(f" {'σ':>8s} {'CV':>8s}")
+    print("  " + "-" * (30 + 10*len(domains) + 20))
 
     row = f"  {'(1) R-XVII':<30s}"
     for d in domains:
@@ -737,6 +940,10 @@ def main():
     row += f" {np.mean(perm_sigmas):8.4f}"
     print(row)
 
+    # Confirmatory het line
+    if yeast and 'het' in yeast:
+        print(f"\n  Confirmatory (not in σ): yeast-het = {r_het:.3f}×")
+
     print(f"\n  KEY TESTS:")
     print(f"    A. Bootstrap P(σ_R-XVII < σ_intensity)   = {p_rxvii_less:.4f}")
     print(f"    B. Cross-class P(mixed_σ ≤ σ_R-XVII)     = {p_cross_class:.4f}")
@@ -752,14 +959,14 @@ def main():
     print("  INTERPRETATION")
     print(f"{'=' * 80}")
 
-    specific = p_rxvii_less > 0.95  # strong evidence R-XVII is tighter
+    specific = p_rxvii_less > 0.95
     partial = p_rxvii_less > 0.75
     cross_specific = p_cross_class < 0.25
 
     if specific:
         verdict = "SPECIFIC"
         detail = ("R-XVII classification produces significantly tighter cross-domain\n"
-                  "    convergence than intensity-based classification. The ~1.8× ratio is\n"
+                  "    convergence than intensity-based classification. The ratio is\n"
                   "    NOT a generic artifact of strong/weak splits — it requires the\n"
                   "    structure/input mechanistic distinction.")
     elif partial:
@@ -779,14 +986,13 @@ def main():
     # ── Visualization ──
     fig = plt.figure(figsize=(22, 20))
     gs = gridspec.GridSpec(4, 3, hspace=0.4, wspace=0.35)
-    fig.suptitle('R-XVII Cross-Domain Specificity Test v2\n'
-                 'Does the ~1.8× structure/input ratio require the R-XVII partition?',
+    fig.suptitle('R-XVII Cross-Domain Specificity Test v2.1\n'
+                 f'Domains: {", ".join(d.capitalize() for d in domains)} + yeast-het (confirmatory)',
                  fontsize=14, fontweight='bold', y=0.995)
 
     C_R = '#1565C0'
     C_I = '#FF6F00'
     C_N = '#9E9E9E'
-    C_D = {'reef': '#26A69A', 'gdsc': '#AB47BC', 'micro': '#EF5350'}
 
     # A: ratios by condition
     ax = fig.add_subplot(gs[0, 0])
@@ -801,7 +1007,6 @@ def main():
     ax.bar(x - w, v_r, w, color=C_R, alpha=0.8, label='R-XVII')
     ax.bar(x, v_i, w, color=C_I, alpha=0.8, label='Intensity')
     ax.bar(x + w, v_n, w, color=C_N, alpha=0.8, label='Perm null')
-    ax.axhline(1.8, color='black', ls=':', lw=1.5, alpha=0.5, label='1.8× target')
     ax.axhline(1.0, color='gray', ls='-', lw=0.5)
     ax.set_xticks(x)
     ax.set_xticklabels([d.capitalize() for d in domains])
@@ -811,8 +1016,8 @@ def main():
 
     # B: bootstrap σ comparison
     ax = fig.add_subplot(gs[0, 1])
-    ax.hist(boot_rxvii_sigmas, bins=50, alpha=0.6, color=C_R, density=True, label=f'σ_R-XVII')
-    ax.hist(boot_intens_sigmas, bins=50, alpha=0.6, color=C_I, density=True, label=f'σ_intensity')
+    ax.hist(boot_rxvii_sigmas, bins=50, alpha=0.6, color=C_R, density=True, label='σ_R-XVII')
+    ax.hist(boot_intens_sigmas, bins=50, alpha=0.6, color=C_I, density=True, label='σ_intensity')
     ax.axvline(sigma_rxvii, color=C_R, lw=2.5, ls='-')
     ax.axvline(sigma_intensity, color=C_I, lw=2.5, ls='--')
     ax.set_xlabel('Cross-domain σ')
@@ -830,7 +1035,7 @@ def main():
     ax.set_title(f'C. Cross-classification null\np={p_cross_class:.4f}')
     ax.legend(fontsize=8)
 
-    # D: per-domain permutation dists with observed
+    # D: per-domain permutation dists
     ax = fig.add_subplot(gs[1, 0])
     for d in domains:
         perms = [r for r in perm_ratios_per_domain[d] if r is not None and np.isfinite(r)]
@@ -839,7 +1044,7 @@ def main():
             obs = rxvii.get(d)
             if obs:
                 ax.axvline(obs, color=C_D[d], lw=2.5)
-    ax.axvline(1.8, color='black', ls=':', lw=1.5, alpha=0.5)
+    ax.axhline(0, color='gray', lw=0.5)
     ax.set_xlabel('Ratio')
     ax.set_ylabel('Density')
     ax.set_title('D. Per-domain null (lines = R-XVII observed)')
@@ -904,31 +1109,34 @@ def main():
     plt.colorbar(im, ax=ax, shrink=0.7)
     ax.set_title('G. Ratio matrix')
 
-    # H: robustness — are BOTH reef and GDSC consistently close?
+    # H: bootstrap ratio distributions
     ax = fig.add_subplot(gs[2, 1])
-    if 'reef' in domains and 'gdsc' in domains:
-        boot_reef_r = bootstrap_ratio(*rxvii_groups['reef'], _reef_ratio_fn, 2000, rng)
-        boot_gdsc_r = bootstrap_ratio(*rxvii_groups['gdsc'], _gdsc_ratio_fn, 2000, rng)
-        ax.hist(boot_reef_r, bins=50, alpha=0.5, color=C_D['reef'], density=True, label='Reef R-XVII')
-        ax.hist(boot_gdsc_r, bins=50, alpha=0.5, color=C_D['gdsc'], density=True, label='GDSC R-XVII')
-        if 'micro' in domains and micro['has_raw']:
-            boot_micro_r = bootstrap_ratio(micro['input_bcs'], micro['hw_bcs'],
-                                           _micro_ratio_fn, 2000, rng)
-            ax.hist(boot_micro_r, bins=50, alpha=0.5, color=C_D['micro'], density=True, label='Micro R-XVII')
-        ax.axvline(1.8, color='black', ls=':', lw=1.5)
-        ax.set_xlabel('Ratio')
-        ax.set_ylabel('Density')
-        ax.set_title('H. Bootstrap ratio distributions (R-XVII)')
-        ax.legend(fontsize=8)
+    for d in domains:
+        if d in rxvii_groups:
+            inp, stc = rxvii_groups[d]
+            boot_r = bootstrap_ratio(inp, stc, ratio_fns[d], 2000, rng)
+            ax.hist(boot_r, bins=50, alpha=0.4, color=C_D[d], density=True, label=f'{d.capitalize()} R-XVII')
+        elif d == 'micro' and not micro['has_raw']:
+            # Parametric bootstrap
+            boot_r = []
+            for _ in range(2000):
+                hw_b = rng.normal(micro['hw_bc_mean'], micro['hw_bc_std'], micro['n_hw'])
+                in_b = rng.normal(micro['input_bc_mean'], micro['input_bc_std'], micro['n_input'])
+                boot_r.append(np.mean(hw_b) / max(np.mean(in_b), 0.001))
+            ax.hist(boot_r, bins=50, alpha=0.4, color=C_D[d], density=True, label=f'{d.capitalize()} R-XVII')
+    ax.set_xlabel('Ratio')
+    ax.set_ylabel('Density')
+    ax.set_title('H. Bootstrap ratio distributions (R-XVII)')
+    ax.legend(fontsize=8)
 
-    # I: bootstrap σ time series (paired comparison)
+    # I: paired bootstrap scatter
     ax = fig.add_subplot(gs[2, 2])
     n_show = min(200, n_compare)
     ax.scatter(boot_rxvii_sigmas[:n_show], boot_intens_sigmas[:n_show],
                s=8, alpha=0.3, color='gray')
     ax.plot([0, max(boot_intens_sigmas)], [0, max(boot_intens_sigmas)], 'k:', alpha=0.3)
     ax.scatter([sigma_rxvii], [sigma_intensity], s=200, color='red', edgecolor='black',
-               zorder=5, label=f'Observed')
+               zorder=5, label='Observed')
     ax.set_xlabel('σ_R-XVII (bootstrap)')
     ax.set_ylabel('σ_intensity (bootstrap)')
     ax.set_title(f'I. Paired bootstrap: {p_rxvii_less*100:.0f}% below diagonal')
@@ -943,7 +1151,7 @@ def main():
 
     S = [
         "=" * 100,
-        "  R-XVII CROSS-DOMAIN SPECIFICITY TEST v2 — SUMMARY",
+        "  R-XVII CROSS-DOMAIN SPECIFICITY TEST v2.1 — SUMMARY",
         "=" * 100, "",
         f"  Domains: {', '.join(d.capitalize() for d in domains)} (n={len(domains)})",
         f"  N_BOOT={N_BOOT}, N_PERM={N_PERM}", "",
@@ -951,6 +1159,11 @@ def main():
         f"    σ = {sigma_rxvii:.4f}, CV = {cv_rxvii:.4f}", "",
         f"  CONDITION 2 — Intensity:  {intens_str}",
         f"    σ = {sigma_intensity:.4f}, CV = {cv_intensity:.4f}", "",
+    ]
+    if yeast and 'het' in yeast:
+        S.append(f"  CONFIRMATORY: yeast-het = {r_het:.3f}× (OSF pre-registered)")
+        S.append("")
+    S += [
         f"  TEST A: Bootstrap P(σ_R-XVII < σ_intensity) = {p_rxvii_less:.4f}",
         f"  TEST B: Cross-classification P(mixed_σ ≤ σ_R-XVII) = {p_cross_class:.4f}",
         f"  σ ratio: intensity/R-XVII = {sigma_intensity/max(sigma_rxvii,0.0001):.2f}×",
@@ -990,6 +1203,9 @@ def main():
         'domain_pvals': {k: float(v) for k, v in domain_pvals.items()},
         'verdict': verdict,
     }
+    if yeast and 'het' in yeast:
+        results['confirmatory_yeast_het'] = float(r_het)
+
     out_json = 'rXVII_specificity_v2.json'
     with open(out_json, 'w') as f:
         json.dump(results, f, indent=2)

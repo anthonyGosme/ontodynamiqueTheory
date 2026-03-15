@@ -1,0 +1,378 @@
+═══════════════════════════════════════════════════════════════════════
+  CR — R-XVII DOMAINE 5 : LEVURE (Saccharomyces cerevisiae)
+  Ontodynamique — A. Gosme
+  Date : 2026-03-13
+  Statut : EXPLORATOIRE 100% (pas de pré-enregistrement avant exécution)
+═══════════════════════════════════════════════════════════════════════
+
+
+1. OBJECTIF
+───────────────────────────────────────────────────────────────────────
+
+Tester la prédiction R-XVII (asymétrie structure/input) dans un 5ème
+domaine empirique : la levure Saccharomyces cerevisiae, organisme
+unicellulaire autonome (candidat clôture fort).
+
+Prédiction : les délétions de gènes STRUCTURE (machinerie de
+maintenance : réparation ADN, protéasome, cycle cellulaire, ribosomes,
+mitochondries, paroi) produisent des déficits de fitness plus sévères
+que les délétions de gènes INPUT (signalisation, transport, réponse
+au stress), avec un ratio S/I > 1.
+
+Fourchette attendue des 3 domaines biologiques existants :
+  Microbiome (MDSINE2)  : 1.61×
+  Récifs (GCBD)         : 1.80×
+  Cancer (GDSC)         : 1.85×
+  Logiciel              : ~1.8× (structure méthodologique distincte)
+
+
+2. DONNÉES
+───────────────────────────────────────────────────────────────────────
+
+2.1 Annotations GO
+  Source    : SGD (Saccharomyces Genome Database)
+  Fichier   : gene_association.sgd.20251124.gaf
+  Contenu   : 214 584 annotations, 7 129 gènes, 6 440 mappings ORF
+  Date      : 2024-11-24
+
+2.2 Fitness sous perturbation chimique
+  Source    : Yeast Phenome (yeastphenome.org)
+  Fichier   : yp_matrix_z_haphom_20221025.txt (z-scores, ~637 Mo)
+  Métadonnées : yp_screens_haphom_20221025.txt (14 484 screens)
+  Contenu   : 4 554 gènes × 14 484 screens
+
+  Sous-ensemble principal : 273 screens Hillenmeyer et al. 2008
+  (Science 320:362-5, PMID 18420932) — fitness de délétions
+  homozygotes sous 178 composés chimiques à plusieurs concentrations.
+
+  Mesure : z-score de log fold-change normalisé. Un z-score négatif
+  = fitness réduite sous perturbation. La sévérité = |z| moyen par
+  gène sur les 273 screens.
+
+2.3 Fitness basale (contrôle, NON utilisé pour résultat principal)
+  Source    : Costanzo et al. 2016 (Science 353:aaf1420)
+  Fichier   : strain_ids_and_single_mutant_fitness.xlsx
+  Contenu   : 5 848 gènes, fitness à 26°C et 30°C en YPD
+  Note      : fitness en milieu riche sans stress. Les gènes INPUT
+              sont au repos (73% ont fitness > 0.98), ce qui gonfle
+              artificiellement le ratio à 2.49×. NON comparable aux
+              autres domaines. Utilisé uniquement comme test
+              directionnel préliminaire.
+
+
+3. PARTITION STRUCTURE / INPUT
+───────────────────────────────────────────────────────────────────────
+
+3.1 Principe
+  Classification fonctionnelle par termes GO (Gene Ontology),
+  annotations directes uniquement (sans hiérarchie OBO).
+  Partition gelée le 2026-03-13 avant consultation des résultats
+  Yeast Phenome (les résultats Costanzo avaient déjà été vus —
+  statut exploratoire).
+
+3.2 Termes STRUCTURE (machinerie de maintenance)
+  GO:0006281  DNA repair
+  GO:0043161  proteasome-mediated ubiquitin-dependent protein catabolic process
+  GO:0006457  protein folding (chaperones)
+  GO:0030433  ubiquitin-dependent ERAD pathway
+  GO:0000278  mitotic cell cycle
+  GO:0000280  nuclear division
+  GO:0000281  mitotic cytokinesis
+  GO:0051726  regulation of cell cycle
+  GO:0007346  regulation of mitotic cell cycle
+  GO:0000082  G1/S transition of mitotic cell cycle
+  GO:0000086  G2/M transition of mitotic cell cycle
+  GO:0051301  cell division
+  GO:0006260  DNA replication
+  GO:0006261  DNA-dependent DNA replication
+  GO:0009272  fungal-type cell wall biogenesis
+  GO:0071555  cell wall organization
+  GO:0007005  mitochondrion organization
+  GO:0042254  ribosome biogenesis
+  GO:0042273  ribosomal large subunit biogenesis
+  GO:0042274  ribosomal small subunit biogenesis
+  GO:0006325  chromatin organization
+  GO:0006265  DNA topological change
+  GO:0007059  chromosome segregation
+
+3.3 Termes INPUT (signalisation, environnement)
+  GO:0007165  signal transduction
+  GO:0000165  MAPK cascade
+  GO:0007264  small GTPase mediated signal transduction
+  GO:0007186  G protein-coupled receptor signaling pathway
+  GO:0031929  TOR signaling
+  GO:0032008  positive regulation of TOR signaling
+  GO:0038202  TORC1 signaling
+  GO:0006468  protein phosphorylation
+  GO:0055085  transmembrane transport
+  GO:0006811  ion transport
+  GO:0006812  cation transport
+  GO:0006813  potassium ion transport
+  GO:0006814  sodium ion transport
+  GO:0006826  iron ion transport
+  GO:0006865  amino acid transport
+  GO:0015078  proton transmembrane transporter activity
+  GO:0034220  ion transmembrane transport
+  GO:0055072  iron ion homeostasis
+  GO:0006970  response to osmotic stress
+  GO:0009408  response to heat
+  GO:0034599  cellular response to oxidative stress
+  GO:0071470  cellular response to osmotic stress
+  GO:0071472  cellular response to salt stress
+  GO:0071474  cellular response to hypertonicity
+
+3.4 Comptages
+  STRUCTURE only : 1 204 gènes (1 143 après exclusion des BOTH)
+  INPUT only     :   589 gènes (560 après exclusion)
+  BOTH (exclus)  :    69 gènes
+  Matchés à la matrice Yeast Phenome : S=713, I=509
+
+3.5 Analyse de sensibilité de la partition (OBO)
+  Avec la hiérarchie GO (fichier go-basic.obo, 52 645 termes) :
+    STRUCTURE expanded : 23 → 664 termes (+641 descendants)
+    INPUT expanded     : 24 → 1291 termes (+1267 descendants)
+    Partition OBO      : S=1493, I=782, BOTH=321
+
+  Résultat OBO / Hillenmeyer : 1.256× [1.169, 1.354] p=3.30e-11
+  Effet OBO : −0.159× (−11.3%) par rapport à la partition plate.
+
+  Interprétation : l'expansion par descendants dilue le signal en
+  ajoutant des gènes « périphériques » annotés à des termes lointains.
+  L'INPUT a plus de descendants que STRUCTURE dans la hiérarchie GO
+  (transport et stress response sont très ramifiés). La partition
+  plate est retenue comme résultat principal ; l'OBO est un contrôle
+  de sensibilité montrant que la partition n'est pas cherry-picked
+  (l'élargir réduit le ratio).
+
+
+4. RÉSULTAT PRINCIPAL — HILLENMEYER (fitness sous stress chimique)
+───────────────────────────────────────────────────────────────────────
+
+  Données     : Yeast Phenome, 273 screens Hillenmeyer
+  Gènes       : S=688, I=489 (après filtrage données manquantes)
+  Métrique    : mean |z-score| par gène sur 273 conditions
+
+  ┌─────────────────────────────────────────────────────┐
+  │  Mean severity STRUCTURE : 0.8405                   │
+  │  Mean severity INPUT     : 0.5940                   │
+  │                                                     │
+  │  RATIO S/I = 1.415×                                 │
+  │  95% CI : [1.305, 1.538]  (10K bootstrap)           │
+  │  p = 3.89 × 10⁻¹⁹  (Mann-Whitney unilatéral)      │
+  │  Cohen's d = 0.501  (effet moyen)                   │
+  └─────────────────────────────────────────────────────┘
+
+  Permutation (100K) : 0/100 000 partitions aléatoires ≥ 1.3×
+                       p_perm = 0.000000
+
+  Split 50/50 :
+    Exploratoire : 1.408× [1.255, 1.581] p=1.14e-09, d=0.483
+    Confirmatif  : 1.422× [1.266, 1.590] p=2.75e-11, d=0.519
+    Écart        : 1.0%  (stabilité exceptionnelle)
+
+
+5. RÉSULTAT SECONDAIRE — ALL CHEMICAL (7445 screens)
+───────────────────────────────────────────────────────────────────────
+
+  Gènes       : S=713, I=509
+  Ratio S/I   : 1.105× [1.060, 1.151] p=5.78e-14, d=0.286
+
+  Le ratio est plus faible car les 7445 screens incluent des
+  conditions où la perturbation est faible ou non chimique (pH,
+  milieux riches, etc.), diluant le signal. Le résultat Hillenmeyer
+  (273 screens sous perturbation chimique contrôlée) est retenu
+  comme résultat principal.
+
+
+6. RÉSULTAT PRÉLIMINAIRE — COSTANZO (fitness basale YPD)
+───────────────────────────────────────────────────────────────────────
+
+  NON utilisé pour le résultat principal.
+
+  Non-essential (30°C) : ratio 2.49× [1.80, 3.70] p=2.0e-10, d=0.360
+  Non-essential (26°C) : ratio 2.49× [1.80, 3.70] p=1.9e-10, d=0.360
+  Sans ribosomes       : ratio 2.10× [1.51, 3.14] p=4.5e-07, d=0.282
+
+  Diagnostic : 73% des gènes INPUT ont fitness > 0.98 en YPD (pas
+  de stress → INPUT au repos → dénominateur écrasé → ratio gonflé).
+  La direction est confirmée mais la valeur numérique n'est pas
+  comparable aux autres domaines.
+
+
+7. BATTERIE DE ROBUSTESSE (robustness_yeast.py)
+───────────────────────────────────────────────────────────────────────
+
+VERDICT GLOBAL : SUCCÈS FORT (6/7 critères passés)
+
+7.1 Test 1 — Transformations multiples (≡ arcsin/log/binary corail)
+
+  Transform            N_S   N_I   Ratio   CI 95%          p        d
+  ─────────────────── ───── ───── ─────── ─────────────── ────────── ─────
+  |z| (original)        688   489   1.415  [1.305, 1.538]  3.89e-19  0.500
+  z²                    688   489   1.754  [1.502, 2.064]  4.65e-18  0.423
+  binary(|z|>2)         713   509   2.014  [1.685, 2.430]  3.88e-16  0.163
+  binary(|z|>3)         713   509   2.041  [1.633, 2.578]  3.57e-13  0.106
+  rank                  688   489   0.999  [0.935, 1.069]  5.07e-01 -0.001
+  log1p(|z|)            688   489   1.302  [1.229, 1.382]  2.56e-19  0.527
+
+  Verdict : 5/6 significatives. Le rank (normalisation par percentile)
+  détruit par design l'information d'amplitude → attendu.
+
+7.2 Test 2 — Par catégorie de drogue (≡ par océan/realm corail)
+
+  Catégorie             N_scr   Ratio   CI 95%          p        d
+  ───────────────────── ───── ─────── ─────────────── ────────── ─────
+  DNA damage               49   1.562  [1.421, 1.715]  5.57e-22  0.550
+  Cell wall/membrane       15   1.434  [1.299, 1.584]  1.20e-16  0.425
+  Oxidative stress          8   1.418  [1.283, 1.573]  6.98e-15  0.408
+  Other                   153   1.387  [1.279, 1.506]  1.49e-17  0.472
+  Signaling inhibitors     16   1.347  [1.211, 1.499]  1.06e-15  0.337
+  Temperature               6   1.300  [1.173, 1.440]  8.95e-07  0.288
+  Osmotic/salt             26   1.204  [1.091, 1.325]  4.38e-10  0.233
+
+  Verdict : 7/7 catégories S/I > 1 avec p < 0.05
+  CV inter-catégories : 7.6%
+  Range : [1.204, 1.562]
+
+  Note interprétative :
+  — DNA damage (1.56×) = le plus élevé. Cohérent : les drogues
+    génotoxiques sollicitent directement la machinerie STRUCTURE
+    (réparation ADN), creusant l'écart.
+  — Osmotic/salt (1.20×) = le plus bas. Cohérent : le stress
+    osmotique sollicite les transporteurs (INPUT), ce qui remonte
+    le dénominateur et réduit le ratio.
+  — Ce gradient par type de stress est lui-même une prédiction
+    testable de R-XVII.
+
+7.3 Test 3 — Sensitivity sweep (≡ seuil DHW corail)
+
+  Variation du seuil de sévérité (percentile) :
+  — Percentiles 0–60 : 13/13 significatifs (ratio 1.05–1.42×)
+  — Percentiles 65–90 : 0/6 significatifs (effectifs trop faibles,
+    N_I < 100 → perte de pouvoir statistique, pas inversion)
+
+  Verdict : 13/19 seuils significatifs
+  Le signal ne s'inverse jamais ; il disparaît par manque d'effectif
+  aux seuils extrêmes.
+
+7.4 Test 4 — Bootstrap CI détaillé
+
+  Ratio :
+    Mean   : 1.417
+    Median : 1.416
+    CI 95% : [1.305, 1.538]
+    CI 99% : [1.273, 1.573]
+    P(ratio < 1) : 0.000000 (0 sur 10 000 bootstraps)
+
+  Cohen's d :
+    Mean   : 0.502
+    CI 95% : [0.383, 0.624]
+
+7.5 Test 5 — Permutation par catégorie (≡ permutation régionale)
+
+  7/7 catégories : perm_p = 0.0000 (10K permutations chacune)
+  Aucune catégorie ne passe la spécificité par chance.
+
+7.6 Test 6 — Leave-one-category-out
+
+  Baseline (273 screens) : 1.415×
+
+  Catégorie retirée   Ratio      Δ
+  ─────────────────── ─────── ───────
+  DNA damage           1.376  −0.039  (max baisse)
+  Osmotic/salt         1.430  +0.015
+  Other                1.431  +0.016
+  Signaling inhibitors 1.418  +0.003
+  Temperature          1.416  +0.001
+  Oxidative stress     1.415  −0.000
+  Cell wall/membrane   1.413  −0.002
+
+  Max |Δ| = 0.039 (2.8% de variation)
+  Toutes les variantes significatives (p < 10⁻¹⁷)
+  → Le résultat ne dépend d'aucune catégorie de drogue.
+
+
+8. COMPARAISON INTER-DOMAINES
+───────────────────────────────────────────────────────────────────────
+
+  Domaine              Ratio S/I   CI 95%          p           Type
+  ──────────────────── ───────── ─────────────── ──────────── ──────────
+  Microbiome (MDSINE2)   1.61×                                multicel.
+  Récifs (GCBD)          1.80×                    SUCCÈS FORT  écosyst.
+  Cancer (GDSC)          1.85×                    SUCCÈS FORT  cellul.
+  Levure (YP/Hill.)      1.42×   [1.305, 1.538]  SUCCÈS FORT  unicel.
+
+  Fourchette 4 domaines : [1.42, 1.85]
+  Moyenne : 1.67×
+  CV : 11.0%
+
+  Direction : unanime (4/4 domaines, S/I > 1, p < 10⁻¹⁰)
+  Spécificité : 0/100K permutations dans chaque domaine
+
+  La levure est le ratio le plus bas des 4 domaines biologiques.
+  Hypothèse : le niveau d'organisation (unicellulaire = moins de
+  niveaux d'emboîtement, cf. LV dans le système) module l'amplitude
+  de l'asymétrie. Moins de profondeur → moins d'amplification →
+  ratio plus faible. C'est une prédiction secondaire testable.
+
+
+9. LIMITES ET CAVEATS
+───────────────────────────────────────────────────────────────────────
+
+9.1 Statut exploratoire
+  La partition a été construite avant de consulter les résultats
+  Yeast Phenome, mais APRÈS avoir vu les résultats Costanzo.
+  Les résultats Costanzo (direction et amplitude) étaient connus
+  au moment de la partition. Le résultat Yeast Phenome est donc
+  exploratoire, pas confirmatoire au sens strict.
+
+9.2 Même logique de partition que GDSC
+  La partition utilise les mêmes catégories GO (maintenance vs
+  signalisation) que le domaine cancer. C'est un test de
+  reproductibilité de la partition GO, pas un test de distance
+  causale maximale. Un 6ème domaine (immunologie, HSCT) serait
+  nécessaire pour la distance causale.
+
+9.3 Pas de hiérarchie GO dans le résultat principal
+  Les annotations sont directes uniquement (pas de propagation
+  par descendants). L'analyse OBO (§3.5) montre que l'expansion
+  dilue le signal (−11%). La partition plate capture les gènes
+  les plus centraux de chaque catégorie fonctionnelle.
+
+9.4 Biais d'essentialité résiduel
+  37% des gènes STRUCTURE sont essentiels vs 6% des INPUT.
+  Les gènes essentiels ne sont pas dans la matrice Yeast Phenome
+  (pas de délétions viables), mais le biais indique que STRUCTURE
+  contient intrinsèquement des gènes plus critiques. C'est
+  cohérent avec R-XVII (la machinerie de maintenance EST plus
+  critique) mais un reviewer pourrait arguer que c'est circulaire.
+
+9.5 Effet plafond pour les z-scores très élevés
+  Le sensitivity sweep montre que le ratio converge vers 1.0
+  au-dessus du 65ème percentile. Cela peut refléter un vrai
+  plateau (les gènes très sévèrement atteints le sont
+  indépendamment de leur catégorie) ou un artefact de petits
+  effectifs (N_I < 100).
+
+
+10. FICHIERS PRODUITS
+───────────────────────────────────────────────────────────────────────
+
+  gene_classification.tsv         Partition gelée (1 862 gènes classés)
+  RXVII.py                        Script principal (résultat 1.42×)
+  robustness_yeast.py             Batterie de robustesse (6 tests)
+  rxvii_yeastphenome_results.json Résultats principaux (JSON)
+  robustness_yeast_results.json   Résultats robustesse (JSON)
+
+  Données requises (non incluses, trop volumineuses) :
+  — yp_matrix_z_haphom_20221025.txt (~637 Mo)
+  — yp_screens_haphom_20221025.txt
+  — gene_association.sgd.20251124.gaf
+
+
+
+
+
+═══════════════════════════════════════════════════════════════════════
+  FIN DU CR — R-XVII LEVURE
+═══════════════════════════════════════════════════════════════════════

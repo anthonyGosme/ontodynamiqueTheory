@@ -2,37 +2,42 @@
   "domains": [
     "reef",
     "gdsc",
-    "micro"
+    "micro",
+    "yeast"
   ],
   "rxvii_ratios": {
     "reef": 1.7946471773224428,
     "gdsc": 1.8311589230217205,
-    "micro": 1.6109272532174095
+    "micro": 1.6109272532174095,
+    "yeast": 1.415048161578472
   },
   "intensity_ratios": {
     "reef": 2.141829902887476,
     "gdsc": 0.8882003011891503,
-    "micro": 1.9126930409183627
+    "micro": 1.9126930409183627,
+    "yeast": 3.2670120098728264
   },
-  "sigma_rxvii": 0.09637202595034342,
-  "sigma_intensity": 0.5450459973989171,
-  "cv_rxvii": 0.05520924177940023,
-  "cv_intensity": 0.3308172258789717,
-  "sigma_ratio": 5.655645318484403,
+  "sigma_rxvii": 0.165680472513346,
+  "sigma_intensity": 0.8453045324927893,
+  "cv_rxvii": 0.0996307362989855,
+  "cv_intensity": 0.4118547096833998,
+  "sigma_ratio": 5.102016669011478,
   "p_bootstrap_rxvii_less": 1.0,
-  "p_cross_classification": 0.2496,
+  "p_cross_classification": 0.0631,
   "boot_sigma_rxvii_ci": [
-    0.019866289255274745,
-    0.22887267762318073
+    0.12176067322471944,
+    0.23955304159597118
   ],
   "boot_sigma_intens_ci": [
-    0.5759870145487318,
-    0.682906524314842
+    0.9209613568919058,
+    1.0228841649584306
   ],
   "domain_pvals": {
     "reef": 0.0,
     "gdsc": 0.0,
-    "micro": 0.0004
+    "micro": 0.0006,
+    "yeast": 0.0
   },
-  "verdict": "SPECIFIC"
+  "verdict": "SPECIFIC",
+  "confirmatory_yeast_het": 1.17746739399932
 }
