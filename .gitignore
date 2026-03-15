@@ -6,3 +6,7 @@ __pycache__/
 *.py[cod]
 MDSINE2/
 MDSINE2_Paper/
+
+*.gaf
+*.obo
+yp_*.txt
