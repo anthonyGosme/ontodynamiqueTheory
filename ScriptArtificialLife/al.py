@@ -149,7 +149,7 @@ def run_sim(pop_type, seed, perturb_type="none", param_regen_factor=1.0,
             hist_count[a] = np.minimum(hist_count[a] + 1, MW)
 
             if layer2_active:
-                has_hist = a & (hist_count >= 3)
+                has_hist = a & (hist_count >= MW)
                 if has_hist.any():
                     idx = np.where(has_hist)[0]
                     cnt = hist_count[has_hist]
@@ -162,7 +162,7 @@ def run_sim(pop_type, seed, perturb_type="none", param_regen_factor=1.0,
                     boost = np.zeros_like(trend)
                     boost[valid] = np.clip(-trend[valid] * eff_gain[has_hist][valid], -0.3, 0.5)
                     meta_boost[has_hist] = boost
-                no_hist = a & (hist_count < 3)
+                no_hist = a & (hist_count < MW)
                 meta_boost[no_hist] = 0.0
                 current_trend[no_hist] = 0.0
             else:
@@ -179,7 +179,7 @@ def run_sim(pop_type, seed, perturb_type="none", param_regen_factor=1.0,
                 trend_count[a] = np.minimum(trend_count[a] + 1, MW3)
 
                 if layer3_active:
-                    has_enough = a & (trend_count >= 3)
+                    has_enough = a & (trend_count >= MW3)
                     if has_enough.any():
                         idx3 = np.where(has_enough)[0]
                         cnt3 = trend_count[has_enough]
@@ -191,7 +191,7 @@ def run_sim(pop_type, seed, perturb_type="none", param_regen_factor=1.0,
                                 mean_abs[j] = np.mean(vals)
                         adj = p['META3_ADAPT_RATE'] * mean_abs
                         eff_gain[has_enough] = np.clip(p['META_GAIN_BASE'] + adj, 0.1, 0.8)
-                    no_l3 = a & (trend_count < 3)
+                    no_l3 = a & (trend_count < MW3)
                     eff_gain[no_l3] = p['META_GAIN_BASE']
 
                 trend_ptr += 1
@@ -668,12 +668,98 @@ def plot_robustness(results, filename):
 
 
 # ═══════════════════════════════════════════════════════════════
-# MAIN
+# META_WINDOW SWEEP
 # ═══════════════════════════════════════════════════════════════
+
+def run_metawindow_sweep(pops=None, n_runs=20):
+    """Sweep META_WINDOW to test reconstruction duration effect on S/I.
+    Uses base calibration (MW=10) for all conditions — tests robustness,
+    not per-condition precision."""
+    if pops is None:
+        pops = ['A', 'Ap', 'B']
+
+    windows = [5, 10, 20, 30, 50, 75, 100]
+
+    # Calibrate once at default MW=10
+    p_base = {**DEFAULT_PARAMS}
+    best_p, _ = bisect_calibrate('B', 'parametric', 'param_regen_factor',
+                                  0.01, 0.95, 4.0, p_base, seeds=10)
+    struct_deltas = {}
+    for pop in pops:
+        d, _ = bisect_calibrate(pop, 'structural', 'struct_delta',
+                                 0.01, 2.0, 4.0, p_base, seeds=10)
+        struct_deltas[pop] = d
+
+    results = {}
+    for w in windows:
+        t0 = time.time()
+        p = {**DEFAULT_PARAMS, 'META_WINDOW': w, 'META3_WINDOW': w}
+
+        data = {}
+        for pop in pops:
+            aucs_I, aucs_S = [], []
+            for seed in range(n_runs):
+                s = seed + OFFSETS.get(pop, 0)
+                tr_I = run_sim(pop, s, 'parametric', param_regen_factor=best_p, p=p)
+                tr_S = run_sim(pop, s, 'structural', struct_delta=struct_deltas[pop], p=p)
+                aucs_I.append(compute_auc(tr_I, p))
+                aucs_S.append(compute_auc(tr_S, p))
+            data[pop] = {'ratio': np.array(aucs_S) / np.array(aucs_I)}
+
+        dt = time.time() - t0
+        results[w] = data
+        rA = data['A']['ratio']
+        print(f"  MW={w:3d}: S/I_A={rA.mean():.4f}+-{rA.std():.4f}  "
+              f"A'={data['Ap']['ratio'].mean():.4f}  "
+              f"B={data['B']['ratio'].mean():.4f}  ({dt:.0f}s)")
+
+    return results, windows
+
+
+def plot_metawindow(results, windows, filename):
+    """Plot META_WINDOW sweep results."""
+    pops = ['A', 'Ap', 'B']
+
+    fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+    fig.suptitle('S/I vs META_WINDOW — reconstruction duration', fontsize=14, fontweight='bold')
+
+    # All populations
+    ax = axes[0]
+    for pop in pops:
+        means = [results[w][pop]['ratio'].mean() for w in windows]
+        stds = [results[w][pop]['ratio'].std() for w in windows]
+        ax.errorbar(windows, means, yerr=stds, color=COLORS[pop], marker='o',
+                    ms=6, capsize=4, lw=2, label=pop)
+    ax.axhline(1.0, color='black', ls='--', alpha=0.3)
+    ax.fill_between(windows, 0.98, 1.02, color='gray', alpha=0.1)
+    ax.set_xlabel('META_WINDOW (cycles)')
+    ax.set_ylabel('S/I ratio')
+    ax.set_title('All populations')
+    ax.legend(fontsize=10)
+    ax.grid(True, alpha=0.3)
+
+    # Zoomed on A
+    ax = axes[1]
+    means_A = [results[w]['A']['ratio'].mean() for w in windows]
+    stds_A = [results[w]['A']['ratio'].std() for w in windows]
+    ax.errorbar(windows, means_A, yerr=stds_A, color=COLORS['A'], marker='s',
+                ms=7, capsize=4, lw=2)
+    ax.axhline(1.0, color='black', ls='--', alpha=0.3)
+    for w, m in zip(windows, means_A):
+        ax.annotate(f'{m:.3f}', (w, m), textcoords='offset points',
+                    xytext=(0, 12), ha='center', fontsize=8)
+    ax.set_xlabel('META_WINDOW (cycles)')
+    ax.set_ylabel('S/I_A')
+    ax.set_title('Pop A — zoomed')
+    ax.grid(True, alpha=0.3)
+
+    plt.tight_layout()
+    plt.savefig(filename, dpi=150)
+    plt.close()
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='R-XIX Simulation')
-    parser.add_argument('--mode', choices=['gradient', 'robustness', 'recovery', 'all'], default='all')
+    parser.add_argument('--mode', choices=['gradient', 'robustness', 'recovery', 'metawindow', 'all'], default='all')
     parser.add_argument('--runs', type=int, default=30)
     parser.add_argument('--outdir', type=str, default='.')
     args = parser.parse_args()
@@ -727,6 +813,16 @@ if __name__ == '__main__':
         print(f"Robustness done in {time.time()-t0:.1f}s")
         plot_robustness(rob, f'{args.outdir}/rxix_robustness.png')
         print(f"Robustness plot saved.")
+
+    if args.mode == 'metawindow':
+        print("=" * 60)
+        print("META_WINDOW SWEEP")
+        print("=" * 60)
+        t0 = time.time()
+        mw_results, mw_windows = run_metawindow_sweep(n_runs=min(args.runs, 20))
+        print(f"Done in {time.time()-t0:.1f}s")
+        plot_metawindow(mw_results, mw_windows, f'{args.outdir}/rxix_metawindow.png')
+        print(f"META_WINDOW plot saved.")
 
     print(f"\n{'=' * 60}")
     print("DONE")
