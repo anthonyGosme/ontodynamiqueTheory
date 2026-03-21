@@ -8,7 +8,7 @@
 **Ontodynamique** is a formal ontological framework built from two independent axioms — *Axiom I* (being = doing: every entity is an act of self-maintenance whose cost is drawn from the very structure it maintains) and *Axiom V* (exteriority admits degrees) — from which it derives finitude, irreversibility, operational closure, constitutive normativity, and a compositional gradient that classifies any finite system as *closure* (endogenous cost-bearing), *normative carriage* (externalized cost), or *aggregate* (no cycle).
 
 The central empirical prediction is **R-XVII**: perturbations targeting the *structure* of a system (its self-maintenance machinery) produce systematically larger displacement than perturbations targeting its *input* (its metabolic flow), at matched intensity. This asymmetry is indexed on the topological target of the perturbation, not on its amplitude.
-📖 **Ontodynamique  summary** https://github.com/anthonyGosme/ontodynamiqueTheory/blob/main/SYSTEM_SUMMARY_EN.md
+📖 **summary** [Ontodynamique](https://github.com/anthonyGosme/ontodynamiqueTheory/blob/main/SYSTEM_SUMMARY_EN.md)
 📖 **Manuscript**: [ontodynamique.com](https://www.ontodynamique.com/)  
 🧪 **Interactive notebook**: [Google Colab](https://colab.research.google.com/drive/1LWbOqywO5o6AtePQRu3plooqwuOtzJrN?usp=sharing)  
 📄 **Empirical paper**: [arXiv:2512.09352](https://arxiv.org/abs/2512.09352)  
