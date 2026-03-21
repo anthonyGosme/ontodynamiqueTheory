@@ -1,0 +1,1274 @@
+{
+  "protocol": "R-XVII rival partition test",
+  "n_random": 1000,
+  "min_obs_per_cancer": 200,
+  "cancer_col": "TISSUE_ANN",
+  "cv_mode": "cancer type",
+  "global": {
+    "ONTO": {
+      "n_a": 97674,
+      "n_b": 119090,
+      "mean_a": 0.7931859800356289,
+      "mean_b": 0.8880364988328154,
+      "mag_a": 0.2068140199643711,
+      "mag_b": 0.11196350116718456,
+      "ratio": 1.8471557052825205,
+      "direction": "A>B",
+      "d": -0.5197944835874663,
+      "abs_d": 0.5197944835874663,
+      "p_MW": 0.0
+    },
+    "PPI": {
+      "n_a": 98121,
+      "n_b": 106828,
+      "mean_a": 0.8248002861466964,
+      "mean_b": 0.8626311492024561,
+      "mag_a": 0.17519971385330357,
+      "mag_b": 0.1373688507975439,
+      "ratio": 1.2753962258264453,
+      "direction": "A>B",
+      "d": -0.2017448014497932,
+      "abs_d": 0.2017448014497932,
+      "p_MW": 0.0
+    },
+    "SEL": {
+      "n_a": 52538,
+      "n_b": 152411,
+      "mean_a": 0.7574619818988162,
+      "mean_b": 0.8745290804403882,
+      "mag_a": 0.2425380181011838,
+      "mag_b": 0.12547091955961176,
+      "ratio": 1.933021762751591,
+      "direction": "A>B",
+      "d": -0.6453362215092456,
+      "abs_d": 0.6453362215092456,
+      "p_MW": 0.0
+    }
+  },
+  "cv_cancer": {
+    "ONTO": {
+      "label": "Ontodynamique",
+      "classes": "INPUT vs STRUCTURE",
+      "n_cancer_types": 42,
+      "mean_ratio": 1.901712533631447,
+      "median_ratio": 1.8159479159726306,
+      "std_ratio": 0.3624081999489838,
+      "cv_ratio": 19.05693912932998,
+      "min_ratio": 1.3501284903907753,
+      "max_ratio": 2.6548859212174145,
+      "per_cancer": [
+        {
+          "cancer_type": "Acute Myeloid Leukemia",
+          "ratio": 1.9459635071976011,
+          "direction": "B>A",
+          "abs_d": 0.6107030497571622,
+          "p_MW": 3.116840179736857e-153,
+          "n_a": 3852,
+          "n_b": 3030
+        },
+        {
+          "cancer_type": "B-Cell Non-Hodgkin's Lymphoma",
+          "ratio": 2.3382761567814248,
+          "direction": "B>A",
+          "abs_d": 0.7268378575019715,
+          "p_MW": 3.959325605320799e-206,
+          "n_a": 4218,
+          "n_b": 3354
+        },
+        {
+          "cancer_type": "B-Lymphoblastic Leukemia",
+          "ratio": 2.415602173696448,
+          "direction": "B>A",
+          "abs_d": 0.8457797779828334,
+          "p_MW": 9.49012516406164e-155,
+          "n_a": 2397,
+          "n_b": 1948
+        },
+        {
+          "cancer_type": "Biliary Tract Carcinoma",
+          "ratio": 1.4618181022306582,
+          "direction": "B>A",
+          "abs_d": 0.3304370748719905,
+          "p_MW": 2.5244329576727554e-06,
+          "n_a": 685,
+          "n_b": 562
+        },
+        {
+          "cancer_type": "Bladder Carcinoma",
+          "ratio": 1.9772336378026005,
+          "direction": "B>A",
+          "abs_d": 0.5571191306061208,
+          "p_MW": 3.632955461262138e-56,
+          "n_a": 2427,
+          "n_b": 2049
+        },
+        {
+          "cancer_type": "Breast Carcinoma",
+          "ratio": 1.6105862820539656,
+          "direction": "B>A",
+          "abs_d": 0.39296712435309245,
+          "p_MW": 6.487914127259958e-81,
+          "n_a": 6790,
+          "n_b": 5771
+        },
+        {
+          "cancer_type": "Burkitt's Lymphoma",
+          "ratio": 2.4978113902344297,
+          "direction": "B>A",
+          "abs_d": 0.7612269800799001,
+          "p_MW": 1.8745317682553868e-97,
+          "n_a": 1866,
+          "n_b": 1542
+        },
+        {
+          "cancer_type": "Cervical Carcinoma",
+          "ratio": 1.97586360798145,
+          "direction": "B>A",
+          "abs_d": 0.5423095902582049,
+          "p_MW": 2.142002180107556e-32,
+          "n_a": 1645,
+          "n_b": 1407
+        },
+        {
+          "cancer_type": "Chondrosarcoma",
+          "ratio": 1.3501284903907753,
+          "direction": "B>A",
+          "abs_d": 0.26276436440814327,
+          "p_MW": 2.0581486379298915e-05,
+          "n_a": 666,
+          "n_b": 540
+        },
+        {
+          "cancer_type": "Chronic Myelogenous Leukemia",
+          "ratio": 1.6858704030202503,
+          "direction": "B>A",
+          "abs_d": 0.4995522223220904,
+          "p_MW": 6.421440737022116e-45,
+          "n_a": 1373,
+          "n_b": 1115
+        },
+        {
+          "cancer_type": "Colorectal Carcinoma",
+          "ratio": 1.473350635201568,
+          "direction": "B>A",
+          "abs_d": 0.3395505431580755,
+          "p_MW": 1.1466698098392048e-63,
+          "n_a": 6337,
+          "n_b": 5200
+        },
+        {
+          "cancer_type": "Endometrial Carcinoma",
+          "ratio": 1.5735276678915675,
+          "direction": "B>A",
+          "abs_d": 0.36822868057484776,
+          "p_MW": 4.553727843337835e-18,
+          "n_a": 1326,
+          "n_b": 1135
+        },
+        {
+          "cancer_type": "Esophageal Carcinoma",
+          "ratio": 1.4143985805952881,
+          "direction": "B>A",
+          "abs_d": 0.3015292441311833,
+          "p_MW": 5.665571759311899e-10,
+          "n_a": 1083,
+          "n_b": 923
+        },
+        {
+          "cancer_type": "Esophageal Squamous Cell Carcinoma",
+          "ratio": 1.7030935249514045,
+          "direction": "B>A",
+          "abs_d": 0.45340123490923795,
+          "p_MW": 8.210844204477956e-44,
+          "n_a": 3238,
+          "n_b": 2681
+        },
+        {
+          "cancer_type": "Ewing's Sarcoma",
+          "ratio": 2.4053631622684732,
+          "direction": "B>A",
+          "abs_d": 0.7600080637400081,
+          "p_MW": 3.376302660088403e-161,
+          "n_a": 3092,
+          "n_b": 2523
+        },
+        {
+          "cancer_type": "Gastric Carcinoma",
+          "ratio": 1.6385640568104514,
+          "direction": "B>A",
+          "abs_d": 0.4294595230556285,
+          "p_MW": 6.2458336247446734e-55,
+          "n_a": 3147,
+          "n_b": 2629
+        },
+        {
+          "cancer_type": "Glioblastoma",
+          "ratio": 1.8846045905412803,
+          "direction": "B>A",
+          "abs_d": 0.5558009786512753,
+          "p_MW": 1.4516230235947234e-100,
+          "n_a": 4338,
+          "n_b": 3470
+        },
+        {
+          "cancer_type": "Glioma",
+          "ratio": 1.9972449646911246,
+          "direction": "B>A",
+          "abs_d": 0.6205462368168156,
+          "p_MW": 7.549773712777862e-47,
+          "n_a": 1788,
+          "n_b": 1423
+        },
+        {
+          "cancer_type": "Head and Neck Carcinoma",
+          "ratio": 1.7472912414039812,
+          "direction": "B>A",
+          "abs_d": 0.5025587298644911,
+          "p_MW": 3.636690685632718e-39,
+          "n_a": 2195,
+          "n_b": 1760
+        },
+        {
+          "cancer_type": "Hepatocellular Carcinoma",
+          "ratio": 1.6599249036532953,
+          "direction": "B>A",
+          "abs_d": 0.41489920518321804,
+          "p_MW": 2.915702006394468e-22,
+          "n_a": 2079,
+          "n_b": 1803
+        },
+        {
+          "cancer_type": "Hodgkin's Lymphoma",
+          "ratio": 2.6548859212174145,
+          "direction": "B>A",
+          "abs_d": 0.7634476565044873,
+          "p_MW": 6.989303373927827e-48,
+          "n_a": 881,
+          "n_b": 721
+        },
+        {
+          "cancer_type": "Kidney Carcinoma",
+          "ratio": 1.488759035008738,
+          "direction": "B>A",
+          "abs_d": 0.3664611342095011,
+          "p_MW": 7.09397685889406e-28,
+          "n_a": 3461,
+          "n_b": 2747
+        },
+        {
+          "cancer_type": "Melanoma",
+          "ratio": 1.4478357051485993,
+          "direction": "B>A",
+          "abs_d": 0.31002564125817744,
+          "p_MW": 3.3097596345097248e-77,
+          "n_a": 5948,
+          "n_b": 4791
+        },
+        {
+          "cancer_type": "Mesothelioma",
+          "ratio": 1.7203078174916127,
+          "direction": "B>A",
+          "abs_d": 0.4848214607188348,
+          "p_MW": 2.8953930721222614e-40,
+          "n_a": 2518,
+          "n_b": 2140
+        },
+        {
+          "cancer_type": "Neuroblastoma",
+          "ratio": 2.1120943376434442,
+          "direction": "B>A",
+          "abs_d": 0.6601961609051644,
+          "p_MW": 1.0537964930903538e-157,
+          "n_a": 3756,
+          "n_b": 2982
+        },
+        {
+          "cancer_type": "Non-Cancerous",
+          "ratio": 2.4652726691635825,
+          "direction": "B>A",
+          "abs_d": 0.8108256289138663,
+          "p_MW": 3.139364695309111e-65,
+          "n_a": 1146,
+          "n_b": 948
+        },
+        {
+          "cancer_type": "Non-Small Cell Lung Carcinoma",
+          "ratio": 1.718419765559224,
+          "direction": "B>A",
+          "abs_d": 0.459207848644983,
+          "p_MW": 1.7278536634444543e-160,
+          "n_a": 10603,
+          "n_b": 8773
+        },
+        {
+          "cancer_type": "Oral Cavity Carcinoma",
+          "ratio": 1.7160145433418972,
+          "direction": "B>A",
+          "abs_d": 0.48744890797225904,
+          "p_MW": 7.251530753750371e-47,
+          "n_a": 2764,
+          "n_b": 2289
+        },
+        {
+          "cancer_type": "Osteosarcoma",
+          "ratio": 1.569024194664327,
+          "direction": "B>A",
+          "abs_d": 0.40195822539154574,
+          "p_MW": 3.4345072206919893e-18,
+          "n_a": 1445,
+          "n_b": 1214
+        },
+        {
+          "cancer_type": "Other Blood Cancers",
+          "ratio": 2.2260822404124325,
+          "direction": "B>A",
+          "abs_d": 0.7106296350409425,
+          "p_MW": 4.504362421888313e-39,
+          "n_a": 834,
+          "n_b": 660
+        },
+        {
+          "cancer_type": "Other Sarcomas",
+          "ratio": 1.9199749485945727,
+          "direction": "B>A",
+          "abs_d": 0.5582839626329263,
+          "p_MW": 1.2554260285786787e-57,
+          "n_a": 2023,
+          "n_b": 1687
+        },
+        {
+          "cancer_type": "Other Solid Cancers",
+          "ratio": 2.0367089741189868,
+          "direction": "B>A",
+          "abs_d": 0.6198005531678201,
+          "p_MW": 2.824295818103389e-102,
+          "n_a": 3388,
+          "n_b": 2676
+        },
+        {
+          "cancer_type": "Ovarian Carcinoma",
+          "ratio": 1.6246478782400395,
+          "direction": "B>A",
+          "abs_d": 0.4337988763287479,
+          "p_MW": 3.496043488208547e-63,
+          "n_a": 4443,
+          "n_b": 3642
+        },
+        {
+          "cancer_type": "Pancreatic Carcinoma",
+          "ratio": 1.626957763145176,
+          "direction": "B>A",
+          "abs_d": 0.4206784609492777,
+          "p_MW": 7.007394610697005e-53,
+          "n_a": 3900,
+          "n_b": 3310
+        },
+        {
+          "cancer_type": "Plasma Cell Myeloma",
+          "ratio": 1.9617599053879389,
+          "direction": "B>A",
+          "abs_d": 0.5393364263954049,
+          "p_MW": 9.916751044623226e-51,
+          "n_a": 1875,
+          "n_b": 1560
+        },
+        {
+          "cancer_type": "Prostate Carcinoma",
+          "ratio": 1.9935791625582249,
+          "direction": "B>A",
+          "abs_d": 0.5854708782913783,
+          "p_MW": 1.3093538284561595e-23,
+          "n_a": 683,
+          "n_b": 578
+        },
+        {
+          "cancer_type": "Rhabdomyosarcoma",
+          "ratio": 1.9090144285655337,
+          "direction": "B>A",
+          "abs_d": 0.5380456358036385,
+          "p_MW": 4.736526654350292e-25,
+          "n_a": 758,
+          "n_b": 626
+        },
+        {
+          "cancer_type": "Small Cell Lung Carcinoma",
+          "ratio": 2.419312542408136,
+          "direction": "B>A",
+          "abs_d": 0.6759804165449975,
+          "p_MW": 1.5856456848931204e-278,
+          "n_a": 6775,
+          "n_b": 5371
+        },
+        {
+          "cancer_type": "Squamous Cell Lung Carcinoma",
+          "ratio": 1.733091955769096,
+          "direction": "B>A",
+          "abs_d": 0.48839243143541805,
+          "p_MW": 2.4871393689444236e-34,
+          "n_a": 1916,
+          "n_b": 1628
+        },
+        {
+          "cancer_type": "T-Cell Non-Hodgkin's Lymphoma",
+          "ratio": 2.53439687291787,
+          "direction": "B>A",
+          "abs_d": 0.8685121111228965,
+          "p_MW": 4.344686301180502e-68,
+          "n_a": 1063,
+          "n_b": 864
+        },
+        {
+          "cancer_type": "T-Lymphoblastic Leukemia",
+          "ratio": 2.539172441847319,
+          "direction": "B>A",
+          "abs_d": 0.8552554448993764,
+          "p_MW": 5.044762945813846e-142,
+          "n_a": 2391,
+          "n_b": 1956
+        },
+        {
+          "cancer_type": "Thyroid Gland Carcinoma",
+          "ratio": 1.6980962299185707,
+          "direction": "B>A",
+          "abs_d": 0.44581667748646864,
+          "p_MW": 7.524749405658121e-38,
+          "n_a": 1965,
+          "n_b": 1635
+        }
+      ]
+    },
+    "PPI": {
+      "label": "Degr\u00e9 PPI",
+      "classes": "HUB vs PERIPHERAL",
+      "n_cancer_types": 42,
+      "mean_ratio": 1.2979849184885306,
+      "median_ratio": 1.3036768689320137,
+      "std_ratio": 0.1323821457818904,
+      "cv_ratio": 10.199051151999972,
+      "min_ratio": 1.0165516818126803,
+      "max_ratio": 1.5479698263464519,
+      "per_cancer": [
+        {
+          "cancer_type": "Acute Myeloid Leukemia",
+          "ratio": 1.1326466603280874,
+          "direction": "A>B",
+          "abs_d": 0.10946211777254349,
+          "p_MW": 4.913242565174015e-11,
+          "n_a": 3061,
+          "n_b": 3462
+        },
+        {
+          "cancer_type": "B-Cell Non-Hodgkin's Lymphoma",
+          "ratio": 1.5153720922093104,
+          "direction": "A>B",
+          "abs_d": 0.34371782754555563,
+          "p_MW": 3.001956987217761e-57,
+          "n_a": 3369,
+          "n_b": 3808
+        },
+        {
+          "cancer_type": "B-Lymphoblastic Leukemia",
+          "ratio": 1.3359427337864385,
+          "direction": "A>B",
+          "abs_d": 0.2635697650977258,
+          "p_MW": 7.343246633223979e-25,
+          "n_a": 2007,
+          "n_b": 2112
+        },
+        {
+          "cancer_type": "Biliary Tract Carcinoma",
+          "ratio": 1.3044097661127196,
+          "direction": "A>B",
+          "abs_d": 0.22830199082608035,
+          "p_MW": 3.406017839845615e-09,
+          "n_a": 572,
+          "n_b": 608
+        },
+        {
+          "cancer_type": "Bladder Carcinoma",
+          "ratio": 1.3534639501219352,
+          "direction": "A>B",
+          "abs_d": 0.24340851357416504,
+          "p_MW": 1.1036952709692303e-31,
+          "n_a": 2051,
+          "n_b": 2172
+        },
+        {
+          "cancer_type": "Breast Carcinoma",
+          "ratio": 1.3798005578265018,
+          "direction": "A>B",
+          "abs_d": 0.2636321382620981,
+          "p_MW": 6.007068342524285e-63,
+          "n_a": 5794,
+          "n_b": 6112
+        },
+        {
+          "cancer_type": "Burkitt's Lymphoma",
+          "ratio": 1.3418504566403042,
+          "direction": "A>B",
+          "abs_d": 0.23695115889148427,
+          "p_MW": 8.803558973929094e-17,
+          "n_a": 1567,
+          "n_b": 1665
+        },
+        {
+          "cancer_type": "Cervical Carcinoma",
+          "ratio": 1.2742000398623323,
+          "direction": "A>B",
+          "abs_d": 0.19081418099491507,
+          "p_MW": 1.2641401178316844e-11,
+          "n_a": 1395,
+          "n_b": 1484
+        },
+        {
+          "cancer_type": "Chondrosarcoma",
+          "ratio": 1.0165516818126803,
+          "direction": "A>B",
+          "abs_d": 0.014353399517744983,
+          "p_MW": 0.011378939903136698,
+          "n_a": 552,
+          "n_b": 591
+        },
+        {
+          "cancer_type": "Chronic Myelogenous Leukemia",
+          "ratio": 1.0666481209512415,
+          "direction": "A>B",
+          "abs_d": 0.06013327207233168,
+          "p_MW": 0.04043074430233028,
+          "n_a": 1132,
+          "n_b": 1224
+        },
+        {
+          "cancer_type": "Colorectal Carcinoma",
+          "ratio": 1.08536789049272,
+          "direction": "A>B",
+          "abs_d": 0.07071237985966254,
+          "p_MW": 1.0093896348429716e-17,
+          "n_a": 5340,
+          "n_b": 5569
+        },
+        {
+          "cancer_type": "Endometrial Carcinoma",
+          "ratio": 1.2490084673782489,
+          "direction": "A>B",
+          "abs_d": 0.17938918603482626,
+          "p_MW": 5.219220965169788e-14,
+          "n_a": 1132,
+          "n_b": 1191
+        },
+        {
+          "cancer_type": "Esophageal Carcinoma",
+          "ratio": 1.300457557498484,
+          "direction": "A>B",
+          "abs_d": 0.22746764981153758,
+          "p_MW": 7.266527500811919e-11,
+          "n_a": 941,
+          "n_b": 949
+        },
+        {
+          "cancer_type": "Esophageal Squamous Cell Carcinoma",
+          "ratio": 1.373969092778378,
+          "direction": "A>B",
+          "abs_d": 0.26665030381832394,
+          "p_MW": 2.4246167590485317e-42,
+          "n_a": 2666,
+          "n_b": 2924
+        },
+        {
+          "cancer_type": "Ewing's Sarcoma",
+          "ratio": 1.4147607931181416,
+          "direction": "A>B",
+          "abs_d": 0.2912420459433452,
+          "p_MW": 1.8435117030808013e-39,
+          "n_a": 2553,
+          "n_b": 2766
+        },
+        {
+          "cancer_type": "Gastric Carcinoma",
+          "ratio": 1.2689184700698464,
+          "direction": "A>B",
+          "abs_d": 0.2037264901445841,
+          "p_MW": 5.636283682189421e-28,
+          "n_a": 2692,
+          "n_b": 2770
+        },
+        {
+          "cancer_type": "Glioblastoma",
+          "ratio": 1.3545270206811648,
+          "direction": "A>B",
+          "abs_d": 0.26056446190876575,
+          "p_MW": 1.4427881124932454e-52,
+          "n_a": 3448,
+          "n_b": 3935
+        },
+        {
+          "cancer_type": "Glioma",
+          "ratio": 1.4577025899174578,
+          "direction": "A>B",
+          "abs_d": 0.32976122031359745,
+          "p_MW": 4.116499910869047e-31,
+          "n_a": 1438,
+          "n_b": 1597
+        },
+        {
+          "cancer_type": "Head and Neck Carcinoma",
+          "ratio": 1.3456415339769887,
+          "direction": "A>B",
+          "abs_d": 0.26213088182024225,
+          "p_MW": 1.564152881931057e-25,
+          "n_a": 1753,
+          "n_b": 1981
+        },
+        {
+          "cancer_type": "Hepatocellular Carcinoma",
+          "ratio": 1.2050576037853908,
+          "direction": "A>B",
+          "abs_d": 0.1516028883051281,
+          "p_MW": 1.0684541032125923e-08,
+          "n_a": 1770,
+          "n_b": 1888
+        },
+        {
+          "cancer_type": "Hodgkin's Lymphoma",
+          "ratio": 1.5479698263464519,
+          "direction": "A>B",
+          "abs_d": 0.3310832248813748,
+          "p_MW": 4.404516636238919e-15,
+          "n_a": 731,
+          "n_b": 787
+        },
+        {
+          "cancer_type": "Kidney Carcinoma",
+          "ratio": 1.4254840784831857,
+          "direction": "A>B",
+          "abs_d": 0.32654493560574344,
+          "p_MW": 4.7518721333821986e-63,
+          "n_a": 2699,
+          "n_b": 3156
+        },
+        {
+          "cancer_type": "Melanoma",
+          "ratio": 1.0182842843605329,
+          "direction": "B>A",
+          "abs_d": 0.014891325061133684,
+          "p_MW": 5.325384645652581e-09,
+          "n_a": 4735,
+          "n_b": 5413
+        },
+        {
+          "cancer_type": "Mesothelioma",
+          "ratio": 1.2903568789282105,
+          "direction": "A>B",
+          "abs_d": 0.22688074072437656,
+          "p_MW": 6.440811911687788e-24,
+          "n_a": 2114,
+          "n_b": 2278
+        },
+        {
+          "cancer_type": "Neuroblastoma",
+          "ratio": 1.2346489972547547,
+          "direction": "A>B",
+          "abs_d": 0.17922130292317912,
+          "p_MW": 5.069479430258251e-27,
+          "n_a": 3043,
+          "n_b": 3352
+        },
+        {
+          "cancer_type": "Non-Cancerous",
+          "ratio": 1.4718012267027656,
+          "direction": "A>B",
+          "abs_d": 0.3331444657425393,
+          "p_MW": 2.336558469756008e-16,
+          "n_a": 958,
+          "n_b": 1024
+        },
+        {
+          "cancer_type": "Non-Small Cell Lung Carcinoma",
+          "ratio": 1.273794748148161,
+          "direction": "A>B",
+          "abs_d": 0.20139033384238691,
+          "p_MW": 3.6686413973930904e-80,
+          "n_a": 8731,
+          "n_b": 9567
+        },
+        {
+          "cancer_type": "Oral Cavity Carcinoma",
+          "ratio": 1.3967105137583924,
+          "direction": "A>B",
+          "abs_d": 0.2983124140801202,
+          "p_MW": 6.870263716829619e-47,
+          "n_a": 2270,
+          "n_b": 2493
+        },
+        {
+          "cancer_type": "Osteosarcoma",
+          "ratio": 1.1987028224737297,
+          "direction": "A>B",
+          "abs_d": 0.16022361551585432,
+          "p_MW": 8.549973460239101e-10,
+          "n_a": 1225,
+          "n_b": 1285
+        },
+        {
+          "cancer_type": "Other Blood Cancers",
+          "ratio": 1.460683927647374,
+          "direction": "A>B",
+          "abs_d": 0.32257469045933324,
+          "p_MW": 1.0971901081780007e-11,
+          "n_a": 674,
+          "n_b": 746
+        },
+        {
+          "cancer_type": "Other Sarcomas",
+          "ratio": 1.2437559974607364,
+          "direction": "A>B",
+          "abs_d": 0.18370464075031187,
+          "p_MW": 7.372571446541422e-20,
+          "n_a": 1698,
+          "n_b": 1809
+        },
+        {
+          "cancer_type": "Other Solid Cancers",
+          "ratio": 1.3547080835020904,
+          "direction": "A>B",
+          "abs_d": 0.25720222446042906,
+          "p_MW": 8.359668469893974e-32,
+          "n_a": 2683,
+          "n_b": 3050
+        },
+        {
+          "cancer_type": "Ovarian Carcinoma",
+          "ratio": 1.2615092554320328,
+          "direction": "A>B",
+          "abs_d": 0.2046601286967527,
+          "p_MW": 3.5890653468861325e-46,
+          "n_a": 3664,
+          "n_b": 3955
+        },
+        {
+          "cancer_type": "Pancreatic Carcinoma",
+          "ratio": 1.0467082252382227,
+          "direction": "A>B",
+          "abs_d": 0.038707759360752464,
+          "p_MW": 4.974155085968784e-11,
+          "n_a": 3333,
+          "n_b": 3473
+        },
+        {
+          "cancer_type": "Plasma Cell Myeloma",
+          "ratio": 1.3029439717513078,
+          "direction": "A>B",
+          "abs_d": 0.2079103762385411,
+          "p_MW": 6.348793261906659e-09,
+          "n_a": 1592,
+          "n_b": 1663
+        },
+        {
+          "cancer_type": "Prostate Carcinoma",
+          "ratio": 1.4826168028484823,
+          "direction": "A>B",
+          "abs_d": 0.3275738294732377,
+          "p_MW": 5.339617250591028e-10,
+          "n_a": 577,
+          "n_b": 615
+        },
+        {
+          "cancer_type": "Rhabdomyosarcoma",
+          "ratio": 1.2550728556203425,
+          "direction": "A>B",
+          "abs_d": 0.18687549026385253,
+          "p_MW": 9.169114119270689e-09,
+          "n_a": 621,
+          "n_b": 683
+        },
+        {
+          "cancer_type": "Small Cell Lung Carcinoma",
+          "ratio": 1.390278394461432,
+          "direction": "A>B",
+          "abs_d": 0.24491713289142544,
+          "p_MW": 2.357464662215805e-56,
+          "n_a": 5381,
+          "n_b": 6125
+        },
+        {
+          "cancer_type": "Squamous Cell Lung Carcinoma",
+          "ratio": 1.3017293966672256,
+          "direction": "A>B",
+          "abs_d": 0.2297543815617191,
+          "p_MW": 1.454967311911157e-26,
+          "n_a": 1646,
+          "n_b": 1696
+        },
+        {
+          "cancer_type": "T-Cell Non-Hodgkin's Lymphoma",
+          "ratio": 1.3074716704596399,
+          "direction": "A>B",
+          "abs_d": 0.23782421125496278,
+          "p_MW": 3.2765553915035484e-11,
+          "n_a": 869,
+          "n_b": 957
+        },
+        {
+          "cancer_type": "T-Lymphoblastic Leukemia",
+          "ratio": 1.3581656917986393,
+          "direction": "A>B",
+          "abs_d": 0.2685241142173563,
+          "p_MW": 1.0498559627432289e-22,
+          "n_a": 1990,
+          "n_b": 2125
+        },
+        {
+          "cancer_type": "Thyroid Gland Carcinoma",
+          "ratio": 1.1156718478261984,
+          "direction": "A>B",
+          "abs_d": 0.09066034949642038,
+          "p_MW": 4.808505829875021e-11,
+          "n_a": 1645,
+          "n_b": 1755
+        }
+      ]
+    },
+    "SEL": {
+      "label": "S\u00e9lectivit\u00e9",
+      "classes": "PROMISCUOUS vs SELECTIVE",
+      "n_cancer_types": 42,
+      "mean_ratio": 1.956562826009684,
+      "median_ratio": 1.9508805394184756,
+      "std_ratio": 0.12983500744890297,
+      "cv_ratio": 6.6358721387799875,
+      "min_ratio": 1.6735838679145418,
+      "max_ratio": 2.239230278224908,
+      "per_cancer": [
+        {
+          "cancer_type": "Acute Myeloid Leukemia",
+          "ratio": 1.7989451398846226,
+          "direction": "A>B",
+          "abs_d": 0.5992259462120881,
+          "p_MW": 3.8930208718466914e-107,
+          "n_a": 1686,
+          "n_b": 4837
+        },
+        {
+          "cancer_type": "B-Cell Non-Hodgkin's Lymphoma",
+          "ratio": 2.013738924735796,
+          "direction": "A>B",
+          "abs_d": 0.6847930262803313,
+          "p_MW": 8.993576640160734e-162,
+          "n_a": 1852,
+          "n_b": 5325
+        },
+        {
+          "cancer_type": "B-Lymphoblastic Leukemia",
+          "ratio": 1.7818413975711458,
+          "direction": "A>B",
+          "abs_d": 0.6109984392804486,
+          "p_MW": 1.786863392274291e-76,
+          "n_a": 1046,
+          "n_b": 3073
+        },
+        {
+          "cancer_type": "Biliary Tract Carcinoma",
+          "ratio": 1.8801511477339452,
+          "direction": "A>B",
+          "abs_d": 0.6365277416123246,
+          "p_MW": 2.848109197224204e-23,
+          "n_a": 305,
+          "n_b": 875
+        },
+        {
+          "cancer_type": "Bladder Carcinoma",
+          "ratio": 2.1323053191856216,
+          "direction": "A>B",
+          "abs_d": 0.7376075237417141,
+          "p_MW": 8.334062322633271e-95,
+          "n_a": 1089,
+          "n_b": 3134
+        },
+        {
+          "cancer_type": "Breast Carcinoma",
+          "ratio": 1.909723798894699,
+          "direction": "A>B",
+          "abs_d": 0.6294782572699195,
+          "p_MW": 3.5166406057271296e-176,
+          "n_a": 2886,
+          "n_b": 9020
+        },
+        {
+          "cancer_type": "Burkitt's Lymphoma",
+          "ratio": 2.1257305954385064,
+          "direction": "A>B",
+          "abs_d": 0.7353313551261104,
+          "p_MW": 3.5115668162007954e-78,
+          "n_a": 834,
+          "n_b": 2398
+        },
+        {
+          "cancer_type": "Cervical Carcinoma",
+          "ratio": 2.1031792231640454,
+          "direction": "A>B",
+          "abs_d": 0.7054856752709918,
+          "p_MW": 4.794506899082336e-59,
+          "n_a": 742,
+          "n_b": 2137
+        },
+        {
+          "cancer_type": "Chondrosarcoma",
+          "ratio": 1.6735838679145418,
+          "direction": "A>B",
+          "abs_d": 0.5143802902137651,
+          "p_MW": 1.747461563583344e-18,
+          "n_a": 294,
+          "n_b": 849
+        },
+        {
+          "cancer_type": "Chronic Myelogenous Leukemia",
+          "ratio": 1.887311243747911,
+          "direction": "A>B",
+          "abs_d": 0.7046790672312656,
+          "p_MW": 5.896061576472997e-56,
+          "n_a": 600,
+          "n_b": 1756
+        },
+        {
+          "cancer_type": "Colorectal Carcinoma",
+          "ratio": 1.7574288763884476,
+          "direction": "A>B",
+          "abs_d": 0.5660910203480273,
+          "p_MW": 5.855633319423752e-136,
+          "n_a": 2706,
+          "n_b": 8203
+        },
+        {
+          "cancer_type": "Endometrial Carcinoma",
+          "ratio": 1.9976276917147597,
+          "direction": "A>B",
+          "abs_d": 0.6653680923177915,
+          "p_MW": 3.061961942664507e-50,
+          "n_a": 597,
+          "n_b": 1726
+        },
+        {
+          "cancer_type": "Esophageal Carcinoma",
+          "ratio": 1.9148311764259078,
+          "direction": "A>B",
+          "abs_d": 0.6747778807903759,
+          "p_MW": 1.4670785209897898e-31,
+          "n_a": 455,
+          "n_b": 1435
+        },
+        {
+          "cancer_type": "Esophageal Squamous Cell Carcinoma",
+          "ratio": 2.220289405587265,
+          "direction": "A>B",
+          "abs_d": 0.8204912224782831,
+          "p_MW": 2.2252580173607693e-138,
+          "n_a": 1449,
+          "n_b": 4141
+        },
+        {
+          "cancer_type": "Ewing's Sarcoma",
+          "ratio": 1.899842955105544,
+          "direction": "A>B",
+          "abs_d": 0.6317143722425058,
+          "p_MW": 1.2319103213343526e-104,
+          "n_a": 1367,
+          "n_b": 3952
+        },
+        {
+          "cancer_type": "Gastric Carcinoma",
+          "ratio": 1.9460416812510841,
+          "direction": "A>B",
+          "abs_d": 0.6783179224296444,
+          "p_MW": 2.7526860432440905e-99,
+          "n_a": 1394,
+          "n_b": 4068
+        },
+        {
+          "cancer_type": "Glioblastoma",
+          "ratio": 2.154093514387855,
+          "direction": "A>B",
+          "abs_d": 0.7994446436344712,
+          "p_MW": 2.96777272386468e-205,
+          "n_a": 1916,
+          "n_b": 5467
+        },
+        {
+          "cancer_type": "Glioma",
+          "ratio": 2.239230278224908,
+          "direction": "A>B",
+          "abs_d": 0.8693395709434859,
+          "p_MW": 7.748295871444933e-93,
+          "n_a": 782,
+          "n_b": 2253
+        },
+        {
+          "cancer_type": "Head and Neck Carcinoma",
+          "ratio": 2.0149855440846074,
+          "direction": "A>B",
+          "abs_d": 0.7387501973524173,
+          "p_MW": 1.341921995769331e-68,
+          "n_a": 964,
+          "n_b": 2770
+        },
+        {
+          "cancer_type": "Hepatocellular Carcinoma",
+          "ratio": 2.15831299936963,
+          "direction": "A>B",
+          "abs_d": 0.7604981414265328,
+          "p_MW": 3.207271561281058e-78,
+          "n_a": 951,
+          "n_b": 2707
+        },
+        {
+          "cancer_type": "Hodgkin's Lymphoma",
+          "ratio": 2.054405160340134,
+          "direction": "A>B",
+          "abs_d": 0.6487641508232457,
+          "p_MW": 7.346263448198062e-32,
+          "n_a": 393,
+          "n_b": 1125
+        },
+        {
+          "cancer_type": "Kidney Carcinoma",
+          "ratio": 1.8897529294641815,
+          "direction": "A>B",
+          "abs_d": 0.6855943852170733,
+          "p_MW": 7.780710994517303e-114,
+          "n_a": 1496,
+          "n_b": 4359
+        },
+        {
+          "cancer_type": "Melanoma",
+          "ratio": 1.7484677369056778,
+          "direction": "A>B",
+          "abs_d": 0.5296218019484881,
+          "p_MW": 1.0050871457090846e-157,
+          "n_a": 2616,
+          "n_b": 7532
+        },
+        {
+          "cancer_type": "Mesothelioma",
+          "ratio": 1.9515649488320965,
+          "direction": "A>B",
+          "abs_d": 0.7067457167790324,
+          "p_MW": 2.555167637243415e-84,
+          "n_a": 1142,
+          "n_b": 3250
+        },
+        {
+          "cancer_type": "Neuroblastoma",
+          "ratio": 1.802671130753469,
+          "direction": "A>B",
+          "abs_d": 0.5784271600243408,
+          "p_MW": 1.0084939083677143e-103,
+          "n_a": 1681,
+          "n_b": 4714
+        },
+        {
+          "cancer_type": "Non-Cancerous",
+          "ratio": 2.091729452981838,
+          "direction": "A>B",
+          "abs_d": 0.7697917466876295,
+          "p_MW": 4.995615063016696e-50,
+          "n_a": 508,
+          "n_b": 1474
+        },
+        {
+          "cancer_type": "Non-Small Cell Lung Carcinoma",
+          "ratio": 1.9501961300048547,
+          "direction": "A>B",
+          "abs_d": 0.6576536875514393,
+          "p_MW": 0.0,
+          "n_a": 4697,
+          "n_b": 13601
+        },
+        {
+          "cancer_type": "Oral Cavity Carcinoma",
+          "ratio": 1.9870541946953793,
+          "direction": "A>B",
+          "abs_d": 0.7296166352731697,
+          "p_MW": 5.452059957874776e-89,
+          "n_a": 1236,
+          "n_b": 3527
+        },
+        {
+          "cancer_type": "Osteosarcoma",
+          "ratio": 2.002621181740453,
+          "direction": "A>B",
+          "abs_d": 0.7391008714065633,
+          "p_MW": 5.1943671609239134e-48,
+          "n_a": 643,
+          "n_b": 1867
+        },
+        {
+          "cancer_type": "Other Blood Cancers",
+          "ratio": 1.9533566284825876,
+          "direction": "A>B",
+          "abs_d": 0.666931139273973,
+          "p_MW": 2.6992536545409734e-29,
+          "n_a": 381,
+          "n_b": 1039
+        },
+        {
+          "cancer_type": "Other Sarcomas",
+          "ratio": 1.9682620391289822,
+          "direction": "A>B",
+          "abs_d": 0.6774649555485669,
+          "p_MW": 6.67845317175663e-77,
+          "n_a": 909,
+          "n_b": 2598
+        },
+        {
+          "cancer_type": "Other Solid Cancers",
+          "ratio": 2.0723619278566088,
+          "direction": "A>B",
+          "abs_d": 0.7412860661459724,
+          "p_MW": 2.9363384433944623e-129,
+          "n_a": 1471,
+          "n_b": 4262
+        },
+        {
+          "cancer_type": "Ovarian Carcinoma",
+          "ratio": 1.7853992678513984,
+          "direction": "A>B",
+          "abs_d": 0.5930748346087458,
+          "p_MW": 1.4918188855437107e-123,
+          "n_a": 1927,
+          "n_b": 5692
+        },
+        {
+          "cancer_type": "Pancreatic Carcinoma",
+          "ratio": 1.8012128189300773,
+          "direction": "A>B",
+          "abs_d": 0.5801111077474523,
+          "p_MW": 4.027708203242171e-107,
+          "n_a": 1765,
+          "n_b": 5041
+        },
+        {
+          "cancer_type": "Plasma Cell Myeloma",
+          "ratio": 1.9890719273705242,
+          "direction": "A>B",
+          "abs_d": 0.6429275986361673,
+          "p_MW": 1.0475142709894815e-61,
+          "n_a": 830,
+          "n_b": 2425
+        },
+        {
+          "cancer_type": "Prostate Carcinoma",
+          "ratio": 1.9482502704671227,
+          "direction": "A>B",
+          "abs_d": 0.6547134064327015,
+          "p_MW": 1.2866749456035907e-22,
+          "n_a": 308,
+          "n_b": 884
+        },
+        {
+          "cancer_type": "Rhabdomyosarcoma",
+          "ratio": 1.973226880231178,
+          "direction": "A>B",
+          "abs_d": 0.6627846917566182,
+          "p_MW": 2.4055822857305925e-27,
+          "n_a": 336,
+          "n_b": 968
+        },
+        {
+          "cancer_type": "Small Cell Lung Carcinoma",
+          "ratio": 1.9164281918261263,
+          "direction": "A>B",
+          "abs_d": 0.560942089060555,
+          "p_MW": 2.2911205883913172e-207,
+          "n_a": 3006,
+          "n_b": 8500
+        },
+        {
+          "cancer_type": "Squamous Cell Lung Carcinoma",
+          "ratio": 1.9003621044728893,
+          "direction": "A>B",
+          "abs_d": 0.6636254925112584,
+          "p_MW": 5.489398646056024e-66,
+          "n_a": 842,
+          "n_b": 2500
+        },
+        {
+          "cancer_type": "T-Cell Non-Hodgkin's Lymphoma",
+          "ratio": 1.8999394454743295,
+          "direction": "A>B",
+          "abs_d": 0.6664317198159663,
+          "p_MW": 5.3819684496841475e-39,
+          "n_a": 486,
+          "n_b": 1340
+        },
+        {
+          "cancer_type": "T-Lymphoblastic Leukemia",
+          "ratio": 1.9282433720854513,
+          "direction": "A>B",
+          "abs_d": 0.6816810966358118,
+          "p_MW": 6.082632936599178e-78,
+          "n_a": 1058,
+          "n_b": 3057
+        },
+        {
+          "cancer_type": "Thyroid Gland Carcinoma",
+          "ratio": 1.9518661717005232,
+          "direction": "A>B",
+          "abs_d": 0.6567921709026531,
+          "p_MW": 3.721930223822468e-67,
+          "n_a": 882,
+          "n_b": 2518
+        }
+      ]
+    }
+  },
+  "cv_bootstrap": {
+    "ONTO": {
+      "label": "Ontodynamique",
+      "n_drugs_a": 88,
+      "n_drugs_b": 102,
+      "mean_ratio": 1.8577350650815945,
+      "median_ratio": 1.8459881166208574,
+      "std_ratio": 0.17268784603658535,
+      "cv_ratio": 9.295612129117057,
+      "ci_95": [
+        1.5452012532507984,
+        2.2118267772070577
+      ]
+    },
+    "PPI": {
+      "label": "Degr\u00e9 PPI",
+      "n_drugs_a": 86,
+      "n_drugs_b": 91,
+      "mean_ratio": 1.2807459316312946,
+      "median_ratio": 1.2629240070066865,
+      "std_ratio": 0.14234384291654018,
+      "cv_ratio": 11.114135864186263,
+      "ci_95": [
+        1.035090998398987,
+        1.605489538964214
+      ]
+    },
+    "SEL": {
+      "label": "S\u00e9lectivit\u00e9",
+      "n_drugs_a": 49,
+      "n_drugs_b": 128,
+      "mean_ratio": 1.9360620447885117,
+      "median_ratio": 1.928104719911789,
+      "std_ratio": 0.18319379704488598,
+      "cv_ratio": 9.46218627331736,
+      "ci_95": [
+        1.5991603022762844,
+        2.3353901748717614
+      ]
+    }
+  },
+  "random_summary": {
+    "boot": {
+      "n_valid": 1000,
+      "cv_median": 9.275467395206837,
+      "cv_q25": 8.260928031716578,
+      "cv_q75": 10.647906002312858
+    },
+    "ratio_median": 1.089083291201759,
+    "boot_percentile": 50.4
+  }
+}

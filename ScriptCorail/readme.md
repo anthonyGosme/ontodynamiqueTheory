@@ -1,0 +1,1 @@
+python3 rival_partitions_reef.py global_bleaching_environmental.csv

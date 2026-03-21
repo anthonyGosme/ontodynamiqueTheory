@@ -1,0 +1,277 @@
+{
+  "protocol": "R-XVII rival partition test \u2014 Yeast Phenome",
+  "n_random": 1000,
+  "global": {
+    "Ontodynamique": {
+      "n_a": 688,
+      "n_b": 489,
+      "mean_a": 0.8404806365749498,
+      "mean_b": 0.5939590322052375,
+      "ratio": 1.415048161578472,
+      "direction": "A>B",
+      "abs_d": 0.5003861850810827,
+      "d": 0.5003861850810827,
+      "p_MW": 7.788063693963229e-19,
+      "bootstrap": {
+        "mean": 1.416692993826217,
+        "ci_95": [
+          1.3052392954441776,
+          1.53768348851316
+        ],
+        "cv": 4.1458810461914455
+      }
+    },
+    "M\u00e9tabolique": {
+      "n_a": 273,
+      "n_b": 459,
+      "mean_a": 0.6030980918748017,
+      "mean_b": 0.7744107078721252,
+      "ratio": 1.284054316047955,
+      "direction": "B>A",
+      "abs_d": 0.34224392447176305,
+      "d": -0.34224392447176305,
+      "p_MW": 7.959665626536243e-07,
+      "bootstrap": {
+        "mean": 1.2868016124121526,
+        "ci_95": [
+          1.1483510480236823,
+          1.4334515995652382
+        ],
+        "cv": 5.65673551963829
+      }
+    },
+    "Anabolique": {
+      "n_a": 425,
+      "n_b": 208,
+      "mean_a": 0.9437463653397502,
+      "mean_b": 0.7086509387424265,
+      "ratio": 1.3317506740547393,
+      "direction": "A>B",
+      "abs_d": 0.4992440900759251,
+      "d": 0.4992440900759251,
+      "p_MW": 9.799896645287333e-11,
+      "bootstrap": {
+        "mean": 1.335113123155907,
+        "ci_95": [
+          1.2059074154167637,
+          1.4809617524948568
+        ],
+        "cv": 5.26903508071722
+      }
+    },
+    "Hub (GO breadth)": {
+      "n_a": 1320,
+      "n_b": 1059,
+      "mean_a": 0.7806018715779064,
+      "mean_b": 0.5130867443482835,
+      "ratio": 1.5213838209159298,
+      "direction": "A>B",
+      "abs_d": 0.6011125042174454,
+      "d": 0.6011125042174454,
+      "p_MW": 1.2816804889133046e-41,
+      "bootstrap": {
+        "mean": 1.521790066931444,
+        "ci_95": [
+          1.439721806245842,
+          1.6083370700622075
+        ],
+        "cv": 2.8211374702296794
+      }
+    }
+  },
+  "cv": {
+    "Ontodynamique": {
+      "n_categories": 6,
+      "mean_ratio": 1.3916555567443396,
+      "median_ratio": 1.4019080121036933,
+      "cv_ratio": 8.430013169268808,
+      "min_ratio": 1.2036367423941752,
+      "max_ratio": 1.5617886597912267,
+      "per_category": [
+        {
+          "category": "Cell wall/membrane",
+          "ratio": 1.433976987484485,
+          "p": 2.4016262925608924e-16,
+          "n_screens": 15
+        },
+        {
+          "category": "DNA damage",
+          "ratio": 1.5617886597912267,
+          "p": 1.1136320682889923e-21,
+          "n_screens": 49
+        },
+        {
+          "category": "Osmotic/salt",
+          "ratio": 1.2036367423941752,
+          "p": 8.765327492836754e-10,
+          "n_screens": 26
+        },
+        {
+          "category": "Other",
+          "ratio": 1.3861162648276033,
+          "p": 3.1311588887932497e-17,
+          "n_screens": 159
+        },
+        {
+          "category": "Oxidative stress",
+          "ratio": 1.4176997593797835,
+          "p": 1.3961896920861503e-14,
+          "n_screens": 8
+        },
+        {
+          "category": "Signaling inhibitors",
+          "ratio": 1.3467149265887648,
+          "p": 2.127342569542096e-15,
+          "n_screens": 16
+        }
+      ]
+    },
+    "M\u00e9tabolique": {
+      "n_categories": 6,
+      "mean_ratio": 1.280802190391223,
+      "median_ratio": 1.267930123194489,
+      "cv_ratio": 3.9702976083374564,
+      "min_ratio": 1.2282879087233907,
+      "max_ratio": 1.3743640162931552,
+      "per_category": [
+        {
+          "category": "Cell wall/membrane",
+          "ratio": 1.2282879087233907,
+          "p": 5.258243977573678e-05,
+          "n_screens": 15
+        },
+        {
+          "category": "DNA damage",
+          "ratio": 1.3743640162931552,
+          "p": 7.376405462472733e-08,
+          "n_screens": 49
+        },
+        {
+          "category": "Osmotic/salt",
+          "ratio": 1.2719707749733322,
+          "p": 1.8750120033229655e-07,
+          "n_screens": 26
+        },
+        {
+          "category": "Other",
+          "ratio": 1.2638894714156457,
+          "p": 4.1194389596057415e-06,
+          "n_screens": 159
+        },
+        {
+          "category": "Oxidative stress",
+          "ratio": 1.2947925717417044,
+          "p": 7.327979166539408e-07,
+          "n_screens": 8
+        },
+        {
+          "category": "Signaling inhibitors",
+          "ratio": 1.2515083992001086,
+          "p": 3.2589291560720224e-05,
+          "n_screens": 16
+        }
+      ]
+    },
+    "Anabolique": {
+      "n_categories": 6,
+      "mean_ratio": 1.3131500046491273,
+      "median_ratio": 1.2573525494281959,
+      "cv_ratio": 17.95107650329152,
+      "min_ratio": 1.0051501527085367,
+      "max_ratio": 1.659288838475163,
+      "per_category": [
+        {
+          "category": "Cell wall/membrane",
+          "ratio": 1.0051501527085367,
+          "p": 7.988725943036584e-05,
+          "n_screens": 15
+        },
+        {
+          "category": "DNA damage",
+          "ratio": 1.5062335714954562,
+          "p": 8.691762535853713e-15,
+          "n_screens": 49
+        },
+        {
+          "category": "Osmotic/salt",
+          "ratio": 1.205701814785946,
+          "p": 6.171167369030999e-07,
+          "n_screens": 26
+        },
+        {
+          "category": "Other",
+          "ratio": 1.3090032840704455,
+          "p": 5.44221181191632e-10,
+          "n_screens": 159
+        },
+        {
+          "category": "Oxidative stress",
+          "ratio": 1.659288838475163,
+          "p": 4.370188812383912e-14,
+          "n_screens": 8
+        },
+        {
+          "category": "Signaling inhibitors",
+          "ratio": 1.1935223663592167,
+          "p": 3.5965703512332437e-07,
+          "n_screens": 16
+        }
+      ]
+    },
+    "Hub (GO breadth)": {
+      "n_categories": 6,
+      "mean_ratio": 1.5421632364515514,
+      "median_ratio": 1.550958098929188,
+      "cv_ratio": 3.2397813042243686,
+      "min_ratio": 1.4732029788786551,
+      "max_ratio": 1.6171257303926323,
+      "per_category": [
+        {
+          "category": "Cell wall/membrane",
+          "ratio": 1.6171257303926323,
+          "p": 5.237790408482225e-32,
+          "n_screens": 15
+        },
+        {
+          "category": "DNA damage",
+          "ratio": 1.559264151837665,
+          "p": 2.2492527762540486e-33,
+          "n_screens": 49
+        },
+        {
+          "category": "Osmotic/salt",
+          "ratio": 1.4732029788786551,
+          "p": 1.6643005617282897e-30,
+          "n_screens": 26
+        },
+        {
+          "category": "Other",
+          "ratio": 1.5014703597419807,
+          "p": 8.87684141127754e-41,
+          "n_screens": 159
+        },
+        {
+          "category": "Oxidative stress",
+          "ratio": 1.552266093895014,
+          "p": 3.7827190163580003e-32,
+          "n_screens": 8
+        },
+        {
+          "category": "Signaling inhibitors",
+          "ratio": 1.5496501039633621,
+          "p": 5.7647640491105405e-27,
+          "n_screens": 16
+        }
+      ]
+    }
+  },
+  "random_summary": {
+    "ratio_median": 1.0294623508406149,
+    "ratio_max": 1.1490660353458577,
+    "ratio_iqr": [
+      1.0139621371774363,
+      1.0496096987655765
+    ],
+    "onto_percentile": 100.0
+  }
+}

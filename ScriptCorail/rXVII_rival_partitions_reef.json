@@ -1,0 +1,331 @@
+{
+  "protocol": "R-XVII rival partition test \u2014 Coral Reefs (GCBD)",
+  "source": "van Woesik & Kratochwill 2022",
+  "n_obs": 34393,
+  "n_random": 1000,
+  "global": {
+    "Ontodynamique": {
+      "n_input": 2949,
+      "n_structure": 3685,
+      "mean_input": 13.927093930145812,
+      "mean_structure": 24.994219810040708,
+      "ratio": 1.7946471773224428,
+      "d": 0.3858643359468999,
+      "abs_d": 0.3858643359468999,
+      "p_MW": 1.9611435991970682e-48,
+      "bootstrap": {
+        "mean": 1.7969361729273852,
+        "ci_95": [
+          1.667962598175777,
+          1.9385566719919611
+        ],
+        "cv": 3.8491216175765426
+      }
+    },
+    "SSTA (temp\u00e9rature)": {
+      "n_input": 33,
+      "n_structure": 34332,
+      "mean_input": 19.35151515151515,
+      "mean_structure": 9.630470989164628,
+      "ratio": 0.4976597911719899,
+      "d": -0.480996293376748,
+      "abs_d": 0.480996293376748,
+      "p_MW": 0.9999656296232206,
+      "bootstrap": {
+        "mean": 0.5333726690938388,
+        "ci_95": [
+          0.32628475810921015,
+          0.9131165043227781
+        ],
+        "cv": 28.599387519084047
+      }
+    },
+    "Profondeur": {
+      "n_input": 1554,
+      "n_structure": 3443,
+      "mean_input": 23.875984555984555,
+      "mean_structure": 12.062483299448155,
+      "ratio": 0.5052140686037039,
+      "d": -0.46604300054472514,
+      "abs_d": 0.46604300054472514,
+      "p_MW": 1.0,
+      "bootstrap": {
+        "mean": 0.5059971848915908,
+        "ci_95": [
+          0.46239620980586743,
+          0.5541826738271981
+        ],
+        "cv": 4.591926712098026
+      }
+    },
+    "Cyclone seul": {
+      "n_input": 4525,
+      "n_structure": 4695,
+      "mean_input": 17.96958453038674,
+      "mean_structure": 17.980106496272633,
+      "ratio": 1.0005855430807595,
+      "d": 0.0003820759727344728,
+      "abs_d": 0.0003820759727344728,
+      "p_MW": 5.184389211255479e-05,
+      "bootstrap": {
+        "mean": 1.0007399680337874,
+        "ci_95": [
+          0.9400797119243879,
+          1.0653213852269772
+        ],
+        "cv": 3.1511856049587
+      }
+    }
+  },
+  "cv_ocean": {
+    "Ontodynamique": {
+      "n_regions": 5,
+      "mean_ratio": 2.566488363487945,
+      "median_ratio": 1.7780142014278268,
+      "cv_ratio": 88.80973517614295,
+      "min_ratio": 0.8496124503499629,
+      "max_ratio": 6.505028106825386,
+      "per_region": [
+        {
+          "region": "Arabian Gulf",
+          "ratio": 6.505028106825386,
+          "p": 0.00015045646429946553,
+          "n_input": 106,
+          "n_structure": 84
+        },
+        {
+          "region": "Atlantic",
+          "ratio": 1.270146478705069,
+          "p": 0.004566419842571308,
+          "n_input": 812,
+          "n_structure": 1388
+        },
+        {
+          "region": "Indian",
+          "ratio": 1.7780142014278268,
+          "p": 1.2451289444390373e-08,
+          "n_input": 351,
+          "n_structure": 205
+        },
+        {
+          "region": "Pacific",
+          "ratio": 2.429640580131481,
+          "p": 2.3504451604862912e-36,
+          "n_input": 1465,
+          "n_structure": 1799
+        },
+        {
+          "region": "Red Sea",
+          "ratio": 0.8496124503499629,
+          "p": 0.549139858301697,
+          "n_input": 215,
+          "n_structure": 209
+        }
+      ]
+    },
+    "Profondeur": {
+      "n_regions": 4,
+      "mean_ratio": 1.1198553139560476,
+      "median_ratio": 0.8722664306555505,
+      "cv_ratio": 58.23352609390346,
+      "min_ratio": 0.6553429399676347,
+      "max_ratio": 2.0795454545454546,
+      "per_region": [
+        {
+          "region": "Atlantic",
+          "ratio": 0.6553429399676347,
+          "p": 0.999999999999998,
+          "n_input": 1071,
+          "n_structure": 892
+        },
+        {
+          "region": "Indian",
+          "ratio": 0.7815800840388463,
+          "p": 0.859445263244818,
+          "n_input": 63,
+          "n_structure": 237
+        },
+        {
+          "region": "Pacific",
+          "ratio": 0.9629527772722547,
+          "p": 0.7254675874937978,
+          "n_input": 408,
+          "n_structure": 2048
+        },
+        {
+          "region": "Red Sea",
+          "ratio": 2.0795454545454546,
+          "p": 0.7649586572984899,
+          "n_input": 12,
+          "n_structure": 176
+        }
+      ]
+    },
+    "Cyclone seul": {
+      "n_regions": 3,
+      "mean_ratio": 0.7148462995264321,
+      "median_ratio": 0.6937024239204574,
+      "cv_ratio": 39.971956157107165,
+      "min_ratio": 0.44026751351907356,
+      "max_ratio": 1.0105689611397652,
+      "per_region": [
+        {
+          "region": "Atlantic",
+          "ratio": 1.0105689611397652,
+          "p": 0.6785231563138732,
+          "n_input": 1018,
+          "n_structure": 2349
+        },
+        {
+          "region": "Indian",
+          "ratio": 0.44026751351907356,
+          "p": 0.9763101841545323,
+          "n_input": 543,
+          "n_structure": 36
+        },
+        {
+          "region": "Pacific",
+          "ratio": 0.6937024239204574,
+          "p": 1.0,
+          "n_input": 2350,
+          "n_structure": 2310
+        }
+      ]
+    }
+  },
+  "cv_realm": {
+    "Ontodynamique": {
+      "n_regions": 5,
+      "mean_ratio": 2.2223218900122306,
+      "median_ratio": 2.343316605327238,
+      "cv_ratio": 37.1558882060928,
+      "min_ratio": 1.2697167019429387,
+      "max_ratio": 3.411308175453048,
+      "per_region": [
+        {
+          "region": "Central Indo-Pacific",
+          "ratio": 2.343316605327238,
+          "p": 6.98367693796364e-35,
+          "n_input": 1279,
+          "n_structure": 1525
+        },
+        {
+          "region": "Eastern Indo-Pacific",
+          "ratio": 3.411308175453048,
+          "p": 4.110553486053327e-06,
+          "n_input": 79,
+          "n_structure": 32
+        },
+        {
+          "region": "Temperate Australasia",
+          "ratio": 2.4483766733343595,
+          "p": 0.0017346982109449902,
+          "n_input": 104,
+          "n_structure": 67
+        },
+        {
+          "region": "Tropical Atlantic",
+          "ratio": 1.2697167019429387,
+          "p": 0.0053189247860690484,
+          "n_input": 812,
+          "n_structure": 1381
+        },
+        {
+          "region": "Western Indo-Pacific",
+          "ratio": 1.638891294003569,
+          "p": 0.026747866571685108,
+          "n_input": 666,
+          "n_structure": 458
+        }
+      ]
+    },
+    "Profondeur": {
+      "n_regions": 4,
+      "mean_ratio": 0.7970926360992838,
+      "median_ratio": 0.7875224834792293,
+      "cv_ratio": 43.05345006191701,
+      "min_ratio": 0.40786952431977536,
+      "max_ratio": 1.2054560531189014,
+      "per_region": [
+        {
+          "region": "Central Indo-Pacific",
+          "ratio": 1.2054560531189014,
+          "p": 0.48949206429706554,
+          "n_input": 350,
+          "n_structure": 1710
+        },
+        {
+          "region": "Temperate Australasia",
+          "ratio": 0.9195652173913043,
+          "p": 0.6646171113321198,
+          "n_input": 12,
+          "n_structure": 104
+        },
+        {
+          "region": "Tropical Atlantic",
+          "ratio": 0.6554797495671543,
+          "p": 0.999999999999997,
+          "n_input": 1065,
+          "n_structure": 892
+        },
+        {
+          "region": "Western Indo-Pacific",
+          "ratio": 0.40786952431977536,
+          "p": 0.9999999455468043,
+          "n_input": 75,
+          "n_structure": 480
+        }
+      ]
+    },
+    "Cyclone seul": {
+      "n_regions": 5,
+      "mean_ratio": 0.9615937536400475,
+      "median_ratio": 0.7699295533150669,
+      "cv_ratio": 59.58238244438313,
+      "min_ratio": 0.41854868567197334,
+      "max_ratio": 1.9146330997872951,
+      "per_region": [
+        {
+          "region": "Central Indo-Pacific",
+          "ratio": 0.6954382682826132,
+          "p": 0.9999999999995386,
+          "n_input": 2057,
+          "n_structure": 1968
+        },
+        {
+          "region": "Eastern Indo-Pacific",
+          "ratio": 1.9146330997872951,
+          "p": 0.010863820076162503,
+          "n_input": 103,
+          "n_structure": 47
+        },
+        {
+          "region": "Tropical Atlantic",
+          "ratio": 1.0094191611432883,
+          "p": 0.6865920240083395,
+          "n_input": 1016,
+          "n_structure": 2344
+        },
+        {
+          "region": "Tropical Eastern Pacific",
+          "ratio": 0.41854868567197334,
+          "p": 0.998404553794008,
+          "n_input": 51,
+          "n_structure": 12
+        },
+        {
+          "region": "Western Indo-Pacific",
+          "ratio": 0.7699295533150669,
+          "p": 0.6588299624783267,
+          "n_input": 1121,
+          "n_structure": 22
+        }
+      ]
+    }
+  },
+  "random": {
+    "ratio_median": 0.9986432784431203,
+    "ratio_max": 1.1039563152593899,
+    "cv_median": 24.6663787068725
+  }
+}

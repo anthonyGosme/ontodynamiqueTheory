@@ -863,31 +863,57 @@ def main():
 
     # Also try loading external annotation file
     if not cancer_col:
-        for ann_file in ['cell_line_annotations.csv', 'Model.csv',
-                         'GDSC_cell_lines.csv', 'TableS1E.csv']:
-            if os.path.exists(ann_file):
+        import glob
+        ann_candidates = ['cell_line_annotations.csv', 'Model.csv',
+                          'GDSC_cell_lines.csv', 'TableS1E.csv']
+        # Also pick up model_list_YYYYMMDD.csv from Cell Model Passports
+        ann_candidates.extend(sorted(glob.glob('model_list*.csv')))
+        for ann_file in ann_candidates:
+            if not os.path.exists(ann_file):
+                continue
+            try:
                 ann = pd.read_csv(ann_file)
+                # Strip whitespace from column names (cancerrxgene.org adds spaces)
+                ann.columns = [c.strip() for c in ann.columns]
                 # Look for COSMIC_ID + tissue/cancer type columns
                 id_col = None
-                for c in ['COSMIC_ID', 'COSMIC ID', 'cosmic_id', 'model_id']:
+                for c in ['COSMIC_ID', 'COSMIC ID', 'cosmic_id', 'model_id',
+                          'COSMICID', 'Sample id']:
                     if c in ann.columns:
                         id_col = c
                         break
                 tissue_col = None
-                for c in ['TCGA_DESC', 'TCGA type', 'tcga_label', 'CANCER_TYPE',
-                          'TISSUE_FACTOR', 'TISSUE', 'tissue', 'cancer_type',
-                          'tissue_descriptor', 'GDSC.description_1']:
+                for c in ['TCGA Classfication', 'TCGA Classification',  # cancerrxgene typo
+                          'TCGA_DESC', 'TCGA type', 'tcga_label',
+                          'cancer_type', 'CANCER_TYPE', 'cancer_type_detail',
+                          'TISSUE_FACTOR', 'TISSUE', 'Tissue', 'tissue',
+                          'tissue_descriptor', 'GDSC.description_1',
+                          'Tissue sub-type']:
                     if c in ann.columns:
                         tissue_col = c
                         break
                 if id_col and tissue_col:
-                    mapping = ann.set_index(id_col)[tissue_col].to_dict()
+                    # Ensure COSMIC ID is integer for join
+                    ann[id_col] = pd.to_numeric(ann[id_col], errors='coerce')
+                    ann_dedup = ann.drop_duplicates(subset=[id_col])
+                    mapping = ann_dedup.set_index(id_col)[tissue_col].to_dict()
                     df['TISSUE_ANN'] = df['COSMIC_ID'].map(mapping)
                     n_mapped = df['TISSUE_ANN'].notna().sum()
                     if n_mapped > len(df) * 0.3:
                         cancer_col = 'TISSUE_ANN'
-                        print(f"  Annotations chargées: {ann_file} ({n_mapped:,} mappées)")
+                        n_types = df['TISSUE_ANN'].nunique()
+                        print(f"  Annotations chargées: {ann_file}")
+                        print(f"    Colonne utilisée: {tissue_col}")
+                        print(f"    {n_mapped:,} / {len(df):,} observations mappées")
+                        print(f"    {n_types} types de cancer")
+                    else:
+                        print(f"  ⚠ {ann_file} trouvé mais mapping faible "
+                              f"({n_mapped:,}/{len(df):,})")
+                        print(f"    Colonnes: {list(ann.columns)}")
                     break
+            except Exception as e:
+                print(f"  ⚠ Erreur lecture {ann_file}: {e}")
+                continue
 
     if cancer_col:
         print(f"  Cancer types: {cancer_col} ({df[cancer_col].nunique()} types)")
@@ -980,6 +1006,127 @@ def main():
             print(f"    {cls_b} (n={r['n_b']:,}): AUC={r['mean_b']:.4f}, mag={r['mag_b']:.4f}")
             print(f"    Ratio = {r['ratio']:.3f}× ({r['direction']})")
             print(f"    |d| = {r['abs_d']:.4f}, p(MW) = {r['p_MW']:.2e}")
+
+    # ================================================================
+    # CONTROLLED TESTS: does structure/input survive within strata?
+    # ================================================================
+    # The critical question: if selectivity explains the asymmetry,
+    # then structure/input should show NO effect within SELECTIVE drugs.
+    # If it does, selectivity alone can't explain it.
+    # ================================================================
+    print(f"\n{'=' * 75}")
+    print(f"  TESTS CONTRÔLÉS: structure/input DANS chaque strate rivale")
+    print(f"  (si l'effet survit au contrôle, la rivale ne l'explique pas)")
+    print(f"{'=' * 75}")
+
+    controlled_results = {}
+
+    # For each rival partition, test structure/input WITHIN each stratum
+    for rival_col, rival_name, strata in [
+        ('SEL', 'Sélectivité', ['SELECTIVE', 'PROMISCUOUS']),
+        ('PPI', 'Degré PPI', ['HUB', 'PERIPHERAL']),
+    ]:
+        print(f"\n  ── Structure/Input contrôlé par {rival_name} ──")
+        controlled_results[rival_col] = {}
+
+        for stratum in strata:
+            # Subset: observations that are BOTH classified by ONTO and in this stratum
+            mask = df['ONTO'].notna() & (df[rival_col] == stratum)
+            sub = df[mask]
+
+            n_struct = (sub['ONTO'] == 'STRUCTURE').sum()
+            n_input = (sub['ONTO'] == 'INPUT').sum()
+
+            if n_struct < 30 or n_input < 30:
+                print(f"\n    {stratum}: n trop faible (S={n_struct}, I={n_input})")
+                continue
+
+            va = sub.loc[sub['ONTO'] == 'STRUCTURE', auc_col].values
+            vb = sub.loc[sub['ONTO'] == 'INPUT', auc_col].values
+            r = compute_ratio(va, vb)
+
+            if r:
+                controlled_results[rival_col][stratum] = r
+                eff = "négligeable" if r['abs_d'] < 0.2 else (
+                    "faible" if r['abs_d'] < 0.5 else (
+                        "moyen" if r['abs_d'] < 0.8 else "FORT"))
+                print(f"\n    {stratum} seulement:")
+                print(f"      STRUCTURE (n={r['n_a']:,}): AUC={r['mean_a']:.4f}")
+                print(f"      INPUT     (n={r['n_b']:,}): AUC={r['mean_b']:.4f}")
+                print(f"      Ratio S/I = {r['ratio']:.3f}×")
+                print(f"      |d| = {r['abs_d']:.4f} ({eff}), p = {r['p_MW']:.2e}")
+
+                # Per cancer type within stratum (if cancer_col available)
+                if cancer_col:
+                    ratios_ct = []
+                    for ct, grp in sub.groupby(cancer_col):
+                        if len(grp) < 100:
+                            continue
+                        va_ct = grp.loc[grp['ONTO'] == 'STRUCTURE', auc_col].values
+                        vb_ct = grp.loc[grp['ONTO'] == 'INPUT', auc_col].values
+                        r_ct = compute_ratio(va_ct, vb_ct)
+                        if r_ct and np.isfinite(r_ct['ratio']) and r_ct['ratio'] < 100:
+                            ratios_ct.append(r_ct['ratio'])
+
+                    if len(ratios_ct) >= 3:
+                        arr = np.array(ratios_ct)
+                        cv = float(np.std(arr, ddof=1) / np.mean(arr) * 100)
+                        controlled_results[rival_col][stratum + '_cv'] = cv
+                        controlled_results[rival_col][stratum + '_ratios'] = ratios_ct
+                        controlled_results[rival_col][stratum + '_n_ct'] = len(ratios_ct)
+                        print(f"      CV par cancer type: {cv:.1f}% "
+                              f"(sur {len(ratios_ct)} types)")
+                        print(f"      Ratio range: [{np.min(arr):.3f}, {np.max(arr):.3f}]")
+
+    # Also test: selectivity WITHIN structure and within input
+    print(f"\n  ── Sélectivité contrôlée par Ontodynamique ──")
+    for onto_stratum in ['STRUCTURE', 'INPUT']:
+        mask = (df['ONTO'] == onto_stratum) & df['SEL'].notna()
+        sub = df[mask]
+        n_prom = (sub['SEL'] == 'PROMISCUOUS').sum()
+        n_sel = (sub['SEL'] == 'SELECTIVE').sum()
+
+        if n_prom < 30 or n_sel < 30:
+            print(f"\n    {onto_stratum}: n trop faible (P={n_prom}, S={n_sel})")
+            continue
+
+        va = sub.loc[sub['SEL'] == 'PROMISCUOUS', auc_col].values
+        vb = sub.loc[sub['SEL'] == 'SELECTIVE', auc_col].values
+        r = compute_ratio(va, vb)
+        if r:
+            eff = "négligeable" if r['abs_d'] < 0.2 else (
+                "faible" if r['abs_d'] < 0.5 else (
+                    "moyen" if r['abs_d'] < 0.8 else "FORT"))
+            print(f"\n    Au sein des drogues {onto_stratum}:")
+            print(f"      PROMISCUOUS (n={r['n_a']:,}): AUC={r['mean_a']:.4f}")
+            print(f"      SELECTIVE   (n={r['n_b']:,}): AUC={r['mean_b']:.4f}")
+            print(f"      Ratio P/S = {r['ratio']:.3f}×")
+            print(f"      |d| = {r['abs_d']:.4f} ({eff}), p = {r['p_MW']:.2e}")
+
+    # Summary table for controlled tests
+    print(f"\n  ── RÉSUMÉ DES TESTS CONTRÔLÉS ──")
+    print(f"  {'Test':<45s} {'Ratio':>7s} {'|d|':>6s} {'CV%':>6s}")
+    print(f"  {'─' * 45} {'─' * 7} {'─' * 6} {'─' * 6}")
+
+    # Uncontrolled baseline
+    if 'ONTO' in global_results:
+        gr = global_results['ONTO']
+        onto_cv = cv_results.get('ONTO', {}).get('cv_ratio', None) if 'cv_results' in dir() else None
+        # We'll fill in CV after the cv_results section; print placeholder
+        print(f"  {'S/I global (pas de contrôle)':<45s} {gr['ratio']:>7.3f} {gr['abs_d']:>6.4f}   {'—':>4s}")
+
+    for rival_col, rival_name in [('SEL', 'Sélectivité'), ('PPI', 'Degré PPI')]:
+        if rival_col not in controlled_results:
+            continue
+        cr = controlled_results[rival_col]
+        for stratum in cr:
+            if stratum.endswith('_cv') or stratum.endswith('_ratios') or stratum.endswith('_n_ct'):
+                continue
+            r = cr[stratum]
+            cv_key = stratum + '_cv'
+            cv_str = f"{cr[cv_key]:.1f}" if cv_key in cr else "—"
+            label = f"S/I dans {rival_name}={stratum}"
+            print(f"  {label:<45s} {r['ratio']:>7.3f} {r['abs_d']:>6.4f} {cv_str:>6s}")
 
     # ================================================================
     # CROSS-DOMAIN CV (the critical test)
