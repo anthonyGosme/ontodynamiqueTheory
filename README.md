@@ -9,7 +9,7 @@
 
 The central empirical prediction is **R-XVII**: perturbations targeting the *structure* of a system (its self-maintenance machinery) produce systematically larger displacement than perturbations targeting its *input* (its metabolic flow), at matched intensity. This asymmetry is indexed on the topological target of the perturbation, not on its amplitude.
   
-📖 **summary** [Ontodynamique](https://github.com/anthonyGosme/ontodynamiqueTheory/blob/main/SYSTEM_SUMMARY_EN.md)  
+📖 **Summary** [Ontodynamique](https://github.com/anthonyGosme/ontodynamiqueTheory/blob/main/SYSTEM_SUMMARY_EN.md)  
 📖 **Manuscript**: [ontodynamique.com](https://www.ontodynamique.com/)  
 🧪 **Interactive notebook**: [Google Colab](https://colab.research.google.com/drive/1LWbOqywO5o6AtePQRu3plooqwuOtzJrN?usp=sharing)  
 📄 **Empirical paper**: [arXiv:2512.09352](https://arxiv.org/abs/2512.09352)  

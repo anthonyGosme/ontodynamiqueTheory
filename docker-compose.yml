@@ -1,0 +1,35 @@
+# ── Mode automatique ─────────────────────────────────────────────────────────
+# docker compose up                         → run all tests
+# docker compose run tests --section gdsc   → run specific section
+# docker compose run tests --skip-lean      → skip Lean (faster)
+# docker compose run tests --list           → list available sections
+#
+# ── Mode interactif (shell dans le container) ────────────────────────────────
+# docker compose run shell                  → bash avec tout installé
+#   puis:  python run_all_tests.py --section lean
+#          python ScriptGDSC/GDSC1.py
+#          lean Lean/gradient.lean
+#          ... corriger, relancer, etc.
+
+services:
+  tests:
+    image: anthonygosme/ontodynamique:latest
+    build: .
+    volumes:
+      - ./output:/app/output
+    environment:
+      - MPLBACKEND=Agg
+      - PYTHONUNBUFFERED=1
+
+  shell:
+    image: anthonygosme/ontodynamique:latest
+    build: .
+    volumes:
+      - .:/app
+      - ./output:/app/output
+    environment:
+      - MPLBACKEND=Agg
+      - PYTHONUNBUFFERED=1
+    entrypoint: /bin/bash
+    stdin_open: true
+    tty: true

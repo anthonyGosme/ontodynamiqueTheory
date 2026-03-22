@@ -1,0 +1,28 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+venv/
+.venv/
+*.egg-info/
+
+# MDSINE2 local clone (re-cloned from GitHub in Docker)
+MDSINE2/
+
+# Large data outputs (regenerated at runtime)
+output/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Colab checkpoints
+.ipynb_checkpoints/
