@@ -40,17 +40,16 @@ RUN lean --version
 # ── Working directory ────────────────────────────────────────────────────────
 WORKDIR /app
 
-# ── Python dependencies (cached layer) ──────────────────────────────────────
-COPY requirements.txt .
+# ── Clone project from GitHub ─────────────────────────────────────────────────
+RUN git clone --depth 1 https://github.com/anthonyGosme/ontodynamiqueTheory.git .
+
+# ── Python dependencies ──────────────────────────────────────────────────────
 RUN pip install --no-cache-dir -r requirements.txt
 
 # ── MDSINE2 (from GitHub) ───────────────────────────────────────────────────
 RUN git clone --depth 1 https://github.com/gerberlab/MDSINE2.git /tmp/MDSINE2 \
     && pip install --no-cache-dir /tmp/MDSINE2/ \
     && rm -rf /tmp/MDSINE2
-
-# ── Copy project files ──────────────────────────────────────────────────────
-COPY . .
 
 # ── Output directory ─────────────────────────────────────────────────────────
 RUN mkdir -p /app/output
