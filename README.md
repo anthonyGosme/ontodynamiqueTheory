@@ -4,6 +4,7 @@
 [![sorry](https://img.shields.io/badge/sorry-0-brightgreen)]()
 [![Domains](https://img.shields.io/badge/domains-4_validated-orange)]()
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC_BY_4.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
+[![Docker Hub](https://img.shields.io/docker/v/anthonygosme/ontodynamique?label=Docker%20Hub&logo=docker)](https://hub.docker.com/r/anthonygosme/ontodynamique)
 
 **Ontodynamique** is a formal ontological framework built from two independent axioms — *Axiom I* (being = doing: every entity is an act of self-maintenance whose cost is drawn from the very structure it maintains) and *Axiom V* (exteriority admits degrees) — from which it derives finitude, irreversibility, operational closure, constitutive normativity, and a compositional gradient that classifies any finite system as *closure* (endogenous cost-bearing), *normative carriage* (externalized cost), or *aggregate* (no cycle).
 
@@ -97,7 +98,27 @@ ontodynamiqueTheory/
 
 Open the [Colab notebook](https://colab.research.google.com/drive/1LWbOqywO5o6AtePQRu3plooqwuOtzJrN?usp=sharing) — it handles all dependencies, data download, Lean installation, and runs every script with full output.
 
-### Option B: Local installation
+### Option B: Docker (recommended for reproducibility)
+
+[![Docker Hub](https://img.shields.io/docker/v/anthonygosme/ontodynamique?label=Docker%20Hub&logo=docker)](https://hub.docker.com/r/anthonygosme/ontodynamique)
+
+Pre-built image with all dependencies (Python 3.10, Lean 4, MDSINE2) — no installation, no restart.
+
+```bash
+# Run all tests
+docker pull anthonygosme/ontodynamique:latest
+docker run --rm -v $(pwd)/output:/app/output anthonygosme/ontodynamique
+
+# Run a specific section
+docker run --rm -v $(pwd)/output:/app/output anthonygosme/ontodynamique --section gdsc
+
+# Interactive shell
+docker run --rm -it -v $(pwd)/output:/app/output anthonygosme/ontodynamique bash
+```
+
+Available sections: `lean`, `mdsine2`, `gdsc`, `corail`, `yeast_hom`, `yeast_het`, `crossdomain`, `meta`, `artificial`
+
+### Option C: Local installation
 
 ```bash
 # 1. Clone
