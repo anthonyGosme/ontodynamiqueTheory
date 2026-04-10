@@ -308,10 +308,20 @@ theorem oscillation_drain_NTXVI (margin c oscillations : Nat)
 
 -- ── 7a. Domain structures ──
 
-/-- An aggregate: finite margin, perturbation cost, no compensation. -/
+/-- Agrégat ontodynamique.
+    Deux sources de drain distinctes :
+    constitutive_drain (XII) : prix permanent de la partialité.
+    perturbation_cost (IV) : coût additionnel sous perturbation.
+    La perturbation accélère la dissolution ; le drain constitutif la cause. -/
 structure Aggregate where
   margin : Nat
+  /-- XII : drain constitutif, le prix d'exister comme être partiel -/
+  constitutive_drain : Nat
+  /-- XII : ce drain est strictement positif (posé, dette documentée) -/
+  constitutive_drain_pos : constitutive_drain > 0
+  /-- IV : coût additionnel sous perturbation -/
   perturbation_cost : Nat
+  /-- IV : ce coût est strictement positif -/
   perturbation_pos : perturbation_cost > 0
 
 /-- A closure under constitutive pressure (XXXIV). -/
@@ -422,8 +432,8 @@ theorem single_step_dissolution [FiniteExposed α] (a : α)
 
 instance : FiniteExposed Aggregate where
   margin a := a.margin
-  drain  a := a.perturbation_cost
-  drain_pos a := a.perturbation_pos
+  drain  a := a.constitutive_drain
+  drain_pos a := a.constitutive_drain_pos
 
 instance : FiniteExposed ConstitutiveClosure where
   margin a := a.margin
@@ -442,9 +452,46 @@ instance : FiniteExposed OscillatingInstitution where
 
 -- ── 7e. Instantiation witnesses: XXXIII at work ──
 
-/-- Aggregate dissolves (XVII via XXXIII). -/
-example (a : Aggregate) : ∃ n, n * a.perturbation_cost > a.margin :=
+/-- Aggregate dissolves constitutively (XII via XXXIII). -/
+example (a : Aggregate) : ∃ n, n * a.constitutive_drain > a.margin :=
   generic_exhaustion a
+
+/-!
+## Modèle séparant IV / XII — Preuve que I fait plus que IV
+-/
+
+/-- Entité purement réactive : satisfait IV, viole XII.
+    L'ancien Aggregate du codebase avant le fix XII.
+    PurelyReactive est un contre-exemple, pas une structure de travail. -/
+structure PurelyReactive where
+  margin : Nat
+  perturbation_cost : Nat
+  perturbation_pos : perturbation_cost > 0
+
+/-- Drain constitutif nul : PurelyReactive viole XII. -/
+def PurelyReactive.constitutive_drain (_e : PurelyReactive) : Nat := 0
+
+/-- PurelyReactive satisfait FiniteExposed via perturbation (IV). -/
+instance : FiniteExposed PurelyReactive where
+  margin a := a.margin
+  drain  a := a.perturbation_cost
+  drain_pos a := a.perturbation_pos
+
+/-- [∎] SÉPARANT — PurelyReactive n'a pas de drain constitutif. -/
+theorem purely_reactive_no_constitutive_drain (e : PurelyReactive) :
+    e.constitutive_drain = 0 := rfl
+
+/-- [∎] SÉPARANT — L'agrégat ontodynamique satisfait XII. -/
+theorem aggregate_has_constitutive_drain (a : Aggregate) :
+    a.constitutive_drain > 0 :=
+  a.constitutive_drain_pos
+
+/-- [∎] SÉPARANT — XII DISCRIMINE.
+    Il existe une instance de FiniteExposed (satisfaisant IV)
+    dont le drain constitutif est nul (violant XII). -/
+theorem IV_does_not_imply_XII :
+    ∃ (e : PurelyReactive), e.perturbation_cost > 0 ∧ e.constitutive_drain = 0 :=
+  ⟨⟨1, 1, Nat.one_pos⟩, Nat.one_pos, rfl⟩
 
 /-- Constitutive closure dissolves (XXXIV via XXXIII). -/
 example (a : ConstitutiveClosure) : ∃ n, n * a.constitutive_cost > a.margin :=
@@ -2152,6 +2199,10 @@ theorem rxviii_consequence_i (s : TransitionSystem) :
 #print axioms OntoDynamique.rxviii_main
 #print axioms OntoDynamique.rxviii_consequence_i
 
+#print axioms OntoDynamique.purely_reactive_no_constitutive_drain
+#print axioms OntoDynamique.aggregate_has_constitutive_drain
+#print axioms OntoDynamique.IV_does_not_imply_XII
+
 end OntoDynamique
 
 -- § 14. VISUAL REPORT — sorry: 0
@@ -2269,9 +2320,11 @@ set_option maxRecDepth 2000 in
   IO.println "║   ✅ already_dissolved / single_step_dissolution (guards)   ║"
   IO.println "║   ✅ LVII-c/d/e  self_cost_endogenous + finite nonzero life║"
   IO.println "║   ✅ faster_dissolution  GradedExposure closed (0 sorry)    ║"
+  IO.println "║   ✅ XII fix   Aggregate drains constitutively (not IV)     ║"
+  IO.println "║   ✅ IV≠XII    Separator model: PurelyReactive              ║"
   IO.println "╠══════════════════════════════════════════════════════════════╣"
-  IO.println "║   101 theorems · 0 sorry · 0 added axiom                   ║"
-  IO.println "║   15 structures ·  8 instances  ·  1 typeclass              ║"
+  IO.println "║   104 theorems · 0 sorry · 0 added axiom                   ║"
+  IO.println "║   16 structures ·  9 instances  ·  1 typeclass              ║"
   IO.println "║   2 axioms (I=α+β, V) + IV corollary (InterAxiomInd.)      ║"
   IO.println "║   I-γ, II, III, VII derived                                 ║"
   IO.println "║   R-XVIII: asymmetry DERIVED (template_saving)              ║"
