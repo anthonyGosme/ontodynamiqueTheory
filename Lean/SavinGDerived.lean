@@ -63,7 +63,14 @@ namespace SavingDerived
     (P2) eliminated > 0     — ANALYTIC: a constraint constrains
     (P3) eliminated < space  — the act remains possible under template
 
-    Note: space > 0 is DERIVED from P2 + P3 (not an independent posit). -/
+    Note: space > 0 is DERIVED from P2 + P3 (not an independent posit).
+
+    Under I' : `space`, `eliminated`, `unit_cost`, `template_constrains`,
+    `template_partial` describe a single individuated act — un acte un.
+    The template operates within the unity of the act (reducing its
+    possibility space), not alongside it. The derivation `space > 0` from
+    P2 + P3 is coherent with the architectonic un : a constrained act
+    that still has possibility is a viable un. -/
 structure ConstrainedAct where
   /-- Size of the unconstrained possibility space -/
   space : Nat

@@ -34,25 +34,42 @@ I-α et III — chantier orthogonal, documenté ici comme dette.
 namespace ProcessualAggregate
 
 /-!
-## §1. TYPECLASS — FiniteExposed (copie locale pour autonomie du fichier)
+## §1. TYPECLASS — FiniteBeing / FiniteExposed / FiniteInertial
+(copie locale pour autonomie du fichier, alignée sur le raffinement 20 avril 2026)
 -/
 
-/-- FiniteExposed (XXXIII) : interface minimale pour l'épuisement.
-    Copie locale — dans le codebase intégré, ce serait un import. -/
-class FiniteExposed (α : Type) where
+/-- **FiniteBeing (mother typeclass)** — margin + drain, partagé par les
+    quatre modes d'être-un finis sous I'. Copie locale — dans le codebase
+    intégré, ce serait un import. -/
+class FiniteBeing (α : Type) where
   margin : α → Nat
   drain  : α → Nat
   drain_pos : ∀ a, 0 < drain a
 
+/-- **FiniteExposed (raffinée)** — modes d'être-un ACTIFS sous I' : ceux
+    qui se-font-un par opérations individuées. Clôtures, portages, portés.
+    Les agrégats ne sont PAS dans cette typeclass. -/
+class FiniteExposed (α : Type) extends FiniteBeing α where
+  operations : α → List Nat
+  ops_nonempty : ∀ a, operations a ≠ []
+  ops_positive : ∀ a, ∀ c ∈ operations a, c > 0
+
+/-- **FiniteInertial** — modes d'être-un INERTIELS : marge + drain sans
+    opérations individuées. Agrégats, artefacts en dérive subie,
+    contre-exemples purement réactifs. -/
+class FiniteInertial (α : Type) extends FiniteBeing α where
+  -- Pas de champ supplémentaire.
+
 /-- [∎] XVII-generic — Épuisement via XXXIII.
-    Tout type satisfaisant FiniteExposed s'épuise en temps fini. -/
-theorem generic_exhaustion [FiniteExposed α] (a : α) :
-    ∃ n, n * FiniteExposed.drain a > FiniteExposed.margin a := by
-  refine ⟨FiniteExposed.margin a + 1, ?_⟩
-  have h1 : 1 ≤ FiniteExposed.drain a := FiniteExposed.drain_pos a
-  have h2 : (FiniteExposed.margin a + 1) * 1 ≤
-             (FiniteExposed.margin a + 1) * FiniteExposed.drain a :=
-    Nat.mul_le_mul_left (FiniteExposed.margin a + 1) h1
+    Tout type satisfaisant FiniteBeing s'épuise en temps fini.
+    S'applique aux deux modes (FiniteExposed actif et FiniteInertial inertiel). -/
+theorem generic_exhaustion [FiniteBeing α] (a : α) :
+    ∃ n, n * FiniteBeing.drain a > FiniteBeing.margin a := by
+  refine ⟨FiniteBeing.margin a + 1, ?_⟩
+  have h1 : 1 ≤ FiniteBeing.drain a := FiniteBeing.drain_pos a
+  have h2 : (FiniteBeing.margin a + 1) * 1 ≤
+             (FiniteBeing.margin a + 1) * FiniteBeing.drain a :=
+    Nat.mul_le_mul_left (FiniteBeing.margin a + 1) h1
   simp only [Nat.mul_one] at h2
   omega
 
@@ -90,11 +107,13 @@ structure Aggregate where
   /-- IV : ce coût est strictement positif -/
   perturbation_pos : perturbation_cost > 0
 
-/-- L'agrégat est FiniteExposed via le drain CONSTITUTIF (XII),
+/-- L'agrégat est **FiniteInertial** via le drain CONSTITUTIF (XII),
     pas via le coût de perturbation (IV).
+    Sous le raffinement 20 avril 2026 : canoniquement inertiel, mode
+    de persistance par inertie sans opérations individuées.
     C'est la correction du chemin déductif : la pierre se dissout
     parce qu'exister coûte, pas parce qu'être perturbé coûte. -/
-instance : FiniteExposed Aggregate where
+instance : FiniteInertial Aggregate where
   margin a := a.margin
   drain  a := a.constitutive_drain
   drain_pos a := a.constitutive_drain_pos
@@ -152,8 +171,12 @@ structure PurelyReactive where
     rfl réduise définitionnellement à 0. -/
 def PurelyReactive.constitutive_drain (_e : PurelyReactive) : Nat := 0
 
-/-- PurelyReactive satisfait FiniteExposed via perturbation (IV). -/
-instance : FiniteExposed PurelyReactive where
+/-- PurelyReactive est **FiniteInertial** : il satisfait IV (drain sous
+    perturbation) mais viole XII (pas de drain constitutif).
+    Contre-exemple du caractère spécifique de FiniteInertial :
+    même sans XII, on a bien un drain — mais c'est de l'inertie
+    réactive, pas un mode d'être-un actif. -/
+instance : FiniteInertial PurelyReactive where
   margin a := a.margin
   drain  a := a.perturbation_cost
   drain_pos a := a.perturbation_pos
@@ -171,7 +194,7 @@ theorem aggregate_has_constitutive_drain (a : Aggregate) :
   a.constitutive_drain_pos
 
 /-- [∎] SÉPARANT — XII DISCRIMINE.
-    Il existe une instance de FiniteExposed (satisfaisant IV)
+    Il existe une instance de FiniteInertial (satisfaisant IV)
     dont le drain constitutif est nul (violant XII).
     Witness : PurelyReactive avec margin = 1, perturbation = 1.
     L'entité s'épuise sous perturbation (IV) mais n'a aucun
@@ -181,28 +204,35 @@ theorem IV_does_not_imply_XII :
   ⟨⟨1, 1, Nat.one_pos⟩, Nat.one_pos, rfl⟩
 
 /-!
-## §5. MONISME PRÉ-XXXII (C) — L'interface est aveugle au type
+## §5. MONISME PRÉ-XXXII (C) — L'interface mère est aveugle au mode
 
-Avant XXXII, le système est aveugle au type d'entité. La typeclass
-`FiniteExposed` ne distingue pas agrégats de clôtures, elle ne
-connaît que `margin` et `drain`. La tripartition est un résultat
-(XXXII, `first_branch : has_cycle`), pas un input.
+Avant XXXII, le système est aveugle au mode d'être-un. La typeclass
+mère `FiniteBeing` ne distingue pas modes actifs (clôtures) de modes
+inertiels (agrégats), elle ne connaît que `margin` et `drain`. La
+tripartition est un résultat (XXXII, `first_branch : has_cycle`),
+pas un input.
+
+Note (raffinement 20 avril 2026) : la distinction actif/inertiel
+EST portée par la hiérarchie typeclass (FiniteExposed / FiniteInertial),
+mais cette distinction est architectonique (sous I'), pas résultat
+de XXXII. Le MONISME PRÉ-XXXII tient au niveau de `FiniteBeing` :
+l'épuisement (XVII generic) s'applique aux deux modes uniformément.
 
 Ce monisme est encodé architecturalement : `generic_exhaustion` est
-prouvé sur `FiniteExposed` sans pattern-matching sur le type concret.
-Tout type satisfaisant l'interface hérite de tous les résultats
+prouvé sur `FiniteBeing` sans pattern-matching sur le mode concret.
+Tout type satisfaisant l'interface mère hérite de tous les résultats
 pré-XXXII. La différenciation commence à `first_branch`.
 
 Aucun théorème de ce fichier ne requiert de savoir si l'entité est
 un agrégat ou une clôture, vérifiable par inspection.
 -/
 
-/-- [∎] MONISME — L'épuisement est aveugle au type.
-    Le même théorème s'applique à l'agrégat et à toute autre
-    instance de FiniteExposed. Pas de disjonction de cas
+/-- [∎] MONISME — L'épuisement est aveugle au mode.
+    Le même théorème s'applique à l'agrégat (FiniteInertial) et à
+    toute autre instance de FiniteBeing. Pas de disjonction de cas
     sur la nature ontologique. XXXIII vérifié. -/
 theorem exhaustion_is_type_blind (a : Aggregate) :
-    (∃ n, n * FiniteExposed.drain a > FiniteExposed.margin a) :=
+    (∃ n, n * FiniteBeing.drain a > FiniteBeing.margin a) :=
   generic_exhaustion a
 
 /-!
@@ -221,7 +251,7 @@ qui fait de la pierre un agrégat.
 
 Pour l'agrégat :
 I-proc ✓ (constitutive_drain > 0, ce fichier).
-I-mono ✓ (FiniteExposed est l'interface commune, §5).
+I-mono ✓ (FiniteBeing est l'interface commune, §5).
 I-ident : rendement minimal (pas de cycle, pas de I-γ, I-δ).
 
 Pour la clôture :

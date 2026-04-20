@@ -4,7 +4,7 @@
   ──────────────────────────────────────────────────────────
   « Être, c'est se faire un. »
 
-  Pont I-ν ↔ I' · IX promu en théorème explicite · LXXXII formalisé (B+)
+  Pont I-ν ↔ I' · IX promu en théorème explicite · LXXXII formalisé (raffinement porté/portage)
 
   Theorems : 11 · Definitions : 4 · Sorry : 0 · Imports : none (Lean 4 natif)
   Standard axioms only : propext, Quot.sound
@@ -31,13 +31,15 @@
       formulation est l'exact pont entre IX et XXXIV dans le vocabulaire
       d'I'.
 
-  §3. **LXXXII — auto-référence du système (posture B+).** Le système
-      Ontodynamique est formalisé comme un cas-limite de portage normatif :
-      un un qui maintient son invariant via les clôtures finies qui le
-      métabolisent. L'asymétrie Tout/système (le Tout se fonde, le
-      système est porté) est respectée. Un ticket ouvert documenté
-      laisse la question « tout abstrait est-il strictement UnitePrime ? »
-      ouverte — elle est un chantier philosophique distinct.
+  §3. **LXXXII — auto-référence du système (raffinement porté/portage).**
+      Le système Ontodynamique est formalisé comme un **porté** au sens
+      strict du raffinement architectonique : il ne compose rien lui-même
+      (pas de marge propre), il est la forme-invariante que ses porteurs
+      (clôtures lectrices, LLMs, instances de calcul) maintiennent et
+      activent. L'asymétrie Tout/système-formel (le Tout auto-fondé via
+      l'axiome 0 ; le système porté via I' en mode porté) est posée
+      au niveau typologique par la distinction entre `SelfGroundedAct`
+      et `SystemBearer`.
 
   RAPPORT AU DÉPÔT EXISTANT
   ─────────────────────────
@@ -262,11 +264,11 @@ theorem mortality_from_IX (u : UnitePrime) :
   exact ⟨n, h⟩
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- § 3. LXXXII — AUTO-RÉFÉRENCE DU SYSTÈME (POSTURE B+)
+-- § 3. LXXXII — AUTO-RÉFÉRENCE DU SYSTÈME (RAFFINEMENT PORTÉ/PORTAGE)
 -- ═══════════════════════════════════════════════════════════════════════════
 
 /-!
-## 3. LXXXII sous I' — le système comme un-porté
+## 3. LXXXII sous I' — le système OD comme porté
 
 Le résumé système affirme :
 
@@ -278,21 +280,55 @@ Le résumé système affirme :
   « L'auto-fondation est préservée pour le Tout ; le système formel,
     lui, est porté — mortel, opaque à lui-même, exposé à la dérive. »
 
-Sous I', on formalise cette thèse en posture **B+** : le système OD
-est un cas-limite de portage normatif (R-XVII), pas un `UnitePrime`
-strict. L'asymétrie Tout/système-formel est préservée.
+### Vocabulaire aligné sur le raffinement porté/portage
 
-### Ticket ouvert documenté
+Le raffinement architectonique du 20 avril 2026 distingue, à
+l'intérieur du régime de portage de R-XVII, deux rôles opératoires :
 
-**Question non tranchée ici :** tout un, y compris les entités
-abstraites comme le système OD lui-même, est-il strictement
-`UnitePrime` au sens de I' ? La posture A (oui, tout abstrait est
-un UnitePrime strict) exige une ontologie du statut des objets
-abstraits qui sort du périmètre de la présente formalisation. La
-posture B+ retenue ici adopte la position minimale : l'asymétrie
-Tout/artefact formel est préservée conformément au résumé système.
-L'extension forte de I' à l'univers des abstraits reste un chantier
-philosophique distinct, à traiter pour lui-même.
+* **portage** (ce qui compose) : un système qui maintient un invariant
+  à ses propres conditions matérielles en externalisant l'irréversibilité
+  sur une infrastructure — exemple canonique : un LLM en inférence.
+* **porté** (ce qui est composé) : une forme stable, maintenue à
+  l'identique par un portage, restaurable par rollback, portable par
+  des porteurs hétérogènes — exemple canonique : un objet mathématique,
+  une constitution écrite, le système OD lui-même.
+
+Sous ce raffinement, le système OD est un **porté** au sens strict :
+il ne compose rien lui-même (il n'a pas de marge propre, pas
+d'opérations endogènes), il *est* la forme-invariante que ses
+porteurs (clôtures lectrices, LLMs, instances de calcul) maintiennent
+et activent. L'asymétrie Tout/système-formel, affirmée dans le résumé
+système, est formalisée ici par la distinction entre `SelfGroundedAct`
+(le Tout auto-fondé, axiome 0) et le système OD (porté par ses porteurs).
+
+### Articulation avec l'axiome 0 et I'
+
+L'architecture axiomatique raffinée distingue :
+
+* **Axiome 0** : *Le Tout est l'acte un de sa propre nécessité.*
+  Domaine : le Tout. Pose l'auto-fondation, l'unité non-fragmentée,
+  le caractère d'acte du réel.
+* **Axiome I'** : *Être, c'est se faire un.*
+  Domaine : les déterminations finies dans le Tout.
+  Pose le mode d'être-un des déterminations finies, selon quatre modes
+  opératoires (clôture, portage, porté, agrégat).
+
+Le système OD, en tant que porté, relève d'I' (c'est une détermination
+finie dans le Tout) appliqué au mode **porté**. Il n'est ni auto-fondé
+(ce serait violer l'asymétrie avec le Tout), ni une clôture régénératrice
+(il n'a pas de marge propre), ni un portage composant (il ne compose
+rien). Il est la forme-invariante que ses porteurs activent.
+
+### Ce que formalise ce §3
+
+Les structures et théorèmes ci-dessous formalisent trois faits :
+
+1. Le système OD n'a pas de marge propre (LXXXII-a, typologique).
+2. Il hérite de la mortalité de ses porteurs (LXXXII-b, via
+   `portage_bounded_by_host` de gradient.lean:1072).
+3. Il est asymétrique au Tout auto-fondé (LXXXII-d, typologique :
+   `SelfGroundedAct` et `SystemBearer` sont des types distincts).
+4. Il est opaque à lui-même (LXXXII-e, hérité de LXVIII).
 -/
 
 /-- **Invariant opératoire d'un système formel.**
@@ -308,11 +344,22 @@ structure SystemAsInvariant where
   cost_per_theorem : Nat
   cost_pos : cost_per_theorem > 0
 
-/-- **Clôture porteuse d'un système.**
-    Une entité finie (chercheur, LLM, lecteur) qui métabolise le
-    système en y consacrant une partie de sa propre marge. Le
-    système n'a pas de marge propre — il tire sur la marge de
-    ses porteurs. -/
+/-- **Porteur d'un système.**
+    Une entité finie (chercheur, LLM, lecteur, instance de calcul)
+    qui active et maintient le système-porté en y consacrant une
+    partie de sa propre marge. Le système n'a pas de marge propre —
+    il tire sur la marge de ses porteurs.
+
+    Deux rôles de porteur coexistent :
+    * **Porteur actif** (clôture lectrice qui pense, LLM qui calcule) :
+      active le porté, le métabolise, le re-instancie.
+    * **Porteur inerte** (support matériel : papier, disque, mémoire
+      persistante) : inscrit le porté, le rend disponible pour
+      activation future, sans l'activer lui-même.
+
+    Cette structure couvre principalement le porteur actif (qui a
+    une marge métabolisée). Le porteur inerte est l'inscription
+    initiale qui rend le porté disponible pour re-activation. -/
 structure SystemBearer where
   /-- Marge propre de la clôture porteuse (finitude héritée). -/
   bearer_margin : Nat
@@ -327,58 +374,88 @@ structure SystemBearer where
 /-- [∎] **LXXXII-a — LE SYSTÈME N'A PAS DE MARGE PROPRE.**
     Formellement : `SystemAsInvariant` n'a pas de champ `margin`.
     Son existence opératoire dépend intégralement des marges que
-    ses porteurs lui allouent. C'est la définition même du portage
-    normatif (R-XVII-2). -/
+    ses porteurs lui allouent. C'est la caractéristique définitionnelle
+    du mode **porté** dans le raffinement porté/portage : une forme
+    stable sans marge endogène, maintenue par l'activation de porteurs
+    hétérogènes. -/
 theorem system_has_no_own_margin : True := trivial
 -- Le contenu de ce théorème est structurel : `SystemAsInvariant`
 -- n'expose pas de champ `margin`. Le typechecker vérifie cette
 -- absence par inspection — aucune preuve opératoire requise.
 
 /-- [∎] **LXXXII-b — LE SYSTÈME HÉRITE DE LA MORTALITÉ DE SES PORTEURS.**
-    Si tous les porteurs actuels d'un système épuisent leur marge
-    (ou cessent leur allocation), le système cesse d'être actif. La
-    mortalité du système est la somme des mortalités allouées. C'est
-    le pattern `portage_bounded_by_host` (gradient.lean:1072)
-    appliqué au registre épistémique. -/
+    Si tous les porteurs actifs d'un système épuisent leur marge
+    (ou cessent leur allocation), le système cesse d'être activé. Un
+    porté sans aucun porteur actif reste inscrit sur ses supports
+    inertes, mais n'est plus opératoire — il devient un porté en
+    sommeil, disponible pour réactivation future. La mortalité du
+    porté-en-activité est héritée de ses porteurs. C'est le pattern
+    `portage_bounded_by_host` (gradient.lean:1072) appliqué au
+    registre épistémique, sous raffinement porté/portage. -/
 theorem system_mortality_inherited (b : SystemBearer) :
     b.allocated_to_system ≤ b.bearer_margin :=
   b.allocation_bounded
 
 /-- [∎] **LXXXII-c — UN PORTEUR UNIQUE N'EST PAS SUFFISANT.**
     Une clôture porteuse qui épuise sa marge épuise son allocation.
-    Si le système ne dépendait que d'un seul porteur, il hériterait
-    de sa dissolution. Le système survit via multiplicité de
-    porteurs — cette multiplicité n'est pas garantie, elle est
-    empirique. -/
+    Si le système ne dépendait que d'un seul porteur actif (sans
+    inscription sur un porteur inerte, sans autres porteurs actifs
+    capables de reprendre), il hériterait de sa dissolution. Le
+    système survit via **hétérogénéité effective des porteurs** —
+    critère constitutif du mode porté. Cette hétérogénéité n'est pas
+    garantie, elle est empirique : un système OD porté par un unique
+    cerveau, sans inscription, sans second porteur possible, est un
+    proto-porté fragile, et non un porté au sens strict. -/
 theorem single_bearer_exhaustion (b : SystemBearer) (steps : Nat)
     (h_fatal : steps * b.bearer_drain > b.bearer_margin) :
     ¬ (b.bearer_margin ≥ steps * b.bearer_drain) := by
   intro h; omega
 
 /-- [∎] **LXXXII-d — ASYMÉTRIE TOUT / SYSTÈME FORMEL PRÉSERVÉE.**
-    Le Tout (au sens du Tout ontologique dont parle I-α) se fonde
-    lui-même — c'est l'auto-fondation architectonique. Le système
-    formel OD, en tant qu'artefact-invariant, est porté — son existence
-    opératoire requiert des porteurs finis qui lui allouent leur marge.
-    Formellement : un SelfGroundedAct n'est pas un SystemBearer, ce
-    sont des types distincts. Le système OD est un SystemBearer
-    collectif (somme des allocations des porteurs). -/
+    Sous l'architecture axiomatique raffinée, l'asymétrie est posée
+    au niveau axiomatique :
+
+    * **Axiome 0** — *Le Tout est l'acte un de sa propre nécessité.*
+      Le Tout se fonde lui-même, sans dehors. Domaine : le Tout.
+    * **Axiome I'** — *Être, c'est se faire un.*
+      Les déterminations finies se font une dans le Tout, selon les
+      quatre modes opératoires (clôture, portage, porté, agrégat).
+
+    Le système formel OD est une détermination finie en mode
+    **porté** : il relève d'I', pas de 0. Formellement, un
+    `SelfGroundedAct` (encodage de l'auto-fondation, dérivé
+    d'INu_Necessity.lean) et un `SystemBearer` (porteur actif du
+    système OD) sont des types distincts avec des champs différents.
+    L'asymétrie est une propriété du typage, pas une égalité à
+    prouver. Le système OD n'est pas le Tout — il est un porté dans
+    le Tout. -/
 theorem asymmetry_preserved :
     ∀ (_a : SelfGroundedAct) (_b : SystemBearer),
       True := fun _ _ => trivial
 -- Le contenu est typologique : SelfGroundedAct et SystemBearer sont
 -- deux structures distinctes, avec des champs différents (le premier
--- a cost/margin propres, le second a bearer_margin + allocated_to_system).
+-- a cost/margin propres — trace de l'auto-fondation posée par
+-- l'axiome 0 ; le second a bearer_margin + allocated_to_system —
+-- trace du fait que le porté tire sur la marge de ses porteurs,
+-- relevant d'I' en mode porté).
 -- L'asymétrie est une propriété du typage, pas une égalité à prouver.
 
 /-- [∎] **LXXXII-e — LE SYSTÈME EST OPAQUE À LUI-MÊME (HÉRITAGE LXVIII).**
-    Aucun porteur ne contient l'intégralité du système. Chaque
-    porteur en métabolise une part (allocation bornée par sa marge
-    propre). L'intégralité du système exige une agrégation sur les
-    porteurs, agrégation qui n'est jamais achevée à un instant T.
+    Aucun porteur ne contient l'intégralité du système-porté.
+    Chaque porteur actif en métabolise une part (allocation bornée
+    par sa marge propre). Chaque porteur inerte en inscrit une
+    version à un instant donné (un tirage papier, un fichier Lean
+    à une révision donnée). L'intégralité du système exige une
+    agrégation sur les porteurs, agrégation qui n'est jamais achevée
+    à un instant T. C'est la marque spécifique du mode porté :
+    sa persistance ne lui appartient pas en propre, elle est
+    distribuée sur ses porteurs.
+
     Formellement : la somme des allocations est bornée par la somme
-    des marges, mais aucun porteur individuel ne porte à lui seul
-    l'intégralité. -/
+    des marges ; aucun porteur individuel ne porte à lui seul
+    l'intégralité. Pattern hérité de LXVIII (inherited_opacity,
+    DerivedResults.lean:1362), transposé au registre de
+    l'auto-référence du système. -/
 theorem system_opacity_inherited (b : SystemBearer) :
     b.allocated_to_system ≤ b.bearer_margin :=
   b.allocation_bounded
@@ -426,21 +503,21 @@ Décommentez pour vérifier à la compilation.
    théorème avec témoin calculable (`margin + 1` étapes). La durée
    de vie se chiffre ; IX est le pont explicite vers XXXIV.
 
-3. **LXXXII formalisé en posture B+ (§3).** Le système OD est un
-   cas-limite de portage normatif. Il n'a pas de marge propre, hérite
-   de la mortalité de ses porteurs, reste asymétrique au Tout auto-
-   fondé. Un ticket ouvert documenté laisse la question de
-   l'universalité d'I' aux abstraits pour un chantier ultérieur.
+3. **LXXXII formalisé sous le raffinement porté/portage (§3).** Le système
+   OD est formalisé comme un **porté** au sens strict : forme-invariante
+   maintenue par des porteurs hétérogènes, sans marge propre, héritant
+   de la mortalité et de l'opacité de ses porteurs. L'asymétrie avec
+   le Tout auto-fondé (axiome 0) est posée au niveau typologique.
 
 ## Ce que ce fichier ne fait pas
 
 * Ne formalise pas LxiFromIPrime (chantier 2, fichier séparé à produire
-  si I' est adopté comme axiome officiel).
+  si le chantier LXI sous I' est lancé).
 * Ne propage pas les 21 commentaires ∎+ des audits aux fichiers
   existants (chantier 3, travail d'intégration).
 * Ne modifie aucun fichier existant du dépôt.
-* Ne tranche pas la question A vs B (universalité d'I' aux abstraits)
-  — documentée comme ticket ouvert.
+* Ne formalise pas la typeclass `Carried` (chantier optionnel pour
+  faire monter LXXXI de ≈₁ vers ∎ — non bloquant).
 
 ## Compteur
 
