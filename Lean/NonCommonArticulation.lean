@@ -287,5 +287,4 @@ violations, alors le fichier ne tient pas même sa version restreinte.
 Je signale ces points sans les résoudre.
 -/
 
-
 end NonCommonArticulation
