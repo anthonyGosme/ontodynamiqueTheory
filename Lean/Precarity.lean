@@ -69,9 +69,14 @@ namespace Precarity
 -- Formally: drain_net > 0 means the closure loses something at each
 -- cycle that must be replenished. The gap between current state and
 -- continuation-condition IS the lack.
-
 -- A system with constitutive lack: it drains more than zero per cycle,
 -- meaning it perpetually needs what it does not yet have.
+--
+-- Sous I' : la précarité suppose une unité qui manque à elle-même.
+-- Les quatre champs (`margin`, `drain_per_cycle`, `regeneration`,
+-- `net_lack_pos`) posent ensemble un être-un précaire — le manque est
+-- le manque *de cet un-là*, pas un manque impersonnel. L'unité est
+-- architecturale, le manque est sa modalité interne.
 structure ConstitutiveLack where
   -- Current margin (finite resource, I-α)
   margin : Nat

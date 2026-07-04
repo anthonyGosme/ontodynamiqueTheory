@@ -344,17 +344,67 @@ structure OscillatingInstitution where
 
 -- ── 7b. The typeclass: XXXIII as interface ──
 
-/-- [∎] XXXIII — REAPPLICABILITY.
-    Any type equipped with a finite margin and a positive drain
-    is FiniteExposed. All structural trunk results apply. -/
-class FiniteExposed (α : Type) where
+/-- **FiniteBeing (mother typeclass)** — the minimal interface shared by
+    all four modes of finite being under I' (closure, portage, carried,
+    aggregate): a margin and a positive drain.
+
+    This is the architectonic generalization of the original
+    `FiniteExposed` : what all four modes share, independent of whether
+    the being actively operates (closure, portage, carried) or persists
+    by inertia (aggregate).
+
+    Theorems that apply to all four modes (e.g. `generic_exhaustion`
+    below) are stated on `FiniteBeing`. -/
+class FiniteBeing (α : Type) where
   margin : α → Nat
   drain  : α → Nat
   drain_pos : ∀ a, 0 < drain a
 
-/-- Extension of FiniteExposed: exposure admits degrees.
-    A partial order on external pressure formalizes full V. -/
-class GradedExposure (α : Type) extends FiniteExposed α where
+/-- **FiniteExposed (refined)** — the typeclass of ACTIVE finite beings
+    under I' : those that `se font un` with individuated operations.
+
+    Under the 20 avril 2026 refinement, closures, portages and carried
+    are active beings : they operate, their drain is the cost of their
+    operations. Aggregates are NOT in this typeclass — they are in
+    `FiniteInertial` below.
+
+    The `operations` field captures the architectonic commitment of I'
+    that an active being has individuated acts (not an undifferentiated
+    cost flow). For structures that carry only scalar costs, the
+    operations list is synthesized from those costs (see instances below). -/
+class FiniteExposed (α : Type) extends FiniteBeing α where
+  /-- Individuated operations per cycle. Under I', every active being
+      acts at least once per cycle with identifiable operational cost. -/
+  operations : α → List Nat
+  /-- At least one operation per cycle (I-α + I-β : the being acts). -/
+  ops_nonempty : ∀ a, operations a ≠ []
+  /-- Every operation has positive cost (IV : every act costs). -/
+  ops_positive : ∀ a, ∀ c ∈ operations a, c > 0
+
+/-- **FiniteInertial** — the typeclass of INERTIAL finite beings : those
+    that have a margin drained by endogenous processes but DO NOT actively
+    operate in the sense of I'.
+
+    Under the 20 avril 2026 refinement, aggregates are the canonical
+    inertial mode : they persist by inertia, their drain is constitutive
+    (XII) but not operational. They are `se tient un` under voix moyenne
+    minimale, not `se fait un` under voix moyenne active.
+
+    Structures that are `NT-V` artifacts (drift without endogenous
+    regeneration), retroactive tiers, and purely reactive counter-examples
+    also belong here. -/
+class FiniteInertial (α : Type) extends FiniteBeing α where
+  -- No additional fields : the inertial mode is precisely what has
+  -- margin + drain without operational individuation.
+
+/-- Extension of FiniteBeing: exposure admits degrees.
+    A partial order on external pressure formalizes full V.
+
+    GradedExposure extends `FiniteBeing` (not `FiniteExposed` refined)
+    because pressure and drain are generic to all four modes — an
+    aggregate can be graded-exposed too. The notion of operation is
+    orthogonal. -/
+class GradedExposure (α : Type) extends FiniteBeing α where
   /-- Pressure admits an intensity, not just a presence -/
   pressure_level : α → Nat
   /-- Weak monotonicity: more pressure → drain at least as strong -/
@@ -377,82 +427,112 @@ theorem faster_dissolution_under_higher_pressure
     {α : Type} [GradedExposure α] (a b : α)
     (h_pressure : GradedExposure.pressure_level a < GradedExposure.pressure_level b) :
     ∃ n_a n_b : Nat, n_b < n_a ∧
-      n_a * FiniteExposed.drain a > FiniteExposed.margin a ∧
-      n_b * FiniteExposed.drain b > FiniteExposed.margin b := by
-  have h_drain_lt : FiniteExposed.drain a < FiniteExposed.drain b :=
+      n_a * FiniteBeing.drain a > FiniteBeing.margin a ∧
+      n_b * FiniteBeing.drain b > FiniteBeing.margin b := by
+  have h_drain_lt : FiniteBeing.drain a < FiniteBeing.drain b :=
     GradedExposure.pressure_strict_monotone a b h_pressure
   obtain ⟨n_b, h_dissolves_b, h_safe_a⟩ :=
     GradedExposure.drain_grows_with_pressure a b h_drain_lt
-  have h_drain_pos : 1 ≤ FiniteExposed.drain a := FiniteExposed.drain_pos a
+  have h_drain_pos : 1 ≤ FiniteBeing.drain a := FiniteBeing.drain_pos a
   -- n_b ≤ margin a: since n_b * 1 ≤ n_b * drain_a ≤ margin_a
-  have h_nb_le : n_b ≤ FiniteExposed.margin a := by
-    have h_mul : n_b * 1 ≤ n_b * FiniteExposed.drain a :=
+  have h_nb_le : n_b ≤ FiniteBeing.margin a := by
+    have h_mul : n_b * 1 ≤ n_b * FiniteBeing.drain a :=
       Nat.mul_le_mul_left n_b h_drain_pos
     simp [Nat.mul_one] at h_mul
     omega
   -- n_a = margin a + 1
-  refine ⟨FiniteExposed.margin a + 1, n_b, ?h_lt, ?h_dissolves_a, h_dissolves_b⟩
+  refine ⟨FiniteBeing.margin a + 1, n_b, ?h_lt, ?h_dissolves_a, h_dissolves_b⟩
   · -- n_b < margin a + 1
     omega
   · -- (margin a + 1) * drain a > margin a
     -- = margin_a * drain_a + drain_a > margin_a, since drain_a ≥ 1
-    have h_mul2 : (FiniteExposed.margin a + 1) * 1 ≤
-                  (FiniteExposed.margin a + 1) * FiniteExposed.drain a :=
-      Nat.mul_le_mul_left (FiniteExposed.margin a + 1) h_drain_pos
+    have h_mul2 : (FiniteBeing.margin a + 1) * 1 ≤
+                  (FiniteBeing.margin a + 1) * FiniteBeing.drain a :=
+      Nat.mul_le_mul_left (FiniteBeing.margin a + 1) h_drain_pos
     simp [Nat.mul_one] at h_mul2
     omega
 
 -- ── 7c. The generic theorem: prove ONCE, apply EVERYWHERE ──
 
 /-- [∎] XVII-generic — EXHAUSTION via XXXIII.
-    One theorem. Every FiniteExposed type inherits it. -/
-theorem generic_exhaustion [FiniteExposed α] (a : α) :
-    ∃ n, n * FiniteExposed.drain a > FiniteExposed.margin a := by
-  refine ⟨FiniteExposed.margin a + 1, ?_⟩
-  have h1 : 1 ≤ FiniteExposed.drain a := FiniteExposed.drain_pos a
-  have h2 : (FiniteExposed.margin a + 1) * 1 ≤
-             (FiniteExposed.margin a + 1) * FiniteExposed.drain a :=
-    Nat.mul_le_mul_left (FiniteExposed.margin a + 1) h1
+    One theorem. Every FiniteBeing type inherits it — both active
+    (FiniteExposed) and inertial (FiniteInertial) modes. -/
+theorem generic_exhaustion [FiniteBeing α] (a : α) :
+    ∃ n, n * FiniteBeing.drain a > FiniteBeing.margin a := by
+  refine ⟨FiniteBeing.margin a + 1, ?_⟩
+  have h1 : 1 ≤ FiniteBeing.drain a := FiniteBeing.drain_pos a
+  have h2 : (FiniteBeing.margin a + 1) * 1 ≤
+             (FiniteBeing.margin a + 1) * FiniteBeing.drain a :=
+    Nat.mul_le_mul_left (FiniteBeing.margin a + 1) h1
   simp only [Nat.mul_one] at h2
   omega
 
 -- ── 7d. Four instances: one per domain ──
 
 /-- Guard: margin = 0 → already dissolved.
-    FiniteExposed does not exclude this case. -/
-theorem already_dissolved [FiniteExposed α] (a : α)
-    (h : FiniteExposed.margin a = 0) :
-    1 * FiniteExposed.drain a > FiniteExposed.margin a := by
-  simp [h]; exact FiniteExposed.drain_pos a
+    FiniteBeing does not exclude this case — applies to both active
+    (FiniteExposed) and inertial (FiniteInertial) modes. -/
+theorem already_dissolved [FiniteBeing α] (a : α)
+    (h : FiniteBeing.margin a = 0) :
+    1 * FiniteBeing.drain a > FiniteBeing.margin a := by
+  simp [h]; exact FiniteBeing.drain_pos a
 
 /-- Guard: drain > margin → dissolution in 1 step. -/
-theorem single_step_dissolution [FiniteExposed α] (a : α)
-    (h : FiniteExposed.drain a > FiniteExposed.margin a) :
-    1 * FiniteExposed.drain a > FiniteExposed.margin a := by simp [h]
+theorem single_step_dissolution [FiniteBeing α] (a : α)
+    (h : FiniteBeing.drain a > FiniteBeing.margin a) :
+    1 * FiniteBeing.drain a > FiniteBeing.margin a := by simp [h]
 
-instance : FiniteExposed Aggregate where
+/-- Aggregate is the canonical **FiniteInertial** : it persists by inertia
+    (XIII), has constitutive drain (XII) but NO individuated operations —
+    that's exactly what distinguishes it from a closure under the 20 avril
+    refinement. -/
+instance : FiniteInertial Aggregate where
   margin a := a.margin
   drain  a := a.constitutive_drain
   drain_pos a := a.constitutive_drain_pos
 
+/-- ConstitutiveClosure is an active being (closure mode) under I'.
+    Its single operation is the constitutive cycle itself — synthesized
+    as the singleton list [constitutive_cost]. -/
 instance : FiniteExposed ConstitutiveClosure where
   margin a := a.margin
   drain  a := a.constitutive_cost
   drain_pos a := a.constitutive_pos
+  operations a := [a.constitutive_cost]
+  ops_nonempty a := by simp
+  ops_positive a := by
+    intro c hc
+    simp at hc
+    rw [hc]
+    exact a.constitutive_pos
 
-instance : FiniteExposed ArtefactualModulator where
+/-- ArtefactualModulator (NT-V) is inertial : its drift is subi, not
+    operated. It has no endogenous cycle that would make it an active
+    being in the sense of I'. -/
+instance : FiniteInertial ArtefactualModulator where
   margin a := a.bandwidth
   drain  a := a.drift
   drain_pos a := a.drift_pos
 
+/-- OscillatingInstitution is an active being (NT-XVI) with two
+    directional operations per oscillation cycle. Synthesized as the list
+    [cost_per_direction, cost_per_direction]. -/
 instance : FiniteExposed OscillatingInstitution where
   margin a := a.margin
   drain  a := 2 * a.cost_per_direction
   drain_pos a := by have := a.cost_pos; omega
+  operations a := [a.cost_per_direction, a.cost_per_direction]
+  ops_nonempty a := by simp
+  ops_positive a := by
+    intro c hc
+    -- c ∈ [a.cost_per_direction, a.cost_per_direction], simp réduit à une égalité unique
+    simp at hc
+    rw [hc]; exact a.cost_pos
 
 -- ── 7e. Instantiation witnesses: XXXIII at work ──
 
-/-- Aggregate dissolves constitutively (XII via XXXIII). -/
+/-- Aggregate dissolves constitutively (XII via XXXIII).
+    Résolu via `FiniteInertial Aggregate` → `FiniteBeing Aggregate`. -/
 example (a : Aggregate) : ∃ n, n * a.constitutive_drain > a.margin :=
   generic_exhaustion a
 
@@ -471,8 +551,12 @@ structure PurelyReactive where
 /-- Drain constitutif nul : PurelyReactive viole XII. -/
 def PurelyReactive.constitutive_drain (_e : PurelyReactive) : Nat := 0
 
-/-- PurelyReactive satisfait FiniteExposed via perturbation (IV). -/
-instance : FiniteExposed PurelyReactive where
+/-- PurelyReactive is inertial : it satisfies IV (positive drain under
+    perturbation) but violates XII (no constitutive drain). Under the
+    20 avril refinement, it's a counter-example showing that
+    FiniteInertial does not require XII — it accepts any mode with
+    margin + drain that is not actively operational under I'. -/
+instance : FiniteInertial PurelyReactive where
   margin a := a.margin
   drain  a := a.perturbation_cost
   drain_pos a := a.perturbation_pos
@@ -487,7 +571,7 @@ theorem aggregate_has_constitutive_drain (a : Aggregate) :
   a.constitutive_drain_pos
 
 /-- [∎] SÉPARANT — XII DISCRIMINE.
-    Il existe une instance de FiniteExposed (satisfaisant IV)
+    Il existe une instance de FiniteInertial (satisfaisant IV)
     dont le drain constitutif est nul (violant XII). -/
 theorem IV_does_not_imply_XII :
     ∃ (e : PurelyReactive), e.perturbation_cost > 0 ∧ e.constitutive_drain = 0 :=
@@ -497,7 +581,8 @@ theorem IV_does_not_imply_XII :
 example (a : ConstitutiveClosure) : ∃ n, n * a.constitutive_cost > a.margin :=
   generic_exhaustion a
 
-/-- Artefact goes out of band (NT-V via XXXIII). -/
+/-- Artefact goes out of band (NT-V via XXXIII).
+    Résolu via `FiniteInertial ArtefactualModulator` → `FiniteBeing`. -/
 example (a : ArtefactualModulator) : ∃ n, n * a.drift > a.bandwidth :=
   generic_exhaustion a
 
@@ -583,11 +668,26 @@ theorem self_affection_valence_on_own_cost (s : SelfAffecting)
     s.operations_per_cycle * s.self_operation_cost ≤ s.threshold :=
   ⟨s.self_cost_endogenous, h_pos⟩
 
-/-- LVII inherits FiniteExposed via XXXIII. -/
+/-- SelfAffecting (LVII) is an active being. Operations are synthesized
+    via List.replicate : `operations_per_cycle` copies of the same
+    `self_operation_cost`. This reflects that all operations of a
+    SelfAffecting are structurally identical — they are the same
+    self-affection repeated. -/
 instance : FiniteExposed SelfAffecting where
   margin s := s.margin
   drain  s := s.operations_per_cycle * s.self_operation_cost
   drain_pos s := self_affection_positive_LVIIa s
+  operations s := List.replicate s.operations_per_cycle s.self_operation_cost
+  ops_nonempty s := by
+    intro h
+    have := s.ops_pos
+    rw [List.replicate_eq_nil_iff] at h
+    omega
+  ops_positive s := by
+    intro c hc
+    rw [List.mem_replicate] at hc
+    rw [hc.2]
+    exact s.self_cost_pos
 
 /-- Self-affection leads to exhaustion (LVII via XXXIII). -/
 example (s : SelfAffecting) :
@@ -808,12 +908,21 @@ structure MetabolizingClosure where
   /-- Additive decomposition (no Nat subtraction) -/
   cost_decomposition : drain_net + regeneration = total_cost
 
-/-- MetabolizingClosure inherits FiniteExposed via XXXIII.
-    The drain is the NET drain (not the gross cost). -/
+/-- MetabolizingClosure inherits FiniteExposed (refined) via XXXIII.
+    The drain is the NET drain (not the gross cost).
+    Operations synthesized as the singleton [drain_net] — the single
+    operational modality is the net metabolized cycle. -/
 instance : FiniteExposed MetabolizingClosure where
   margin m := m.margin
   drain  m := m.drain_net
   drain_pos m := m.drain_net_pos
+  operations m := [m.drain_net]
+  ops_nonempty m := by simp
+  ops_positive m := by
+    intro c hc
+    simp at hc
+    rw [hc]
+    exact m.drain_net_pos
 
 -- ── XXXVIII — Metabolization ──
 
@@ -1059,9 +1168,10 @@ theorem drift_exceeds_any_band (p : EvolvingProfile) (band : Nat) :
   simp only [Nat.mul_one] at h2
   omega
 
-/-- XX inherits FiniteExposed via XXXIII.
-    Margin = total vulnerabilities, drain = shift. -/
-instance : FiniteExposed EvolvingProfile where
+/-- EvolvingProfile (XX-b) is inertial : the profile drift is subi (the
+    vulnerability profile shifts under environmental pressure), not
+    operated. Inertial mode under the 20 avril refinement. -/
+instance : FiniteInertial EvolvingProfile where
   margin p := p.total_vulnerabilities
   drain  p := p.shift_per_step
   drain_pos p := p.shift_pos
@@ -1095,12 +1205,27 @@ structure SubClosure where
   host_drift : Nat
   host_drift_pos : host_drift > 0
 
-/-- LXXIV inherits FiniteExposed via XXXIII.
-    Same typeclass as ArtefactualModulator — formal convergence. -/
+/-- SubClosure (LXXIV) is an active being — a sub-closure that operates
+    within its adequacy band, compensating for host drift. Synthesized as
+    [host_drift] : its single operational modality is the adequation work.
+
+    NOTE: under the 20 avril refinement, SubClosure is NOT in the same
+    typeclass as ArtefactualModulator anymore. ArtefactualModulator is
+    FiniteInertial (drift subi) while SubClosure is FiniteExposed
+    (operates against drift). The NT-V / LXXIV convergence noted
+    previously holds at the FiniteBeing level — they share margin+drain
+    — but they diverge at the active/inertial distinction. -/
 instance : FiniteExposed SubClosure where
   margin s := s.adequacy_band
   drain  s := s.host_drift
   drain_pos s := s.host_drift_pos
+  operations s := [s.host_drift]
+  ops_nonempty s := by simp
+  ops_positive s := by
+    intro c hc
+    simp at hc
+    rw [hc]
+    exact s.host_drift_pos
 
 /-- [∎] LXXIV — THE SUB-CLOSURE IS EXHAUSTED (via XXXIII).
     Identical to NT-V by the type system. The symptom (LXXIV)
@@ -1497,25 +1622,26 @@ derived from I-β₁ + XLIV + operation individuability.
 
 /-- [∎] II — UNTYPED PRODUCTIVITY (from I-α).
     The act does not presuppose a predefined type space.
-    Formally: generic_exhaustion is polymorphic via FiniteExposed.
-    Any type α instantiating the typeclass inherits exhaustion. -/
+    Formally: generic_exhaustion is polymorphic via FiniteBeing.
+    Any type α instantiating the typeclass (active or inertial)
+    inherits exhaustion. -/
 theorem productivity_untyped_II :
-    ∀ (α : Type) [FiniteExposed α] (x : α),
-    ∃ n, n * FiniteExposed.drain x > FiniteExposed.margin x :=
+    ∀ (α : Type) [FiniteBeing α] (x : α),
+    ∃ n, n * FiniteBeing.drain x > FiniteBeing.margin x :=
   fun _ _ x => generic_exhaustion x
 
 -- ── III — Causal unity ──
 
 /-- [∎] III — CAUSAL UNITY (from I, "one").
     No absolute causal isolation: every domain instantiating
-    FiniteExposed inherits the same exhaustion pattern.
+    FiniteBeing inherits the same exhaustion pattern.
     Transdomainality IS formalized causal unity.
     The pattern is one — any two types produce the same result. -/
 theorem causal_unity_III :
-    ∀ (α β : Type) [FiniteExposed α] [FiniteExposed β]
+    ∀ (α β : Type) [FiniteBeing α] [FiniteBeing β]
     (a : α) (b : β),
-    (∃ n, n * FiniteExposed.drain a > FiniteExposed.margin a) ∧
-    (∃ n, n * FiniteExposed.drain b > FiniteExposed.margin b) :=
+    (∃ n, n * FiniteBeing.drain a > FiniteBeing.margin a) ∧
+    (∃ n, n * FiniteBeing.drain b > FiniteBeing.margin b) :=
   fun _ _ _ _ a b =>
     ⟨generic_exhaustion a, generic_exhaustion b⟩
 

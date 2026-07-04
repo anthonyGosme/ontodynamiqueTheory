@@ -39,7 +39,13 @@ namespace SecondOrderLoop
     - metabolized: fraction of valence_cost the closure regenerates
       If metabolized = valence_cost → complete second-order loop
       If metabolized = 0 → drain suffered passively
-      If 0 < metabolized < valence_cost → partial -/
+      If 0 < metabolized < valence_cost → partial
+
+    Under I' : all four fields (margin, base_drain, valence_cost, metabolized)
+    are scoped to the same un. The valence feedback is the un's own affection
+    of itself — there is no affecting-and-affected as two entities. The
+    architectonic coherence is that the valence loop is the un turned back
+    toward its own operations. -/
 structure ValenceFeedbackClosure where
   margin : Nat
   margin_pos : margin > 0

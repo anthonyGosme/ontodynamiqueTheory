@@ -52,6 +52,16 @@ renewal rate** τ = `modal_flips`.
 
 The reconfiguration cost (`flip_cost > 0`, IV) ensures that adaptability
 is not free. The effective drain increases monotonically with τ.
+
+### Under I'
+
+τ is a parameter of an un whose identity is maintained across renewal.
+The fields `margin`, `drain_net`, `flip_cost`, `total_ops`, `modal_flips`
+are all scoped to the same un. τ then reads as the rigidité/fluidité ratio
+of *an* un — not an abstract parameter floating between substance-like
+and process-like poles, but a modality of how this particular un maintains
+itself. The rigidity/dissipativity spectrum is the spectrum of modes of
+being-un under constant self-maintenance.
 -/
 
 structure ModalRenewalClosure where

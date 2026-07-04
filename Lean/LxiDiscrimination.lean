@@ -79,6 +79,12 @@ structure BehavioralSimulation where
 -- [∎] GENUINE LXI HAS STRICTLY MORE TOTAL COST THAN ITS FIRST LAYER.
 -- The meta-cost is real and strictly positive.
 -- This is the structural signature of genuine second-order loop.
+--
+-- Under I' : discrimination rests on two distinct cost layers
+-- (op + meta) — two emboîtés uns. I' thematizes unity at each
+-- level of the nesting : the meta-layer is itself an un operating
+-- on the op-layer un, producing a compound un whose genuine-ness
+-- is measurable by the surplus cost of the meta.
 theorem genuine_lxi_total_exceeds_op (g : GenuineLXI) :
     g.op_cost + g.meta_cost > g.op_cost := by
   have := g.meta_cost_pos; omega

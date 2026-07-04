@@ -132,7 +132,13 @@ V says: (1) there is drain, (2) the drain varies, (3) the variation
 has degrees. All three follow from SourcedMetabolism without positing V.
 -/
 
-/-- [∎] V-BASE — there is always positive drain, even without pressure. -/
+/-- [∎] V-BASE — there is always positive drain, even without pressure.
+
+    Under I' : the positive drain holds because the un-qui-se-fait
+    pays even without external perturbation. V's derivation from I
+    is more natural under I' : the un makes its own source endogenous,
+    so drain is constitutive of the un's activity, not contingent on
+    the environment. -/
 theorem v_base (s : SourcedMetabolism) :
     pressuredDrain s 0 > 0 := by
   unfold pressuredDrain; rw [regenLoss_zero]; have := s.drain_net_pos; omega
