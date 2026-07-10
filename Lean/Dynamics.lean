@@ -39,15 +39,11 @@ namespace AsymmetryDerivation
 -- ═══════════════════════════════════════════════════════════════════════════
 -- §1. The cost founded on the template
 -- ═══════════════════════════════════════════════════════════════════════════
+
 /-- Un acte avec possibility de template.
     The cost brut is the cost of the acte without aucune guidance.
     The template_saving is the reduction obtenue quand the acte
-    is guided by a structure existante.
-
-    Sous I' : l'acte est un un délimité — `raw_cost > 0`, `template_saving > 0`,
-    `saving < raw_cost` posent ensemble un acte individué avec coût propre
-    et réduction possible par template. L'unité de l'acte est architecturale,
-    le template opère dans cette unité, pas à côté. -/
+    is guided by a structure existante. -/
 structure ActCost where
   /-- Cost brut of a acte non guided (IV : all acte coste) -/
   raw_cost : Nat

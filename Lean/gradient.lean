@@ -1708,4 +1708,29 @@ theorem dimension_is_eight (e₁ e₂ : CompletePresentistEntity)
 90 theorems · 0 sorry · 0 imports
 -/
 
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- §16. SÉPARATION endossement/clôture — le coût est constitutif, non épistémique
+-- ═══════════════════════════════════════════════════════════════════════════
+/-!
+Deux entités à `maintenance_cost` identique, ne différant que par le split
+d'endossement (`self_absorbed` vs `externally_absorbed`), sont individuées
+différemment : l'une clôture, l'autre portage. L'endossement est donc un
+paramètre INDÉPENDANT de la boucle causale, non un prédicat dérivé d'elle.
+Le coût fait un travail que la clôture seule ne fait pas (constitutif), non
+un simple traceur de la clôture (épistémique).
+-/
+def organismWitness : FiniteEntity :=
+  { maintenance_cost := 4, cost_pos := by omega,
+    self_absorbed := 4, externally_absorbed := 0, conservation := by omega }
+def whirlpoolWitness : FiniteEntity :=
+  { maintenance_cost := 4, cost_pos := by omega,
+    self_absorbed := 0, externally_absorbed := 4, conservation := by omega }
+/-- [∎] Même coût de maintien, seul le lieu d'endossement varie,
+    le verdict d'individuation bascule clôture/portage. -/
+theorem endorsement_separates :
+    organismWitness.maintenance_cost = whirlpoolWitness.maintenance_cost ∧
+    classify organismWitness = CostRegime.closure ∧
+    classify whirlpoolWitness = CostRegime.portage := by
+  refine ⟨rfl, ?_, ?_⟩ <;> decide
 end Gradient

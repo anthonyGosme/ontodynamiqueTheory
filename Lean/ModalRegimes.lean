@@ -1150,4 +1150,60 @@ Crisis requires τ > 0 (stationary closures immune). The forced choice
 adaptability-vs-persistence IS the transition mechanism.
 -/
 
+-- ═══════════════════════════════════════════════════════════════════════════
+-- §17. SEPARATING MODEL — non-redundancy of the adaptability characterizations
+-- ═══════════════════════════════════════════════════════════════════════════
+
+/-!
+The four constraints on `adaptability` (monotonicity, boundedness by the
+budget, nullity at the stationary regime, non-triviality at the dissipative
+regime) are not mutually derivable. We show this for the constraint a
+reviewer is most likely to doubt — **nullity at the stationary regime**
+(τ = 0 ⇒ adaptability = 0) — by exhibiting an alternative function
+`adaptabilitySep` that satisfies the other three and violates this one.
+
+Because `flips_bound` is riveted to `total_ops` (no slack), an additive
+witness (`modal_flips + 1`) would overflow the budget at the dissipative
+regime and violate *two* constraints. A separating model must violate
+exactly one, so we use the surgical `if`-witness, which coincides with the
+original everywhere except at τ = 0.
+-/
+
+/-- Witness: equals the original adaptability everywhere except at τ = 0,
+    where it is 1 instead of 0. -/
+def adaptabilitySep (c : ModalRenewalClosure) : Nat :=
+  if c.modal_flips = 0 then 1 else c.modal_flips
+
+/-- (1) Monotonicity in τ — preserved. -/
+theorem sep_monotone (c d : ModalRenewalClosure)
+    (h : c.modal_flips ≤ d.modal_flips) :
+    adaptabilitySep c ≤ adaptabilitySep d := by
+  unfold adaptabilitySep
+  split <;> split <;> omega
+
+/-- (2) Boundedness by the budget — preserved (never overflows total_ops). -/
+theorem sep_bounded (c : ModalRenewalClosure) :
+    adaptabilitySep c ≤ c.total_ops := by
+  unfold adaptabilitySep
+  have hb := c.flips_bound
+  have hp := c.total_ops_pos
+  split <;> omega
+
+/-- (3) Non-triviality at the dissipative regime — preserved. -/
+theorem sep_dissipative_nontrivial (c : ModalRenewalClosure)
+    (h : isDissipative c) :
+    0 < adaptabilitySep c := by
+  unfold adaptabilitySep isDissipative at *
+  split <;> omega
+
+/-- (4) VIOLATION of nullity at the stationary regime : at τ = 0 the witness
+    is 1, not 0. Hence the fourth constraint is not derivable from the
+    other three — the characterization bundle is non-redundant. -/
+theorem sep_violates_stationary_zero (c : ModalRenewalClosure)
+    (h : isStationary c) :
+    adaptabilitySep c ≠ 0 := by
+  unfold isStationary at h
+  unfold adaptabilitySep
+  simp [h]
+
 end ModalRegimes

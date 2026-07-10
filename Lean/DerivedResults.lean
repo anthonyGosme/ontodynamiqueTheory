@@ -586,35 +586,21 @@ end OperationalDiscreteness
 namespace RecursionBoundV2
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- SECTION 1: Infrastructure (FiniteBeing + FiniteExposed + FiniteInertial + XVII)
+-- SECTION 1: Infrastructure (FiniteExposed + XVII)
 -- ═══════════════════════════════════════════════════════════════════════════
 
-/-- **FiniteBeing (mother typeclass)** — local copy for standalone use,
-    aligned on the 20 avril 2026 refinement in Ontodynamique.lean. -/
-class FiniteBeing (α : Type) where
+class FiniteExposed (α : Type) where
   margin : α → Nat
   drain  : α → Nat
   drain_pos : ∀ a, 0 < drain a
 
-/-- **FiniteExposed (refined)** — active finite beings with individuated
-    operations. Aligned on I' and Ontodynamique.lean. -/
-class FiniteExposed (α : Type) extends FiniteBeing α where
-  operations : α → List Nat
-  ops_nonempty : ∀ a, operations a ≠ []
-  ops_positive : ∀ a, ∀ c ∈ operations a, c > 0
-
-/-- **FiniteInertial** — inertial finite beings (aggregate mode, retroactive
-    tiers, artifacts under drift). No individuated operations. -/
-class FiniteInertial (α : Type) extends FiniteBeing α where
-  -- No additional fields.
-
-theorem generic_exhaustion [FiniteBeing α] (a : α) :
-    ∃ n, n * FiniteBeing.drain a > FiniteBeing.margin a := by
-  refine ⟨FiniteBeing.margin a + 1, ?_⟩
-  have h1 : 1 ≤ FiniteBeing.drain a := FiniteBeing.drain_pos a
-  have h2 : (FiniteBeing.margin a + 1) * 1 ≤
-             (FiniteBeing.margin a + 1) * FiniteBeing.drain a :=
-    Nat.mul_le_mul_left (FiniteBeing.margin a + 1) h1
+theorem generic_exhaustion [FiniteExposed α] (a : α) :
+    ∃ n, n * FiniteExposed.drain a > FiniteExposed.margin a := by
+  refine ⟨FiniteExposed.margin a + 1, ?_⟩
+  have h1 : 1 ≤ FiniteExposed.drain a := FiniteExposed.drain_pos a
+  have h2 : (FiniteExposed.margin a + 1) * 1 ≤
+             (FiniteExposed.margin a + 1) * FiniteExposed.drain a :=
+    Nat.mul_le_mul_left (FiniteExposed.margin a + 1) h1
   omega
 
 -- ═══════════════════════════════════════════════════════════════════════════
@@ -896,11 +882,7 @@ structure RetroactiveTier where
   displacement : Nat
   displacement_pos : displacement > 0
 
-/-- RetroactiveTier is **FiniteInertial** under the 20 avril refinement :
-    its displacement is retroactively derived from saturation, not
-    operated. It is an inertial mode — a structural tier whose drain
-    is subi, not opéré. -/
-instance : FiniteInertial RetroactiveTier where
+instance : FiniteExposed RetroactiveTier where
   margin r := r.band
   drain r := r.displacement
   drain_pos r := r.displacement_pos
@@ -1208,27 +1190,11 @@ Imports: none
 
 namespace RegisterDissolution
 
--- Local FiniteBeing / FiniteExposed / FiniteInertial hierarchy, aligned on
--- the 20 avril 2026 refinement in Ontodynamique.lean.
-
-/-- **FiniteBeing (mother typeclass)** — margin + drain, shared by all
-    four modes of finite being under I'. -/
-class FiniteBeing (α : Type) where
+-- Local FiniteExposed redefinition for standalone use
+class FiniteExposed (α : Type) where
   margin : α → Nat
   drain  : α → Nat
   drain_pos : ∀ a, 0 < drain a
-
-/-- **FiniteExposed (refined)** — active finite beings with individuated
-    operations (closures, portages, carried). -/
-class FiniteExposed (α : Type) extends FiniteBeing α where
-  operations : α → List Nat
-  ops_nonempty : ∀ a, operations a ≠ []
-  ops_positive : ∀ a, ∀ c ∈ operations a, c > 0
-
-/-- **FiniteInertial** — inertial finite beings (aggregate mode). No
-    individuated operations. -/
-class FiniteInertial (α : Type) extends FiniteBeing α where
-  -- No additional fields.
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- §1. Cycle operation (XXXII + IV + VII)
@@ -1466,26 +1432,15 @@ theorem single_margin (c : FiniteSelfClosure) :
 -- §7. Bridge: FiniteExposed for the self-knowing closure
 -- ═══════════════════════════════════════════════════════════════════════════
 
-/-- [∎] BRIDGE — FiniteSelfClosure IS FiniteExposed (refined).
+/-- [∎] BRIDGE — FiniteSelfClosure IS FiniteExposed.
     The drain includes self-knowledge. The typechecker verifies
     that the epistemic is in the same regime as the constitutive.
     All trunk theorems (XVII, XXXIV, etc.) apply automatically
-    to the self-knowing closure.
-
-    Operations synthesized as [cycle_cost, self_knowledge_cost] — the
-    two distinct operational modalities of a self-knowing closure under I'. -/
+    to the self-knowing closure. -/
 instance : FiniteExposed FiniteSelfClosure where
   margin c := c.margin
   drain c := totalDrain c
   drain_pos c := by unfold totalDrain; have := c.cycle_cost_pos; have := c.sk_cost_pos; omega
-  operations c := [c.cycle_cost, c.self_knowledge_cost]
-  ops_nonempty c := by simp
-  ops_positive c := by
-    intro x hx
-    simp at hx
-    cases hx with
-    | inl h => rw [h]; exact c.cycle_cost_pos
-    | inr h => rw [h]; exact c.sk_cost_pos
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- INVENTORY

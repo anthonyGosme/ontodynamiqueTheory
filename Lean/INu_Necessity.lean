@@ -31,14 +31,15 @@ Imports : none (standalone)
 -- ═══════════════════════════════════════════════════════════════════════════
 
 /-!
-I-α (auto-fondation) : le Tout se fonde lui-même — pas de fondement
-extérieur. Encodé comme : l'acte est sa propre condition de possibilité.
+I-α (auto-fondation) : l'acte se fonde lui-même — capacité d'agir
+endogène, marge > 0 par soi, pas de fondement extérieur. Encodé comme :
+l'acte est sa propre condition de possibilité.
 
 I-β (être = faire) : être et faire sont indistincts. Encodé comme :
 ne pas faire = ne pas être (contraposition).
 -/
 
-/-- Le Tout : un acte auto-fondé avec un coût. -/
+/-- Un acte fini auto-fondé, portant un coût (IV). -/
 structure SelfGroundedAct where
   /-- L'acte a un coût positif (IV) -/
   cost : Nat
@@ -78,17 +79,16 @@ structure ContingentAct where
 /-!
 Dérivation de I-ν :
 
-  I-α : le Tout se fonde lui-même (pas de fondement extérieur)
+  I-α : l'acte se fonde lui-même (marge endogène, pas de fondement extérieur)
   I-β : ne pas faire = ne pas être
 
   Supposons l'acte contingent : il pourrait ne pas avoir lieu.
   "Ne pas avoir lieu" = "ne pas faire" = "ne pas être" (par I-β).
-  "Ne pas être" pour le Tout = rien ne fonde cette non-existence
-  (par I-α, il n'y a rien en dehors du Tout).
-  L'existence du Tout est fondée (par lui-même, I-α).
-  Sa non-existence est infondée.
-  Donc la contingence est exclue.
-  Donc l'acte est nécessaire.
+  Un acte contingent exigerait un fondement extérieur compensant le coût.
+  Or un acte auto-fondé n'a pas ce champ (par I-α, la capacité d'agir
+  est endogène — marge > 0 par soi). Sa non-existence n'a pas de
+  fondement disponible. Donc la contingence est exclue.
+  Donc l'acte est nécessaire — nécessité immanente à l'acte fini.
 
   En Lean : on montre que SelfGroundedAct ne peut pas avoir de
   fondement extérieur (ce serait contradictoire avec l'auto-fondation),

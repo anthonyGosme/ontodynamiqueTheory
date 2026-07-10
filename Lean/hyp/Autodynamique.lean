@@ -1,40 +1,42 @@
 /-!
 ===================================================================================
-  ONTODYNAMIQUE — LEAN 4 FORMALIZATION
-  Bipartite Axiom I (α+β) · 101 theorems · 0 sorry
-  2 axioms (I = α+β, V) + 1 corollary (IV, derived from I-β₂)
-  I-γ derived · VII from I-β₁ · R-XVIII integrated · Asymmetry derived
+  ONTODYNAMIQUE — FORMALISATION LEAN 4 v5.6
+  Axiome I bipartite (α+β) · 101 théorèmes · 0 sorry
+  2 axiomes (I = α+β, V) + 1 corollaire (IV, dérivé de I-β₂)
+  Voir InterAxiomIndependence.lean : theorem I_implies_IV
+  -- I-γ dérivé : voir DerivedResults.lean (DeriveGamma.gamma_derived, toDerivedPolarized, 0 sorry)
+  I-γ dérivé · VII de I-β₁ · R-XVIII intégré · Asymétrie dérivée
 ===================================================================================
 
-  AXIOM I — THE ACT, ONE WITH ITS OWN NECESSITY
+  AXIOME I — L'ACTE UN DE SA PROPRE NÉCESSITÉ
   ─────────────────────────────────────────────
-  Single statement, three epistemic cuts:
+  Énoncé unique, trois coupes épistémiques :
 
-  * **I-α** (self-grounding): the act grounds itself.
-    Formally: `cost > 0`, `drain > 0`, `margin : Nat`.
-    A system exists with positive cost. No external foundation required.
+  * **I-α** (auto-fondation) : l'acte se fonde lui-même.
+    Formellement : `cost > 0`, `drain > 0`, `margin : Nat`.
+    Un système existe avec un coût positif. Pas de fondement extérieur requis.
 
-  * **I-β** (being = doing): no inert substrate beneath an active process.
-    Formally: endogeneity of cost.
-    Three independent components:
-    - I-β₁: additive decomposition (`drain_net + regeneration = total_cost`)
-    - I-β₂: gradient endogeneity (`cost > recovery`)
-    - I-β₃: reflexivity (`ops * cost ≤ margin`)
+  * **I-β** (être = faire) : pas de substrat inerte sous un processus actif.
+    Formellement : endogénéité du coût.
+    Trois composantes indépendantes (audit H8, fichier séparé) :
+    - I-β₁ : décomposition additive (`drain_net + regeneration = total_cost`)
+    - I-β₂ : endogénéité du gradient (`cost > recovery`)
+    - I-β₃ : réflexivité (`ops * cost ≤ margin`)
 
-  * **I-γ** (no act without mode): every operation is qualified.
-    Formally: exhaustive partition facilitation + resistance = operations.
-    DERIVED THEOREM from I-β₁ + XLIV + operation individuability.
-    PolarizedClosure is CONSTRUCTED (toPolarizedClosure), not posited.
+  * **I-γ** (nul acte sans mode) : toute opération est qualifiée.
+    Formellement : partition exhaustive facilitation + résistance = opérations.
+    THÉORÈME DÉRIVÉ de I-β₁ + XLIV + individuabilité des opérations.
+    PolarizedClosure est CONSTRUITE (toPolarizedClosure), pas posée.
 
-  Commitment tiers:
-    I-min = I-α + I-β  →  structural trunk + XLIV + VII, 63 theorems
-    I-strong = I-min + I-γ(derived)  →  + modal partition + dark acting excluded, 69 theorems
-    I-strong + R-XVIII  →  + inter-regime dynamics + derived asymmetry, 102 theorems
+  Paliers d'engagement :
+    I-min = I-α + I-β  →  tronc structurel + XLIV + VII, 63 théorèmes
+    I-fort = I-min + I-γ(dérivé)  →  + partition modale + dark acting exclu, 69 théorèmes
+    I-fort + R-XVIII  →  + dynamique inter-régimes + asymétrie dérivée, 102 théorèmes
 
-  Axiomatic parsimony:
-    2 posited axioms (I = α+β, V). IV is a COROLLARY derived from I-β₂.
-    See InterAxiomIndependence.lean: theorem I_implies_IV.
-    I-γ, II, III, VII derived.
+  Parcimonie axiomatique :
+    2 axiomes posés (I = α+β, V). IV est un COROLLAIRE dérivé de I-β₂.
+    Voir InterAxiomIndependence.lean : theorem I_implies_IV.
+    I-γ, II, III, VII dérivés.
 
   SCOPE — WHAT THIS FORMALIZES
   ────────────────────────────
@@ -71,43 +73,46 @@ namespace OntoDynamique
 
 /-- The disjunction XXXII as a type. Every finite being either maintains
     its closure or dissolves. Exhaustivity is structural: the type has
-    exactly two constructors. -/
+    exactly two constructors. Proving accessibility of each branch
+    (attractor dynamics) requires fixpoint structure — open target. -/
 inductive Regime where
-  | closure   -- self-maintaining cycle
-  | dissolves -- structural exhaustion
+  | closure   -- "se refait" : self-maintaining cycle
+  | dissolves -- "se défait" : structural exhaustion
   deriving Repr
 
 /-- The three regimes of composition (R-XVII), defined by the site of
     irreversibility endossement under perturbation. -/
 inductive CompositionRegime where
-  | autonomousClosure  -- R-XVII-1: endogenous cost, self-maintenance
-  | normativePortage   -- R-XVII-2: cost externalized to host
-  | pureAggregate      -- R-XVII-3: no cycle, no compensation
+  | autonomousClosure  -- R-XVII-1 : endogenous cost, self-maintenance
+  | normativePortage   -- R-XVII-2 : cost externalized to host
+  | pureAggregate      -- R-XVII-3 : no cycle, no compensation
   deriving Repr, DecidableEq
 
+
 -- ═══════════════════════════════════════════════════════════════════════════
--- § 1. STRUCTURAL TRUNK (XVII, XXXII-a)
+-- § 1. TRONC STRUCTUREL (XVII, XXXII-a)
 -- ═══════════════════════════════════════════════════════════════════════════
 
-/-- [∎] XVII — EXHAUSTION.
+/-- [∎] XVII — ÉPUISEMENT.
     A finite margin under cumulative drain exceeding it cannot persist. -/
 theorem exhaustion_XVII (margin drain steps : Nat)
     (h_fatal : steps * drain > margin) :
     ¬ (margin ≥ steps * drain) := by
   intro h; omega
 
-/-- [∎] XXXII-a — EXOGENOUS DISSOLUTION.
+/-- [∎] XXXII-a — DISSOLUTION EXOGÈNE.
     An aggregate under persistent perturbation dissolves. -/
 theorem dissolution_XXXII_a (margin drain steps : Nat)
     (h_fatal : steps * drain > margin) :
     ¬ (margin ≥ steps * drain) := by
   intro h; omega
 
+
 -- ═══════════════════════════════════════════════════════════════════════════
--- § 2. CONSTITUTIVE MORTALITY (XXXIV)
+-- § 2. MORTALITÉ CONSTITUTIVE (XXXIV)
 -- ═══════════════════════════════════════════════════════════════════════════
 
-/-- [∎] XXXIV — CONSTITUTIVE MORTALITY.
+/-- [∎] XXXIV — MORTALITÉ CONSTITUTIVE.
     Even with perfect relational compensation, constitutional pressure
     alone (XII: price of partiality, non-compensable) exhausts the margin. -/
 theorem mortality_XXXIV (margin constitutive steps : Nat)
@@ -127,20 +132,20 @@ theorem lifespan_bound (margin c : Nat) (h_pos : c > 0) :
   simp only [Nat.mul_one] at h2
   omega
 
-/-- XII: the price of partiality — every partial act leaves an
-    incompressible residue. This is the constraint that generates
-    h_fatal in mortality_XXXIV. -/
+/-- XII : le prix de la partialité — chaque acte partiel laisse un résidu
+    incompressible. Ce n'est pas une hypothèse libre : c'est la contrainte
+    qui engendre h_fatal dans mortality_XXXIV. -/
 structure ConstitutivePressure where
   margin : Nat
-  /-- Per-act partiality cost (XII: non-compensable) -/
+  /-- Coût de la partialité par acte (XII : non-compensable) -/
   partiality_cost : Nat
   partiality_pos  : partiality_cost > 0
-  /-- Cost is strictly endogenous: it cannot be externalized -/
+  /-- Le coût est strictement endogène : il ne peut être externalisé -/
   non_compensable : ∀ (external : Nat), external < partiality_cost
 
-/-- [∎] XXXIV — h_fatal derived from XII.
-    Constitutional drain exceeds margin in finite time
-    because partiality_cost > 0 and non-compensable. -/
+/-- [∎] XXXIV — dérivation de h_fatal depuis XII.
+    Le drain constitutif dépasse la marge en temps fini
+    PARCE QUE partiality_cost > 0 ET non-compensable. -/
 theorem mortality_XXXIV_derived (p : ConstitutivePressure) :
     ∃ steps, steps * p.partiality_cost > p.margin :=
   ⟨p.margin + 1, by
@@ -149,18 +154,19 @@ theorem mortality_XXXIV_derived (p : ConstitutivePressure) :
       Nat.mul_le_mul_left _ h1
     simp only [Nat.mul_one] at h2; omega⟩
 
+
 -- ═══════════════════════════════════════════════════════════════════════════
--- § 3. NORMATIVITY AND AUTHENTICITY (XLIV → XLVI → XLVII)
+-- § 3. NORMATIVITÉ ET AUTHENTICITÉ (XLIV → XLVI → XLVII)
 -- ═══════════════════════════════════════════════════════════════════════════
 
-/-- [∎] XLVI — MARGIN EXHAUSTION UNDER DRAIN.
+/-- [∎] XLVI — ÉPUISEMENT DE LA MARGE SOUS DRAIN.
     Perturbation cost and drain cost draw on the SAME finite margin. -/
 theorem drain_exhaustion_XLVI (margin total_cost steps : Nat)
     (h_fatal : steps * total_cost > margin) :
     ¬ (margin ≥ steps * total_cost) := by
   intro h; omega
 
-/-- [∎] XLVII — LAW OF AUTHENTICITY.
+/-- [∎] XLVII — LOI D'AUTHENTICITÉ.
     The drain makes the difference: survives without it, dies with it. -/
 theorem authenticity_XLVII
     (margin perturbation_cost drain_cost steps : Nat)
@@ -170,13 +176,14 @@ theorem authenticity_XLVII
     ¬ (margin ≥ steps * (perturbation_cost + drain_cost)) :=
   ⟨h_survives_without, by intro h; omega⟩
 
+
 -- ═══════════════════════════════════════════════════════════════════════════
--- § 4. R-XVII — COMPOSITION GRADIENT BY PERTURBATION
+-- § 4. R-XVII — GRADIENT DE COMPOSITION PAR PERTURBATION
 -- ═══════════════════════════════════════════════════════════════════════════
 
 -- ── 4a. Portage: zero absorption ──
 
-/-- [∎] R-XVII-A — PORTAGE EXTERNALIZES ALL COST. -/
+/-- [∎] R-XVII-A — PORTAGE EXTERNALISES ALL COST. -/
 theorem portage_zero_absorption : (0 : Nat) = 0 := rfl
 
 -- ── 4b. Closure: positive but partial absorption ──
@@ -206,14 +213,14 @@ theorem gradient_RXVII (n cost recovery : Nat)
    closure_lt_aggregate n cost recovery h_n h_r h_net⟩
 
 /-
-  EPISTEMIC NOTE — R-XVII gradient vs empirical ratio.
-  This theorem proves the ORDER: 0 < closure_absorption < aggregate_absorption.
-  It does NOT prove the MAGNITUDE of the ratio (≈1.8× in MDSINE2).
-  The ratio is an empirical measurement documented in Section 4 of the manuscript.
-  The Lean formalization covers only the ordinal structure.
+  NOTE ÉPISTÉMIQUE — R-XVII gradient vs ratio empirique.
+  Ce théorème prouve l'ORDRE : 0 < absorption_clôture < absorption_agrégat.
+  Il ne prouve PAS la MAGNITUDE du ratio (≈1.8× dans MDSINE2).
+  Le ratio est une mesure empirique, documentée dans la Section 4 du manuscrit.
+  La formalisation Lean couvre uniquement la structure ordinale.
 -/
 
--- ── 4c. Trace: the closure loses margin (hysteresis, XV) ──
+-- ── 4c. Trace: the closure loses margin (hystérésis, XV) ──
 
 /-- [∎] R-XVII-B — THE CLOSURE BEARS THE TRACE.
     After endogenous absorption, the margin is strictly reduced. -/
@@ -250,11 +257,12 @@ theorem closure_neq_portage (margin n cost recovery : Nat)
   have := closure_trace margin n cost recovery h_margin h_n h_net
   omega
 
+
 -- ═══════════════════════════════════════════════════════════════════════════
--- § 5. NT-V — INEVITABLE ARTEFACTUAL DEBT
+-- § 5. NT-V — DETTE ARTEFACTUELLE INÉVITABLE
 -- ═══════════════════════════════════════════════════════════════════════════
 
-/-- [∎] NT-V — ARTEFACTUAL DEBT.
+/-- [∎] NT-V — DETTE ARTEFACTUELLE.
     A fixed modulator under structural drift inevitably goes out of band. -/
 theorem artefactual_debt_NTV (bandwidth drift steps : Nat)
     (h_fatal : steps * drift > bandwidth) :
@@ -271,8 +279,9 @@ theorem debt_deadline_NTV (bandwidth drift : Nat) (h_pos : drift > 0) :
   simp only [Nat.mul_one] at h2
   omega
 
+
 -- ═══════════════════════════════════════════════════════════════════════════
--- § 6. NT-XVI — APPARENT REVERSIBILITY AND HIDDEN COST
+-- § 6. NT-XVI — RÉVERSIBILITÉ APPARENTE ET COÛT CACHÉ
 -- ═══════════════════════════════════════════════════════════════════════════
 
 /-- [∎] NT-XVI — THE ROUNDTRIP COST IS PAID TWICE. -/
@@ -289,21 +298,23 @@ theorem oscillation_drain_NTXVI (margin c oscillations : Nat)
     ¬ (margin ≥ oscillations * (c + c)) := by
   intro h; omega
 
+
 -- ═══════════════════════════════════════════════════════════════════════════
--- § 7. XXXIII — REAPPLICABILITY AS TYPECLASS
+-- § 7. XXXIII — RÉAPPLICABILITÉ COMME TYPECLASS
 -- ═══════════════════════════════════════════════════════════════════════════
 
 /-!
-  XXXIII: any result derived from the structural trunk (XVII) applies to
-  EVERY domain satisfying its premises. Here it becomes a MECHANISM:
-  a Lean 4 typeclass.
+  XXXIII states that any result derived from the structural trunk (XVII)
+  applies to EVERY domain satisfying its premises. In the text, this is
+  an assertion. Here, it becomes a MECHANISM: a Lean 4 typeclass.
 
-  `FiniteExposed α` captures the minimal structure: a type α with a finite
-  margin and a positive drain. Any type satisfying this interface inherits
-  the exhaustion theorem automatically via typeclass resolution.
+  `FiniteExposed α` captures the minimal structure: a type α equipped with
+  a finite margin and a positive drain. ANY type satisfying this interface
+  inherits the exhaustion theorem automatically — not by copy-paste, but
+  by the typeclass resolution system.
 
   This is XXXIII verified mechanically: the transdomainality of the trunk
-  is a property of the code.
+  is not rhetoric, it is a property of the code.
 -/
 
 -- ── 7a. Domain structures ──
@@ -334,7 +345,7 @@ structure OscillatingInstitution where
 
 -- ── 7b. The typeclass: XXXIII as interface ──
 
-/-- [∎] XXXIII — REAPPLICABILITY.
+/-- [∎] XXXIII — RÉAPPLICABILITÉ.
     Any type equipped with a finite margin and a positive drain
     is FiniteExposed. All structural trunk results apply. -/
 class FiniteExposed (α : Type) where
@@ -342,27 +353,29 @@ class FiniteExposed (α : Type) where
   drain  : α → Nat
   drain_pos : ∀ a, 0 < drain a
 
-/-- Extension of FiniteExposed: exposure admits degrees.
-    A partial order on external pressure formalizes full V. -/
+/-- Extension de FiniteExposed : l'exposition admet des degrés.
+    Un ordre partiel sur la pression extérieure formalise V complet. -/
 class GradedExposure (α : Type) extends FiniteExposed α where
-  /-- Pressure admits an intensity, not just a presence -/
+  /-- La pression admet une intensité, pas seulement une présence -/
   pressure_level : α → Nat
-  /-- Weak monotonicity: more pressure → drain at least as strong -/
+  /-- Monotonie faible : plus de pression → drain au moins aussi fort -/
   pressure_monotone : ∀ a b : α,
     pressure_level a ≤ pressure_level b → drain a ≤ drain b
-  /-- Strict monotonicity: strictly higher pressure → strictly stronger drain -/
+  /-- Monotonie stricte : pression strictement plus haute → drain strictement plus fort -/
   pressure_strict_monotone : ∀ a b : α,
     pressure_level a < pressure_level b → drain a < drain b
-  /-- Quantitative link: stronger drain → n_b insufficient to dissolve a,
-      but sufficient to dissolve b. (margin a within bound, not margin b.) -/
+  /-- Lien quantitatif : drain plus fort → n_b pas suffisant pour dissoudre a,
+      mais suffisant pour dissoudre b. (margin a dans la borne, pas margin b.) -/
   drain_grows_with_pressure : ∀ a b : α,
     drain a < drain b →
     ∃ n_b : Nat, n_b * drain b > margin b ∧
                  n_b * drain a ≤ margin a
 
-/-- [∎] Dissolution gradient under increasing pressure.
-    Higher pressure → faster dissolution: ∃ n_b < n_a with
-    n_a dissolves a and n_b dissolves b. -/
+/-- [∎] Gradient de dissolution sous pression croissante.
+    Preuve sans appel forward :
+      - h_drain_lt de pressure_strict_monotone
+      - n_b et h_safe de drain_grows_with_pressure (marge de a)
+      - n_a = margin a + 1 : dissout a (drain ≥ 1), et n_b < n_a (car n_b * drain_a ≤ margin a). -/
 theorem faster_dissolution_under_higher_pressure
     {α : Type} [GradedExposure α] (a b : α)
     (h_pressure : GradedExposure.pressure_level a < GradedExposure.pressure_level b) :
@@ -374,7 +387,7 @@ theorem faster_dissolution_under_higher_pressure
   obtain ⟨n_b, h_dissolves_b, h_safe_a⟩ :=
     GradedExposure.drain_grows_with_pressure a b h_drain_lt
   have h_drain_pos : 1 ≤ FiniteExposed.drain a := FiniteExposed.drain_pos a
-  -- n_b ≤ margin a: since n_b * 1 ≤ n_b * drain_a ≤ margin_a
+  -- n_b ≤ margin a : car n_b * 1 ≤ n_b * drain_a ≤ margin_a
   have h_nb_le : n_b ≤ FiniteExposed.margin a := by
     have h_mul : n_b * 1 ≤ n_b * FiniteExposed.drain a :=
       Nat.mul_le_mul_left n_b h_drain_pos
@@ -385,7 +398,7 @@ theorem faster_dissolution_under_higher_pressure
   · -- n_b < margin a + 1
     omega
   · -- (margin a + 1) * drain a > margin a
-    -- = margin_a * drain_a + drain_a > margin_a, since drain_a ≥ 1
+    -- = margin_a * drain_a + drain_a > margin_a, et drain_a ≥ 1 > 0
     have h_mul2 : (FiniteExposed.margin a + 1) * 1 ≤
                   (FiniteExposed.margin a + 1) * FiniteExposed.drain a :=
       Nat.mul_le_mul_left (FiniteExposed.margin a + 1) h_drain_pos
@@ -408,14 +421,15 @@ theorem generic_exhaustion [FiniteExposed α] (a : α) :
 
 -- ── 7d. Four instances: one per domain ──
 
-/-- Guard: margin = 0 → already dissolved.
-    FiniteExposed does not exclude this case. -/
+/-- Guard FiniteExposed-1 : margin = 0 → déjà dissous.
+    FiniteExposed n'exclut pas ce cas. C'est une condition d'applicabilité. -/
 theorem already_dissolved [FiniteExposed α] (a : α)
     (h : FiniteExposed.margin a = 0) :
     1 * FiniteExposed.drain a > FiniteExposed.margin a := by
   simp [h]; exact FiniteExposed.drain_pos a
 
-/-- Guard: drain > margin → dissolution in 1 step. -/
+/-- Guard FiniteExposed-2 : drain > margin → dissolution en 1 pas.
+    Cas limite documenté : drain très grand, marge très petite. -/
 theorem single_step_dissolution [FiniteExposed α] (a : α)
     (h : FiniteExposed.drain a > FiniteExposed.margin a) :
     1 * FiniteExposed.drain a > FiniteExposed.margin a := by simp [h]
@@ -459,65 +473,69 @@ example (a : OscillatingInstitution) :
     ∃ n, n * (2 * a.cost_per_direction) > a.margin :=
   generic_exhaustion a
 
+
 -- ═══════════════════════════════════════════════════════════════════════════
 -- ═══════════════════════════════════════════════════════════════════════════
--- § 8. LVII — SELF-AFFECTION
--- LVII-a: cost positivity
--- LVII-b: endogeneity on own margin
+-- § 8. LVII — AUTO-AFFECTION
+-- LVII-a : positivité du coût
+-- LVII-b : endogénéité sur marge propre
 -- ═══════════════════════════════════════════════════════════════════════════
 
 /-!
-  LVII: Every closure (XXXII) performs operations on its own structure
-  to regenerate (VII). By R-I, every relation has a cost. When operator
-  and operand are the SAME being, the relation is reflexive AND costly.
+  LVII : Toute clôture (XXXII) effectue des opérations sur sa propre structure
+  pour se régénérer (VII). Par R-I, toute relation a un coût. Quand l'opérateur
+  et l'opéré sont le MÊME être, la relation est réflexive ET coûteuse.
 
-  This is self-affection: the finite being is affected by its own functioning.
-  A structural consequence of VII + R-I + I-β.
+  C'est l'auto-affection : l'être fini est affecté par son propre fonctionnement.
+  Ce n'est pas une métaphore — c'est une conséquence structurelle de VII + R-I + I-β.
+
+  Seuil franchi : la formalisation entre dans la chaîne subjective.
 -/
 
-/-- A self-affecting closure: it operates on itself at each regeneration
-    step, and each operation has a strictly positive cost. -/
+/-- Une clôture auto-affectée : elle opère sur elle-même à chaque pas
+    de régénération, et chaque opération a un coût strictement positif. -/
 structure SelfAffecting where
   margin : Nat
-  /-- Cost per self-regeneration operation (VII + R-I) -/
+  /-- Coût de chaque opération de régénération sur soi (VII + R-I) -/
   self_operation_cost : Nat
-  /-- IV + R-I: self-relation has an incompressible cost -/
+  /-- IV + R-I : le rapport à soi a un coût incompressible -/
   self_cost_pos : self_operation_cost > 0
-  /-- Number of regeneration operations per cycle -/
+  /-- Nombre d'opérations de régénération par cycle -/
   operations_per_cycle : Nat
   ops_pos : operations_per_cycle > 0
-  /-- I-β₃: cost falls on own margin (reflexivity) -/
+  /-- I-β₃ : le coût tombe sur la marge propre (réflexivité) -/
   self_cost_endogenous : operations_per_cycle * self_operation_cost ≤ margin
-  /-- Neutrality threshold for valence (LVIII) -/
+  /-- Seuil de neutralité pour la valence (LVIII) -/
   threshold : Nat
 
--- NOTE: I-α encodes the consequence of self-grounding (cost > 0),
--- not the act of self-grounding itself. The latter is an interpretive
--- commitment (≈₁), not formalizable without type circularity.
+-- NOTE : I-α encode la conséquence de l'auto-fondation (cost > 0),
+-- pas l'acte d'auto-fondation lui-même. Ce dernier est un engagement
+-- interprétatif (≈₁), non formalisable sans circularité de type.
 
-/-- [∎] LVII-a — SELF-AFFECTION IS COSTLY.
-    The total cost of a regeneration cycle is strictly positive.
-    The finite being pays for the mere fact of relating to itself. -/
+/-- [∎] LVII-a — L'AUTO-AFFECTION EST COÛTEUSE.
+    Le coût total d'un cycle de régénération est strictement positif.
+    L'être fini paie pour le seul fait de se rapporter à lui-même. -/
 theorem self_affection_positive_LVIIa (s : SelfAffecting) :
     s.operations_per_cycle * s.self_operation_cost > 0 :=
   Nat.mul_pos s.ops_pos s.self_cost_pos
 
-/-- [∎] LVII-b — SELF-AFFECTION DRAWS ON THE SAME MARGIN.
-    The cost of self-relation adds to other pressures (XII, XVIII)
-    and drains the same finite margin (IX, I-β: endogeneity). -/
+/-- [∎] LVII-b — L'AUTO-AFFECTION PRÉLÈVE SUR LA MÊME MARGE.
+    Le coût du rapport à soi s'ajoute aux autres pressions (XII, XVIII)
+    et draine la même marge finie (IX, I-β : endogénéité). -/
 theorem self_affection_endogenous_LVIIb (s : SelfAffecting) (external_cost cycles : Nat)
     (h_fatal : cycles * (external_cost + s.operations_per_cycle * s.self_operation_cost) > s.margin) :
     ¬ (s.margin ≥ cycles * (external_cost + s.operations_per_cycle * s.self_operation_cost)) := by
   intro h; omega
 
-/-- [∎] LVII-c — THE SYSTEM SURVIVES AT LEAST ONE SELF-AFFECTION CYCLE.
-    Requires I-β₃ (self_cost_endogenous). -/
+/-- [∎] LVII-c — LE SYSTÈME SURVIT AU MOINS UN CYCLE D'AUTO-AFFECTION.
+    Requiert I-β₃ (self_cost_endogenous). Sans ce champ, margin = 1
+    et cost = 1000 serait une SelfAffecting valide — ce qui est absurde. -/
 theorem self_affection_survives_one_cycle (s : SelfAffecting) :
     s.margin ≥ s.operations_per_cycle * s.self_operation_cost :=
   s.self_cost_endogenous
 
-/-- [∎] LVII-d — SELF-AFFECTING LIFE IS FINITE BUT NON-ZERO.
-    At least 1 cycle, but exhaustion in finite time (XVII). -/
+/-- [∎] LVII-d — LA VIE AUTO-AFFECTANTE EST FINIE MAIS NON-NULLE.
+    Au moins 1 cycle, mais épuisement en temps fini (XVII). -/
 theorem self_affection_finite_nonzero_life (s : SelfAffecting) :
     (∃ n, n > 0 ∧ n * (s.operations_per_cycle * s.self_operation_cost) ≤ s.margin) ∧
     (∃ n, n * (s.operations_per_cycle * s.self_operation_cost) > s.margin) := by
@@ -528,60 +546,62 @@ theorem self_affection_finite_nonzero_life (s : SelfAffecting) :
     have := Nat.mul_le_mul_left (s.margin + 1) h_drain
     simp only [Nat.mul_one] at this; omega
 
-/-- [∎] LVII-e — VALENCE BEARS ON THE COST THIS MARGIN SUPPORTS.
-    The operator/operand identity is formal: same margin, same cost. -/
+/-- [∎] LVII-e — LA VALENCE PORTE SUR LE COÛT QUE CETTE MARGE SUPPORTE.
+    L'identité opérateur/opéré est formelle : même marge, même coût. -/
 theorem self_affection_valence_on_own_cost (s : SelfAffecting)
     (h_pos : s.operations_per_cycle * s.self_operation_cost ≤ s.threshold) :
     s.margin ≥ s.operations_per_cycle * s.self_operation_cost ∧
     s.operations_per_cycle * s.self_operation_cost ≤ s.threshold :=
   ⟨s.self_cost_endogenous, h_pos⟩
 
-/-- LVII inherits FiniteExposed via XXXIII. -/
+/-- LVII hérite de FiniteExposed via XXXIII. -/
 instance : FiniteExposed SelfAffecting where
   margin s := s.margin
   drain  s := s.operations_per_cycle * s.self_operation_cost
   drain_pos s := self_affection_positive_LVIIa s
 
-/-- Self-affection leads to exhaustion (LVII via XXXIII). -/
+/-- L'auto-affection mène à l'épuisement (LVII via XXXIII). -/
 example (s : SelfAffecting) :
     ∃ n, n * (s.operations_per_cycle * s.self_operation_cost) > s.margin :=
   generic_exhaustion s
 
+
 -- ═══════════════════════════════════════════════════════════════════════════
 -- § 9. LVIII — VALENCE
--- LVIII-a: exhaustivity of the partition
--- LVIII  : valence as polarity (negative drains, positive facilitates)
--- Asymmetry: facilitation bounded / resistance unbounded
+-- LVIII-a : exhaustivité de la partition
+-- LVIII   : valence comme polarité (négative draine, positive facilite)
+-- Asymétrie : facilitation bornée / résistance non bornée
 -- ═══════════════════════════════════════════════════════════════════════════
 
 /-!
-  LVIII: Self-affection (LVII) is not neutral. By XLIV (constitutive
-  normativity), every closure operation falls into a partition:
-  it either FACILITATES or RESISTS the cycle.
+  LVIII : L'auto-affection (LVII) n'est pas neutre. Par XLIV (normativité
+  constitutive), toute opération de la clôture tombe dans une partition :
+  elle FACILITE le cycle ou elle y RÉSISTE.
 
-  Valence is this polarity. It is DERIVED from self-affection + normativity.
-  Any closure that relates to itself (LVII) and partitions its operations
-  (XLIV) has a valence on each operation.
+  La valence est cette polarité. Elle n'est pas ajoutée de l'extérieur —
+  elle est DÉRIVÉE de l'auto-affection + la normativité. Toute clôture
+  qui se rapporte à elle-même (LVII) et qui partitionne ses opérations
+  (XLIV) a une valence sur chaque opération.
 
-  Positive: the operation facilitates regeneration (reduced net cost)
-  Negative: the operation resists regeneration (increased net cost)
+  Positive : l'opération facilite la régénération (coût net réduit)
+  Négative : l'opération résiste à la régénération (coût net augmenté)
 -/
 
-/-- The two valence polarities (LVIII). -/
+/-- Les deux polarités de la valence (LVIII). -/
 inductive Valence where
-  | positive  -- facilitates the cycle: reduced net cost
-  | negative  -- resists the cycle: increased net cost
+  | positive  -- facilite le cycle : coût net réduit
+  | negative  -- résiste au cycle : coût net augmenté
   deriving Repr, DecidableEq
 
-/-- Valence assignment: compares an operation's cost to the neutrality
-    threshold. Below = facilitation, above = resistance. -/
+/-- Assignation de valence : compare le coût d'une opération au seuil
+    de neutralité. En-dessous = facilitation, au-dessus = résistance. -/
 def assignValence (operation_cost neutrality_threshold : Nat) : Valence :=
   if operation_cost ≤ neutrality_threshold then Valence.positive
   else Valence.negative
 
-/-- [∎] LVIII — THE PARTITION IS EXHAUSTIVE.
-    Every operation has a valence. There is no third option.
-    (Direct consequence of XLIV: normativity is binary.) -/
+/-- [∎] LVIII — LA PARTITION EST EXHAUSTIVE.
+    Toute opération a une valence. Il n'y a pas de troisième option.
+    (Conséquence directe de XLIV : la normativité est binaire.) -/
 theorem valence_exhaustive_LVIIIa (op_cost threshold : Nat) :
     assignValence op_cost threshold = Valence.positive ∨
     assignValence op_cost threshold = Valence.negative := by
@@ -590,9 +610,9 @@ theorem valence_exhaustive_LVIIIa (op_cost threshold : Nat) :
   · exact Or.inl rfl
   · exact Or.inr rfl
 
-/-- [∎] LVIII — NEGATIVE OPERATIONS DRAIN.
-    A negative-valence operation costs strictly more than the threshold.
-    It accelerates exhaustion — the link LVIII → XLVI. -/
+/-- [∎] LVIII — LES OPÉRATIONS NÉGATIVES DRAINENT.
+    Une opération de valence négative coûte strictement plus que le seuil.
+    Elle accélère l'épuisement — c'est le lien LVIII → XLVI. -/
 theorem negative_valence_drains (op_cost threshold : Nat)
     (h_neg : assignValence op_cost threshold = Valence.negative) :
     op_cost > threshold := by
@@ -601,9 +621,9 @@ theorem negative_valence_drains (op_cost threshold : Nat)
   · cases h_neg   -- Valence.positive = Valence.negative is impossible
   · omega          -- ¬ (op_cost ≤ threshold) → op_cost > threshold
 
-/-- [∎] LVIII — POSITIVE OPERATIONS FACILITATE.
-    A positive-valence operation costs at most the neutrality threshold.
-    It does not compromise the cycle — the constructive side of XLIV. -/
+/-- [∎] LVIII — LES OPÉRATIONS POSITIVES FACILITENT.
+    Une opération de valence positive coûte au plus le seuil de neutralité.
+    Elle ne compromet pas le cycle — c'est le versant constructif de XLIV. -/
 theorem positive_valence_facilitates (op_cost threshold : Nat)
     (h_pos : assignValence op_cost threshold = Valence.positive) :
     op_cost ≤ threshold := by
@@ -612,93 +632,107 @@ theorem positive_valence_facilitates (op_cost threshold : Nat)
   · omega          -- op_cost ≤ threshold from the split condition
   · cases h_pos    -- Valence.negative = Valence.positive is impossible
 
--- ── 9c. Constitutive asymmetry of valence ──
+-- ── 9c. Asymétrie constitutive de la valence ──
 
 /-!
-  Constitutive asymmetry:
-  - Facilitation is BOUNDED (Nat truncates to 0: one cannot facilitate
-    more than there is to facilitate)
-  - Resistance is UNBOUNDED (the surcharge can exceed the margin)
+  Asymétrie découverte par la vérification mécanique :
+  - La facilitation est BORNÉE (Nat tronque à 0 : on ne facilite pas
+    plus qu'il n'y a à faciliter)
+  - La résistance est NON BORNÉE (le surcoût peut excéder la marge)
 
-  This is XXXII (dissolution/closure asymmetry) at the scale of each
-  self-affecting operation. The text posits reduction ≤ base_cost as a
-  condition; Lean shows it is structurally guaranteed.
+  C'est XXXII (asymétrie dissolution/clôture) vu à l'échelle de chaque
+  opération auto-affectante. Le texte pose reduction ≤ base_cost comme
+  condition ; Lean montre que c'est garanti structurellement.
 -/
 
-/-- [∎] ASYMMETRY — FACILITATION IS BOUNDED.
-    In Nat, base_cost - reduction ≤ base_cost always holds.
-    Positive valence can never harm the cycle. -/
+/-- [∎] ASYMÉTRIE — LA FACILITATION EST BORNÉE.
+    En Nat, base_cost - reduction ≤ base_cost est toujours vrai.
+    La valence positive ne peut jamais nuire au cycle. -/
 theorem facilitation_bounded (base_cost reduction : Nat) :
     base_cost - reduction ≤ base_cost := by omega
 
-/-- [∎] ASYMMETRY — RESISTANCE IS UNBOUNDED.
-    The surcharge can exceed any margin.
-    Negative valence can always kill. -/
+/-- [∎] ASYMÉTRIE — LA RÉSISTANCE EST NON BORNÉE.
+    Le surcoût peut excéder n'importe quelle marge.
+    La valence négative peut toujours tuer. -/
 theorem resistance_unbounded (base_cost surcharge margin : Nat)
     (h : surcharge > margin) :
     base_cost + surcharge > margin := by omega
 
-/-- [∎] XXXIV-bis — MORTALITY VIA MAXIMAL FACILITATION.
-    Even under maximal facilitation (reduction = base_cost, cost → 0),
-    a constitutive floor (XII) remains. By XVII, the margin is exhausted.
-    Second proof of XXXIV by an independent path. -/
+/-- [∎] XXXIV-bis — MORTALITÉ VIA FACILITATION MAXIMALE.
+    Même sous facilitation maximale (reduction = base_cost, coût → 0),
+    un plancher constitutif (XII) reste. Par XVII, la marge s'épuise.
+    Deuxième preuve de XXXIV par un chemin indépendant.
+    NOTE: floor > 0 n'est PAS requis par la preuve. Si floor = 0,
+    h_steps (steps * 0 > margin) est irréalisable en Nat — la
+    condition se protège elle-même. Le plancher constitutif est
+    une condition d'applicabilité, pas une prémisse logique. -/
 theorem mortality_via_facilitation (margin floor steps : Nat)
     (h_steps : steps * floor > margin) :
     margin < steps * floor := h_steps
 
+
 -- ═══════════════════════════════════════════════════════════════════════════
--- § 9b. LVIII-bis — VALENCE → CYCLE FEEDBACK
--- Last mechanical result before LIX
+-- § 9b. LVIII-bis — RÉTROACTION VALENCE → CYCLE
+-- Dernier résultat mécanique avant LIX
 -- ═══════════════════════════════════════════════════════════════════════════
 
 /-!
-  LVIII-bis — Valence feedback on the cycle.
-  Valence conditions the parameters of the next cycle.
-  Last mechanical result before the interpretive leap of LIX.
+  LVIII-bis — Rétroaction de la valence sur le cycle.
+  La valence conditionne les paramètres du cycle suivant.
+  Dernier résultat mécanique avant le saut interprétatif de LIX.
+  Dépendances : LVII-b, LVIII, LVIII-a, XLIV, XXXVII, XXXVIII.
 
-  A positive-valence operation reduces the effective cost of the next cycle.
-  A negative-valence operation increases it. This is a direct consequence
-  of LVIII + VII (regeneration).
+  Une opération de valence positive réduit le coût effectif du cycle suivant.
+  Une opération de valence négative l'augmente. Ce n'est pas un ajout
+  ad hoc : c'est la conséquence directe de LVIII + VII (régénération).
 
-  If valence conditions parameters, and parameters determine the next cycle,
-  then valence modifies the exposure profile — exactly XX-b applied to the
-  subjective layer. The last mechanical link before LIX (minimal subjectivity).
+  Si la valence conditionne les paramètres, et que les paramètres
+  déterminent le cycle suivant, alors la valence modifie le profil
+  d'exposition — ce qui est exactement XX-b appliqué à la couche
+  subjective.
+
+  C'est le dernier maillon mécanique avant LIX (subjectivité minimale).
 -/
 
-/-- Effective cost of the next cycle, conditioned by the current
-    operation's valence. Positive → reduction, Negative → surcharge. -/
+/-- Coût effectif du cycle suivant, conditionné par la valence de
+    l'opération courante. Positive → réduction, Négative → surcoût. -/
 def effectiveCost (base_cost reduction surcharge : Nat)
     (v : Valence) : Nat :=
   match v with
   | Valence.positive => base_cost - reduction
   | Valence.negative => base_cost + surcharge
 
-/-- [∎] LVIII-bis — POSITIVE VALENCE REDUCES EFFECTIVE COST.
-    A facilitating operation reduces the next cycle's drain.
-    In Nat, base_cost - reduction ≤ base_cost always holds (truncation to zero). -/
+/-- [∎] LVIII-bis — LA VALENCE POSITIVE RÉDUIT LE COÛT EFFECTIF.
+    Une opération facilitante réduit le drain du cycle suivant.
+    NOTE: la condition reduction ≤ base_cost n'est PAS requise.
+    En Nat, base_cost - reduction ≤ base_cost est toujours vrai
+    (troncature à zéro). La réduction ne peut jamais nuire. -/
 theorem positive_reduces_cost (base_cost reduction surcharge : Nat) :
     effectiveCost base_cost reduction surcharge Valence.positive ≤ base_cost := by
   show base_cost - reduction ≤ base_cost; omega
 
-/-- [∎] LVIII-bis — NEGATIVE VALENCE INCREASES EFFECTIVE COST.
-    A resisting operation increases the next cycle's drain. -/
+/-- [∎] LVIII-bis — LA VALENCE NÉGATIVE AUGMENTE LE COÛT EFFECTIF.
+    Une opération résistante accroît le drain du cycle suivant. -/
 theorem negative_increases_cost (base_cost reduction surcharge : Nat)
     (h : surcharge > 0) :
     effectiveCost base_cost reduction surcharge Valence.negative > base_cost := by
   show base_cost + surcharge > base_cost; omega
 
-/-- [∎] LVIII-bis — FEEDBACK CONDITIONS EXHAUSTION.
-    Under persistent negative valence, increased cost accelerates
-    dissolution (link LVIII-bis → XVII). -/
+/-- [∎] LVIII-bis — LA RÉTROACTION CONDITIONNE L'ÉPUISEMENT.
+    Sous valence négative persistante, le coût accru accélère
+    l'atteinte de la dissolution (lien LVIII-bis → XVII). -/
 theorem negative_feedback_accelerates (margin base_cost surcharge steps : Nat)
     (h_fatal : steps * (base_cost + surcharge) > margin) :
     ¬ (margin ≥ steps * (base_cost + surcharge)) := by
   intro h; omega
 
-/-- [∎] LVIII-bis — FEEDBACK DISCRIMINATES FATES.
-    Same margin, same number of steps: valence alone makes the difference
-    between survival and dissolution. Parallel of XLVII (authenticity)
-    transposed to the subjective layer. -/
+/-- [∎] LVIII-bis — LA RÉTROACTION DISCRIMINE LES DESTINS.
+    Même marge, même nombre de pas : la valence fait la différence
+    entre survie et dissolution. Parallèle de XLVII (authenticité)
+    transposé à la couche subjective.
+    NOTE: ni reduction ≤ base_cost ni surcharge > 0 ne sont requis.
+    h_survives et h_dissolves suffisent. Le système est plus robuste
+    que ses prémisses explicites. -/
 theorem valence_feedback_discriminates
     (margin base_cost reduction surcharge steps : Nat)
     (h_survives : margin ≥ steps * (base_cost - reduction))
@@ -709,85 +743,94 @@ theorem valence_feedback_discriminates
   · show margin ≥ steps * (base_cost - reduction); exact h_survives
   · show ¬ (margin ≥ steps * (base_cost + surcharge)); omega
 
+
 -- ═══════════════════════════════════════════════════════════════════════════
--- § 9d. XXXVIII–XXXIX — CONSTITUTIVE METABOLIZATION AND NORMATIVITY CRITERION
--- XXXVIII: endogenous regeneration (prolongs without saving)
--- XXXIX : demarcation criterion (closure vs aggregate)
+-- § 9d. XXXVIII–XXXIX — MÉTABOLISATION CONSTITUTIVE ET CRITÈRE DE NORMATIVITÉ
+-- XXXVIII : régénération endogène (prolonge sans sauver)
+-- XXXIX  : critère de démarcation (clôture vs agrégat)
 -- ═══════════════════════════════════════════════════════════════════════════
 
 /-!
-  XXXVIII: A surviving closure does not passively suffer its cost.
-  It partially reincorporates it into its cycle. The cycle consumes
-  `total_cost` and regenerates `regeneration` per turn. The net drain
-  `drain_net` satisfies: drain_net + regeneration = total_cost.
+  XXXVIII : Une clôture survivante ne subit pas passivement son coût.
+  Elle le réincorpore partiellement dans son cycle. Le cycle consomme
+  `total_cost` et régénère `regeneration` par tour. Le drain net
+  `drain_net` vérifie : drain_net + regeneration = total_cost.
 
-  Without regeneration → aggregate, passive exhaustion (pure XVII).
-  With regeneration → closure, prolonged but mortal life (XXXIV).
+  Sans régénération → agrégat, épuisement passif (XVII pur).
+  Avec régénération → clôture, vie prolongée mais mortelle (XXXIV).
 
-  XXXIX: The normativity criterion = nonzero endogenous regeneration.
-  An aggregate (regen = 0) is excluded structurally, not by convention.
+  XXXIX : Le critère de normativité = régénération endogène non-nulle.
+  Un agrégat (regen = 0) est exclu structurellement, pas par convention.
 
-  Bridge LVIII-bis → XXXVIII: metabolization is the concrete mechanism
-  of valence feedback. Positive valence reduces net cost via regeneration;
-  negative valence increases it.
+  Pont LVIII-bis → XXXVIII : la métabolisation est le mécanisme concret
+  de la rétroaction de valence. La valence positive réduit le coût net
+  par régénération ; la valence négative l'augmente.
 -/
 
-/-- NOTE on drain_net_pos.
-    Philosophically, drain_net_pos is a consequence of XXXIV
-    (mortality is incompressible). Formally, it is posited as a field
-    because the derivation is circular. The theorem below shows
-    the conditional derivation. -/
+/-- NOTE sur l'inversion logique de drain_net_pos.
+    Philosophiquement, drain_net_pos est une conséquence de XXXIV
+    (la mortalité est incompressible). Formellement, c'est posé comme
+    champ car la dérivation est circulaire :
+      drain_net > 0
+      ← drain_net + regen = total_cost ∧ regen < total_cost
+      ← regen < total_cost
+      ← drain_net > 0 (via cost_decomposition)
+    Le théorème ci-dessous exhibe la dérivation conditionnelle. -/
 theorem drain_net_pos_derivable (drain_net regeneration total_cost : Nat)
     (h_decomp : drain_net + regeneration = total_cost)
     (h_regen_lt : regeneration < total_cost) :
     drain_net > 0 := by omega
 
-/-- A metabolizing closure: it consumes AND regenerates.
-    Invariant: drain_net + regeneration = total_cost (addition, not subtraction).
-    Net drain is > 0 (mortality preserved, XXXIV). -/
+/-- Une clôture métabolisante : elle consomme ET régénère.
+    Invariant : drain_net + regeneration = total_cost (addition, pas soustraction).
+    Le drain net est > 0 (mortalité préservée, XXXIV). -/
 structure MetabolizingClosure where
   margin : Nat
-  /-- Gross cost per cycle (LVII-a) -/
+  /-- Coût brut par cycle (LVII-a) -/
   total_cost : Nat
   total_cost_pos : total_cost > 0
-  /-- Margin recovered per cycle (XXXVIII: regeneration) -/
+  /-- Marge récupérée par cycle (XXXVIII : régénération) -/
   regeneration : Nat
-  /-- Nonzero regeneration — this is metabolization -/
+  /-- Régénération non-nulle — c'est ça la métabolisation -/
   regen_pos : regeneration > 0
-  /-- Net cost after regeneration -/
+  /-- Coût net après régénération -/
   drain_net : Nat
-  /-- XXXIV preserved: net drain remains positive (incompressible mortality) -/
+  /-- XXXIV préservé : le drain net reste positif (mortalité incompressible) -/
   drain_net_pos : drain_net > 0
-  /-- Additive decomposition (no Nat subtraction) -/
+  /-- Décomposition additive (pas de soustraction Nat) -/
   cost_decomposition : drain_net + regeneration = total_cost
 
-/-- MetabolizingClosure inherits FiniteExposed via XXXIII.
-    The drain is the NET drain (not the gross cost). -/
+/-- MetabolizingClosure hérite de FiniteExposed via XXXIII.
+    Le drain est le drain NET (pas le coût brut). 8e instance.
+    Placé AVANT les théorèmes pour que generic_exhaustion soit disponible. -/
 instance : FiniteExposed MetabolizingClosure where
   margin m := m.margin
   drain  m := m.drain_net
   drain_pos m := m.drain_net_pos
 
--- ── XXXVIII — Metabolization ──
+-- ── XXXVIII — Métabolisation ──
 
-/-- [∎] R-XVII — RECOVERY IS ENDOGENOUS REGENERATION.
-    The `recovery` parameter in gradient_RXVII is not free:
-    it is bounded by the closure's regeneration (I-β₁). -/
+/-- [∎] R-XVII — RECOVERY EST LA RÉGÉNÉRATION ENDOGÈNE.
+    Le paramètre `recovery` dans gradient_RXVII n'est pas libre :
+    il est borné par la régénération de la clôture (I-β₁). -/
 theorem recovery_is_bounded_by_regen (m : MetabolizingClosure) :
     ∃ recovery, recovery > 0 ∧ recovery < m.total_cost :=
   ⟨m.regeneration,
    m.regen_pos,
    by have := m.cost_decomposition; have := m.drain_net_pos; omega⟩
 
-/-- [∎] XXXVIII-a — NET DRAIN IS STRICTLY LESS THAN GROSS COST.
-    Regeneration reduces effective cost per cycle. -/
+/-- [∎] XXXVIII-a — LE DRAIN NET EST STRICTEMENT INFÉRIEUR AU COÛT BRUT.
+    La régénération réduit le coût effectif par cycle. C'est le contenu
+    formel de « la métabolisation prolonge ». -/
 theorem metabolization_reduces_drain (m : MetabolizingClosure) :
     m.drain_net < m.total_cost := by
   have := m.cost_decomposition; have := m.regen_pos; omega
 
-/-- [∎] XXXVIII-b — METABOLIZATION EXTENDS LIFE.
-    At every step where the non-regenerating system survives (gross drain),
-    the metabolizing system also survives (net drain ≤ gross drain). -/
+/-- [∎] XXXVIII-b — LA MÉTABOLISATION PROLONGE LA VIE.
+    À chaque pas où le système sans régénération survit (drain brut),
+    le système métabolisant survit aussi (drain net ≤ drain brut).
+    Contraposée : si le net est mort, le brut l'est déjà.
+    C'est « prolonge » : le net est toujours au moins aussi viable. -/
 theorem metabolization_extends_life (m : MetabolizingClosure) (n : Nat)
     (h_gross_alive : n * m.total_cost ≤ m.margin) :
     n * m.drain_net ≤ m.margin := by
@@ -795,26 +838,26 @@ theorem metabolization_extends_life (m : MetabolizingClosure) (n : Nat)
   have : n * m.drain_net ≤ n * m.total_cost := Nat.mul_le_mul_left n (Nat.le_of_lt h)
   omega
 
-/-- [∎] XXXVIII-c — METABOLIZATION DOES NOT SAVE (XXXIV preserved).
-    Despite regeneration, net drain > 0 exhausts the finite margin
-    in finite time. Mortality is incompressible.
-    XXXVIII-b + XXXVIII-c = "prolongs without saving". -/
+/-- [∎] XXXVIII-c — LA MÉTABOLISATION NE SAUVE PAS (XXXIV préservé).
+    Malgré la régénération, le drain net > 0 épuise la marge finie
+    en temps fini. La mortalité est incompressible. C'est « sans sauver ».
+    XXXVIII-b + XXXVIII-c = « prolonge sans sauver ». -/
 theorem metabolization_does_not_save (m : MetabolizingClosure) :
     ∃ n, n * m.drain_net > m.margin :=
   generic_exhaustion m
 
-/-- [∎] XXXVIII-d — REGENERATION IS ENDOGENOUS.
-    It never exceeds total cost — it reduces, it does not externalize.
-    I-β applied to metabolization. -/
+/-- [∎] XXXVIII-d — LA RÉGÉNÉRATION EST ENDOGÈNE.
+    Elle ne dépasse jamais le coût total — elle le réduit, elle ne
+    l'externalise pas. C'est le point I-β appliqué à la métabolisation. -/
 theorem metabolization_is_endogenous (m : MetabolizingClosure) :
     m.regeneration < m.total_cost := by
   have := m.cost_decomposition; have := m.drain_net_pos; omega
 
-/-- [∎] XXXVIII-e — BRIDGE LVIII-bis → XXXVIII.
-    A MetabolizingClosure's net drain, when below the neutrality threshold,
-    is classified as a positive-valence operation (LVIII-a).
-    Regeneration is the concrete mechanism of facilitation.
-    This closes the circuit LVIII-bis → XXXVIII → XXXIX. -/
+/-- [∎] XXXVIII-e — PONT LVIII-bis → XXXVIII.
+    Le drain net d'une MetabolizingClosure, quand il est sous le seuil
+    de neutralité, est classé comme opération de valence positive (LVIII-a).
+    La régénération est le mécanisme concret de la facilitation.
+    Cela ferme le circuit LVIII-bis → XXXVIII → XXXIX. -/
 theorem metabolization_feeds_valence (m : MetabolizingClosure)
     (threshold : Nat) (h : m.drain_net ≤ threshold) :
     assignValence m.drain_net threshold = Valence.positive := by
@@ -822,28 +865,28 @@ theorem metabolization_feeds_valence (m : MetabolizingClosure)
   · rfl
   · next h_neg => exact absurd h h_neg
 
--- ── XXXIX — Normativity criterion ──
+-- ── XXXIX — Critère de normativité ──
 
-/-- [∎] XXXIX-a — THE NORMATIVITY CRITERION IS NONZERO REGENERATION.
-    A system with regeneration = 0 cannot instantiate MetabolizingClosure —
-    regen_pos forbids it structurally. The demarcation criterion:
-    an aggregate does not metabolize. -/
+/-- [∎] XXXIX-a — LE CRITÈRE DE NORMATIVITÉ EST LA RÉGÉNÉRATION NON-NULLE.
+    Un système avec regeneration = 0 ne peut pas instancier
+    MetabolizingClosure — regen_pos l'interdit structurellement.
+    C'est le critère de démarcation : un agrégat ne métabolise pas. -/
 theorem normativity_criterion (m : MetabolizingClosure) :
     m.regeneration > 0 := m.regen_pos
 
-/-- [∎] XXXIX-b — WITHOUT REGENERATION, NET DRAIN = GROSS COST (AGGREGATE).
-    If regeneration = 0 in the additive decomposition, net drain
-    equals gross cost. The system is a pure aggregate (XVII). -/
+/-- [∎] XXXIX-b — SANS RÉGÉNÉRATION, DRAIN NET = COÛT BRUT (AGRÉGAT).
+    Si regeneration = 0 dans la décomposition additive, le drain net
+    égale le coût brut. Le système est un agrégat pur (XVII). -/
 theorem normativity_aggregate (drain_net regeneration total_cost : Nat)
     (h_decomp : drain_net + regeneration = total_cost)
     (h_no_regen : regeneration = 0) :
     drain_net = total_cost := by omega
 
-/-- [∎] XXXIX-c — NORMATIVITY DISCRIMINATES THE R-XVII GRADIENT.
-    Two profiles under the same additive decomposition:
-    - Closure: regen > 0 → drain_net < total_cost (metabolizes)
-    - Aggregate: regen = 0 → drain_net = total_cost (passively suffers)
-    The distinction is formal, not conventional. -/
+/-- [∎] XXXIX-c — LA NORMATIVITÉ DISCRIMINE LE GRADIENT R-XVII.
+    Trois profils sous la même décomposition additive :
+    - Clôture : regen > 0 → drain_net < total_cost (métabolise)
+    - Agrégat : regen = 0 → drain_net = total_cost (subit passivement)
+    La distinction est formelle, pas conventionnelle. -/
 theorem normativity_discriminates_gradient
     (drain_net regeneration total_cost : Nat)
     (h_decomp : drain_net + regeneration = total_cost) :
@@ -851,138 +894,143 @@ theorem normativity_discriminates_gradient
     (regeneration = 0 → drain_net = total_cost) := by
   constructor <;> intro h <;> omega
 
--- ── XLIV — Constitutive normativity ──
+-- ── XLIV — Normativité constitutive ──
 
 /-!
-  XLIV: The metabolizing closure produces its own discrimination threshold.
+  XLIV : La clôture métabolisante produit son propre seuil de discrimination.
 
-  `assignValence` (§9) takes a `neutrality_threshold` as a free parameter.
-  XLIV closes this degree of freedom: the constitutive threshold of a closure
-  IS its `drain_net` — the endogenous cost from the I-β₁ decomposition.
+  `assignValence` (§9) prend un `neutrality_threshold` comme paramètre libre.
+  XLIV ferme ce degré de liberté : le seuil constitutif d'une clôture
+  EST son `drain_net` — le coût endogène issu de la décomposition I-β₁.
 
-  Below threshold (op_cost ≤ drain_net) = maintenance (facilitation).
-  Above threshold (op_cost > drain_net) = compromise (resistance).
+  Sous le seuil (op_cost ≤ drain_net) = maintien (facilitation).
+  Au-dessus (op_cost > drain_net) = compromission (résistance).
 
-  The threshold is endogenous (additive decomposition), positive (XXXIV),
-  and discriminating (XXXIX). This is the formal content of normativity.
+  Le seuil est endogène (décomposition additive), positif (XXXIV),
+  et discriminant (XXXIX). C'est le contenu formel de la normativité.
 -/
 
-/-- [∎] XLIV — CONSTITUTIVE NORMATIVITY.
-    The metabolizing closure produces its own valence threshold.
-    Threshold = drain_net (endogenous cost, I-β₁). -/
+/-- [∎] XLIV — NORMATIVITÉ CONSTITUTIVE.
+    La clôture métabolisante produit son propre seuil de valence.
+    Le seuil = drain_net (coût endogène, I-β₁). -/
 theorem constitutive_norm_XLIV (m : MetabolizingClosure) :
     ∃ threshold, threshold = m.drain_net ∧ threshold > 0 :=
   ⟨m.drain_net, rfl, m.drain_net_pos⟩
 
-/-- [∎] XLIV-bis — THE THRESHOLD IS ENDOGENOUS.
-    It comes from the additive decomposition (I-β₁), not from an external norm. -/
+/-- [∎] XLIV-bis — LE SEUIL EST ENDOGÈNE.
+    Il vient de la décomposition additive (I-β₁), pas d'une norme externe. -/
 theorem constitutive_norm_endogenous_XLIV_bis (m : MetabolizingClosure) :
     m.drain_net + m.regeneration = m.total_cost :=
   m.cost_decomposition
 
-/-- [∎] XLIV-ter — THE THRESHOLD DISCRIMINATES.
-    Every operation is classified by the constitutive threshold.
-    This is the link XLIV → LVIII: normativity feeds valence. -/
+/-- [∎] XLIV-ter — LE SEUIL DISCRIMINE.
+    Toute opération est classifiée par le seuil constitutif.
+    C'est le lien XLIV → LVIII : la normativité alimente la valence. -/
 theorem constitutive_norm_discriminates_XLIV_ter (m : MetabolizingClosure)
     (op_cost : Nat) :
     assignValence op_cost m.drain_net = Valence.positive ∨
     assignValence op_cost m.drain_net = Valence.negative :=
   valence_exhaustive_LVIIIa op_cost m.drain_net
 
--- ── VII — Constitutive negation (from I-β₁, without I-γ) ──
+-- ── VII — Négation constitutive (de I-β₁, sans I-γ) ──
 
 /-!
-  VII: Every determination is negation — positing a form means excluding.
+  VII : Toute détermination est négation — poser une forme, c'est exclure.
 
-  The additive partition I-β₁ (drain_net + regeneration = total_cost)
-  IS the structure of constitutive negation. Positing drain (drain > 0)
-  excludes cost being entirely regeneration (and vice versa).
+  La partition additive I-β₁ (drain_net + regeneration = total_cost)
+  EST la structure de la négation constitutive. Poser du drain (drain > 0)
+  exclut que le coût soit entièrement régénération (et inversement).
 
-  VII is thus a theorem of I-β₁ alone — no I-γ needed.
-  The metabolic partition (I-β₁) suffices.
+  VII est donc un théorème de I-β₁ seul — pas de I-γ.
 
-  XXXVIII-a (`metabolization_reduces_drain`) and XXXVIII-d
-  (`metabolization_is_endogenous`) already prove VII's content.
-  The theorems below name it explicitly.
+  Note historique : VII était précédemment dérivé de PolarizedClosure (I-γ).
+  La re-dérivation ci-dessous montre qu'il n'a pas besoin de la partition
+  modale — la partition métabolique (I-β₁) suffit.
+
+  XXXVIII-a (`metabolization_reduces_drain`) et XXXVIII-d
+  (`metabolization_is_endogenous`) prouvent déjà le contenu de VII.
+  Les théorèmes ci-dessous le nomment explicitement.
 -/
 
-/-- [∎] VII — CONSTITUTIVE NEGATION (from I-β₁).
-    Every determination excludes. In the additive decomposition:
-    positive drain → regeneration is strictly partial.
-    Positing one component excludes it being the whole. -/
+/-- [∎] VII — NÉGATION CONSTITUTIVE (de I-β₁).
+    Toute détermination exclut. Dans la décomposition additive :
+    le drain est positif → la régénération est strictement partielle.
+    Poser une composante, c'est exclure qu'elle soit le tout. -/
 theorem negation_VII_from_beta (m : MetabolizingClosure) :
     m.drain_net > 0 → m.regeneration < m.total_cost := by
   intro _; have := m.cost_decomposition; omega
 
-/-- [∎] VII-bis — CONVERSE (from I-β₁).
-    Positive regeneration → drain is strictly partial.
-    Negation is symmetric: positing one excludes the other. -/
+/-- [∎] VII-bis — RÉCIPROQUE (de I-β₁).
+    La régénération est positive → le drain est strictement partiel.
+    La négation est symétrique : poser l'un exclut de l'autre. -/
 theorem negation_VII_bis_from_beta (m : MetabolizingClosure) :
     m.regeneration > 0 → m.drain_net < m.total_cost := by
   intro _; have := m.cost_decomposition; omega
 
-/-- [∎] VII-ter — LIMIT CASE (from I-β₁).
-    If drain is all the cost, regeneration is zero.
-    Negation is total: form exhausts possibility. -/
+/-- [∎] VII-ter — CAS LIMITE (de I-β₁).
+    Si le drain est tout le coût, la régénération est nulle.
+    La négation est totale : la forme épuise la possibilité. -/
 theorem negation_VII_ter_from_beta (m : MetabolizingClosure) :
     m.drain_net = m.total_cost → m.regeneration = 0 := by
   intro _; have := m.cost_decomposition; omega
 
-/-- [∎] VII-GENERAL — NEGATION ON ANY ADDITIVE PARTITION.
-    Abstract principle: in any decomposition a + b = c,
-    if a > 0 then b < c. The arithmetic kernel of VII. -/
+/-- [∎] VII-GÉNÉRAL — NÉGATION SUR TOUTE PARTITION ADDITIVE.
+    Le principe abstrait : dans toute décomposition a + b = c,
+    si a > 0 alors b < c. C'est le noyau arithmétique de VII.
+    Indépendant de toute structure — pur omega. -/
 theorem negation_general (a b c : Nat) (h_partition : a + b = c)
     (h_pos : a > 0) : b < c := by omega
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- § 10. XX — EXPOSURE PROFILE DRIFT
+-- § 10. XX — DÉRIVE DU PROFIL D'EXPOSITION
 
 /-!
-  XX: Drift is not a parameter — it is a CONSEQUENCE.
+  XX : La dérive n'est pas un paramètre — c'est une CONSÉQUENCE.
 
-  Premises:
-  - VII : the closure regenerates (it does not remain identical)
-  - XV  : every transformation is irreversible (post-state ≠ pre-state)
-  - IX  : the coverage (set of protected vulnerabilities) is finite
+  Prémisses :
+  - VII  : la clôture se régénère (elle ne reste pas identique)
+  - XV   : toute transformation est irréversible (l'état post ≠ état pré)
+  - IX   : la couverture (ensemble des vulnérabilités protégées) est finie
 
-  Consequence: at each regeneration step, the state changes (XV).
-  A modulator calibrated for state n does not necessarily cover the
-  vulnerabilities of state n+1. The uncovered count forms a
-  non-decreasing sequence.
+  Conséquence : à chaque pas de régénération, l'état change (XV).
+  Un modulateur calibré pour l'état n ne couvre pas nécessairement
+  les vulnérabilités de l'état n+1. Le nombre de vulnérabilités
+  non couvertes forme une suite non-décroissante.
 
-  This makes NT-V DISTINCT from XVII: the drain is not an external
-  parameter — it is GENERATED by regeneration itself.
+  C'est ce qui rend NT-V DISTINCT de XVII dans le code : le drain
+  n'est pas un paramètre externe — il est ENGENDRÉ par la régénération
+  elle-même.
 -/
 
-/-- An exposure profile evolving under regeneration. -/
+/-- Un profil d'exposition évoluant sous régénération. -/
 structure EvolvingProfile where
-  /-- Total possible vulnerabilities (finite, IX) -/
+  /-- Nombre total de vulnérabilités possibles (fini, IX) -/
   total_vulnerabilities : Nat
-  /-- Vulnerabilities covered by the modulator (calibrated at t=0) -/
+  /-- Vulnérabilités couvertes par le modulateur (calibré à t=0) -/
   initial_coverage : Nat
-  /-- Per regeneration step, at least one vulnerability shifts (XV + VII) -/
+  /-- Par pas de régénération, au moins une vulnérabilité change (XV + VII) -/
   shift_per_step : Nat
   shift_pos : shift_per_step > 0
-  /-- The modulator covers at most the total -/
+  /-- Le modulateur couvre au plus le total -/
   coverage_bounded : initial_coverage ≤ total_vulnerabilities
 
-/-- Uncovered vulnerabilities after n regeneration steps.
-    The modulator is fixed (XIII), the profile drifts by `shift` per step.
-    New vulnerabilities accumulate without compensation. -/
+/-- Vulnérabilités non couvertes après n pas de régénération.
+    Le modulateur est fixe (XIII), le profil dérive de `shift` par pas.
+    Les nouvelles vulnérabilités s'accumulent sans compensation. -/
 def uncovered_after (p : EvolvingProfile) (steps : Nat) : Nat :=
   steps * p.shift_per_step
 
-/-- [∎] XX-a — DRIFT IS MONOTONICALLY INCREASING.
-    More regeneration steps → more uncovered vulnerabilities.
-    Drift never retreats (XV: irreversibility). -/
+/-- [∎] XX-a — LA DÉRIVE EST MONOTONE CROISSANTE.
+    Plus de pas de régénération → plus de vulnérabilités non couvertes.
+    La dérive ne recule jamais (XV : irréversibilité). -/
 theorem drift_monotone_XXa (p : EvolvingProfile) (n m : Nat) (h : n ≤ m) :
     uncovered_after p n ≤ uncovered_after p m := by
   unfold uncovered_after
   exact Nat.mul_le_mul_right p.shift_per_step h
 
-/-- [∎] XX-b — DRIFT IS STRICTLY INCREASING.
-    At each additional step, at least one new vulnerability appears.
-    XX-a is non-regression, XX-b is accumulation. -/
+/-- [∎] XX-b — LA DÉRIVE EST STRICTEMENT CROISSANTE.
+    À chaque pas supplémentaire, au moins une nouvelle vulnérabilité apparaît.
+    Distinction XX-a/XX-b : XX-a est la non-régression, XX-b est l'accumulation. -/
 theorem drift_strict_XXb (p : EvolvingProfile) (n : Nat) :
     uncovered_after p n < uncovered_after p (n + 1) := by
   unfold uncovered_after
@@ -990,18 +1038,18 @@ theorem drift_strict_XXb (p : EvolvingProfile) (n : Nat) :
   have := p.shift_pos
   omega
 
-/-- [∎] XX → NT-V — DRIFT GENERATES DEBT.
-    The modulator goes out of band when uncovered vulnerabilities
-    exceed its residual capacity. Not an external parameter:
-    a consequence of regeneration (VII) + irreversibility (XV). -/
+/-- [∎] XX → NT-V — LA DÉRIVE ENGENDRE LA DETTE.
+    Le modulateur sort de bande quand les vulnérabilités non couvertes
+    dépassent sa capacité résiduelle. Ce n'est pas un paramètre externe :
+    c'est une conséquence de la régénération (VII) + l'irréversibilité (XV). -/
 theorem drift_causes_debt (p : EvolvingProfile) (modulator_bandwidth : Nat)
     (h_fatal : uncovered_after p (modulator_bandwidth / p.shift_per_step + 1) > modulator_bandwidth) :
     ¬ (modulator_bandwidth ≥ uncovered_after p (modulator_bandwidth / p.shift_per_step + 1)) := by
   intro h; omega
 
-/-- [∎] XX — DRIFT EXCEEDS ANY FINITE BAND.
-    For any band B and shift δ > 0, ∃ n such that n*δ > B.
-    Deadline existence theorem — derived, not posited. -/
+/-- [∎] XX — LA DÉRIVE DÉPASSE TOUTE BANDE FINIE.
+    Pour toute bande B et tout shift δ > 0, ∃ n tel que n*δ > B.
+    C'est le théorème d'existence de la deadline — dérivé, pas posé. -/
 theorem drift_exceeds_any_band (p : EvolvingProfile) (band : Nat) :
     ∃ n, uncovered_after p n > band := by
   unfold uncovered_after
@@ -1012,74 +1060,76 @@ theorem drift_exceeds_any_band (p : EvolvingProfile) (band : Nat) :
   simp only [Nat.mul_one] at h2
   omega
 
-/-- XX inherits FiniteExposed via XXXIII.
-    Margin = total vulnerabilities, drain = shift. -/
+/-- XX hérite de FiniteExposed via XXXIII.
+    La marge est le total des vulnérabilités, le drain est le shift. -/
 instance : FiniteExposed EvolvingProfile where
   margin p := p.total_vulnerabilities
   drain  p := p.shift_per_step
   drain_pos p := p.shift_pos
 
+
 -- ═══════════════════════════════════════════════════════════════════════════
--- § 10b. LXXIV — PARASITIC SUB-CLOSURE
--- 7th FiniteExposed instance
--- Isomorphic to NT-V via XXXIII
+-- § 10b. LXXIV — SOUS-CLÔTURE PARASITE
+-- 7e instance de FiniteExposed
+-- Isomorphe à NT-V via XXXIII
 -- ═══════════════════════════════════════════════════════════════════════════
 
 /-!
-  LXXIV: A sub-closure (e.g., organ, module, psychic function) is subject
-  to its host's profile drift (XX-b). Its adequacy band is finite (IX).
-  The drain is the host profile drift.
+  LXXIV : Une sous-clôture (ex: organe, module, fonction psychique)
+  est soumise à la dérive du profil de son hôte (XX-b). Sa bande
+  d'adéquation est finie (IX). Le drain est la dérive du profil hôte.
 
-  Structurally identical to NT-V (artefactual debt): same typeclass
-  (`FiniteExposed`), same exhaustion theorem (`generic_exhaustion`),
-  same consequences (finite deadline).
+  C'est structurellement identique à NT-V (dette artefactuelle) :
+  même typeclass (`FiniteExposed`), même théorème d'épuisement
+  (`generic_exhaustion`), mêmes conséquences (deadline finie).
 
-  The NT-V / LXXIV convergence is not an analogy — it is a formal identity
-  verified by the type system.
+  La convergence NT-V / LXXIV n'est pas une analogie — c'est une
+  identité formelle vérifiée par le système de types.
 -/
 
-/-- A sub-closure exposed to its host's drift.
-    The adequacy band plays the role of margin,
-    the host profile drift plays the role of drain. -/
+/-- Une sous-clôture exposée à la dérive de son hôte.
+    La bande d'adéquation joue le rôle de marge,
+    la dérive du profil hôte joue le rôle de drain. -/
 structure SubClosure where
-  /-- Functional adequacy band (IX: finite) -/
+  /-- Bande d'adéquation fonctionnelle (IX : finie) -/
   adequacy_band : Nat
-  /-- Host profile drift per regeneration step (XX-b) -/
+  /-- Dérive du profil hôte par pas de régénération (XX-b) -/
   host_drift : Nat
   host_drift_pos : host_drift > 0
 
-/-- LXXIV inherits FiniteExposed via XXXIII.
-    Same typeclass as ArtefactualModulator — formal convergence. -/
+/-- LXXIV hérite de FiniteExposed via XXXIII.
+    Même typeclass que ArtefactualModulator — c'est la convergence. -/
 instance : FiniteExposed SubClosure where
   margin s := s.adequacy_band
   drain  s := s.host_drift
   drain_pos s := s.host_drift_pos
 
-/-- [∎] LXXIV — THE SUB-CLOSURE IS EXHAUSTED (via XXXIII).
-    Identical to NT-V by the type system. The symptom (LXXIV)
-    and technical debt (NT-V) are the same theorem instantiated
-    on two different structures. -/
+/-- [∎] LXXIV — LA SOUS-CLÔTURE S'ÉPUISE (via XXXIII).
+    Identique à NT-V par le système de types. Le symptôme (LXXIV)
+    et la dette technique (NT-V) sont le même théorème instancié
+    sur deux structures différentes. -/
 example (s : SubClosure) :
     ∃ n, n * s.host_drift > s.adequacy_band :=
   generic_exhaustion s
 
+
 -- ═══════════════════════════════════════════════════════════════════════════
--- § 11. XXIX + XXXII — CLASSIFICATION BY PIGEONHOLE ON FINITE STATE SPACE
+-- § 11. XXIX + XXXII — CLASSIFICATION PAR PIGEONHOLE SUR ESPACE FINI
 -- ═══════════════════════════════════════════════════════════════════════════
 
 /-!
-  XXIX proceeds by exhaustion: on a finite state space (IX), every
-  trajectory either reaches zero margin (dissolution) or revisits a
-  state (cycle = closure candidate). There is no third option.
+  XXIX procède par exhaustion : sur un espace d'états fini (IX), toute
+  trajectoire soit atteint la marge zéro (dissolution), soit revisite
+  un état (cycle = clôture candidate). Il n'y a pas de troisième option.
 
-  The proof relies on the pigeonhole principle proved from scratch
-  in pure Lean 4 — without Mathlib.
+  La preuve repose sur le principe des tiroirs (pigeonhole) prouvé
+  de zéro en Lean 4 pur — sans Mathlib.
 
-  XXXII complete: the type `Regime {closure | dissolves}` is proved
-  exhaustive — as a classification theorem.
+  XXXII complet : le type `Regime {closure | dissolves}` est prouvé
+  exhaustif. Non comme déclaration, mais comme théorème de classification.
 -/
 
--- ── 11a. Infrastructure: pigeonhole without Mathlib ──
+-- ── 11a. Infrastructure : pigeonhole sans Mathlib ──
 
 /-- Skip a value: maps {0,..,n} minus {v} injectively to {0,..,n-1}. -/
 private def skipVal (v x : Nat) : Nat :=
@@ -1162,15 +1212,23 @@ structure FiniteSystem where
   transition : Fin states → Fin states
   margin : Fin states → Nat
 
-/-- [∎] XXIX — TRAJECTORY DICHOTOMY.
-    HYPOTHESIS: FINITE and DISCRETE state space (states : Nat).
-    Continuous or countably infinite state spaces: out of scope.
-    The result strictly requires Fin n — it fails on ℕ.
+/-- [∎] XXIX — DICHOTOMIE TRAJECTOIRE.
+    HYPOTHÈSE : espace d'états FINI et DISCRET (states : Nat).
+    Systèmes à états continus ou infinis dénombrables : hors portée.
+    Le résultat repose sur le principe des tiroirs (pigeonhole) qui requiert
+    strictement Fin n — il échoue sur ℕ.
 
-    On a finite state space, every trajectory:
-    (a) reaches zero margin (dissolution), OR
-    (b) revisits a state with positive margin everywhere (closure candidate).
-    No third option — pigeonhole on Fin. -/
+    NOTE : la dichotomie échoue sans finitude.
+    Exemple : espace d'états ℕ, transition n ↦ n+1, marge constante = 1.
+    La trajectoire ne revisite jamais (pas de pigeonhole sur ℕ),
+    et la marge reste > 0. Pas de dissolution, pas de cycle.
+    → Le résultat est strict : il requiert states : Fin n.
+    (Commentaire, pas de code — ℕ est infini, pas de FiniteSystem.)
+
+    Sur un espace fini, toute trajectoire :
+    (a) atteint la marge zéro (dissolution), OU
+    (b) revisite un état avec marge positive partout (clôture candidate).
+    Il n'y a pas de troisième option — c'est le pigeonhole sur Fin. -/
 theorem trajectory_dichotomy_XXIX (sys : FiniteSystem) (start : Fin sys.states) :
     (∃ t : Nat, t ≤ sys.states ∧
       sys.margin (orbit sys.transition start t) = 0) ∨
@@ -1200,9 +1258,9 @@ noncomputable def classifyTrajectory (sys : FiniteSystem)
   then Regime.dissolves
   else Regime.closure
 
-/-- [∎] XXXII — NO THIRD REGIME.
-    The Regime type has exactly two constructors. Every trajectory
-    falls into one or the other. The classification is exhaustive. -/
+/-- [∎] XXXII — PAS DE TROISIÈME RÉGIME.
+    Le type Regime a exactement deux constructeurs. Chaque trajectoire
+    tombe dans l'un ou l'autre. La classification est exhaustive. -/
 theorem no_third_regime (sys : FiniteSystem) (start : Fin sys.states) :
     classifyTrajectory sys start = Regime.dissolves ∨
     classifyTrajectory sys start = Regime.closure := by
@@ -1211,10 +1269,10 @@ theorem no_third_regime (sys : FiniteSystem) (start : Fin sys.states) :
   · exact Or.inl rfl
   · exact Or.inr rfl
 
-/-- [∎] XXXII — CLOSURE IMPLIES A POSITIVE-MARGIN CYCLE.
-    If the trajectory does not dissolve, it revisits a state — and all
-    intermediate states have margin > 0. The bridge between
-    "no dissolution" and "self-maintaining cycle" (closure). -/
+/-- [∎] XXXII — LA CLÔTURE IMPLIQUE UN CYCLE À MARGE POSITIVE.
+    Si la trajectoire ne se dissout pas, elle revisite un état — et tous
+    les états intermédiaires ont marge > 0. C'est le pont entre
+    « pas de dissolution » et « cycle auto-maintenu » (clôture). -/
 theorem closure_has_cycle (sys : FiniteSystem) (start : Fin sys.states)
     (h : classifyTrajectory sys start = Regime.closure) :
     ∃ i j : Nat, i < j ∧ j ≤ sys.states ∧
@@ -1234,28 +1292,30 @@ theorem closure_has_cycle (sys : FiniteSystem) (start : Fin sys.states)
       orbit_revisits sys.states sys.transition start
     exact ⟨i, j, hij, hj, heq, fun k hk => hpos k (by omega)⟩
 
--- ── 11e. ATTRACTOR: trapping, convergence, stability ──
+-- ── 11e. ATTRACTEUR : piégeage, convergence, stabilité ──
 
 /-!
-  Is the closure merely a well-formed type, or is it an attractor?
-  Answer in 5 theorems:
+  Le critique demande : la clôture n'est-elle qu'un type bien formé,
+  ou est-elle un attracteur ? Réponse en 5 théorèmes :
 
-  1. Trapping: a deterministic cycle is absorbing (periodicity)
-  2. Bounded convergence: every surviving trajectory enters a cycle in ≤ s steps
-  3. Stability: absorbable perturbation → cycle survives
-  4. Fatal perturbation → dissolution (no wandering)
-  5. Regime uniqueness: no_third_regime + trapping + convergence
-     = closure is the unique TYPE of stable attractor
+  1. Piégeage : un cycle déterministe est absorbant (périodicité)
+  2. Convergence bornée : toute trajectoire survivante entre dans
+     un cycle en ≤ s pas
+  3. Stabilité : perturbation absorbable → cycle survit
+  4. Perturbation fatale → dissolution (pas d'errance)
+  5. Unicité du régime : no_third_regime + piégeage + convergence
+     = la clôture est l'unique TYPE d'attracteur stable
 
-  Note: two different trajectories may converge to different cycles.
-  Uniqueness is about the regime TYPE (closure vs dissolution),
-  not the cycle itself.
+  Note sur l'unicité : deux trajectoires différentes peuvent converger
+  vers des cycles différents. L'unicité porte sur le TYPE de régime
+  (clôture vs dissolution), pas sur le cycle lui-même. C'est ce que
+  le texte revendique philosophiquement.
 -/
 
-/-- [∎] TRAPPING — A deterministic cycle is absorbing.
-    If the trajectory revisits a state (pigeonhole), then by
-    determinism it is periodic from that point on.
-    Proof by induction on k: deterministic f propagates equality. -/
+/-- [∎] PIÉGEAGE — Un cycle déterministe est absorbant.
+    Si la trajectoire revisite un état (pigeonhole), alors par
+    déterminisme elle est périodique à partir de ce point.
+    Preuve par récurrence sur k : f déterministe propage l'égalité. -/
 theorem trapped_in_cycle {α : Type} (f : α → α) (x : α) (i j : Nat)
     (h : orbit f x i = orbit f x j) (k : Nat) :
     orbit f x (i + k) = orbit f x (j + k) := by
@@ -1265,10 +1325,10 @@ theorem trapped_in_cycle {α : Type} (f : α → α) (x : α) (i j : Nat)
     show f (orbit f x (i + k)) = f (orbit f x (j + k))
     exact congrArg f ih
 
-/-- [∎] BOUNDED CONVERGENCE — Every orbit on Fin s enters a cycle
-    in at most s steps, with period ≤ s.
-    Bound from pigeonhole (s+1 values in s slots).
-    No indefinite wandering: closure is reached in finite time. -/
+/-- [∎] CONVERGENCE BORNÉE — Toute orbite sur Fin s entre dans
+    un cycle en au plus s pas, avec période ≤ s.
+    La borne vient du pigeonhole (s+1 valeurs dans s cases).
+    Pas d'errance indéfinie : la clôture est atteinte en temps fini. -/
 theorem convergence_bounded (s : Nat) (f : Fin s → Fin s) (x : Fin s) :
     ∃ entry period : Nat, entry < s ∧ period > 0 ∧ period ≤ s ∧
       ∀ k, orbit f x (entry + k + period) = orbit f x (entry + k) := by
@@ -1278,83 +1338,85 @@ theorem convergence_bounded (s : Nat) (f : Fin s → Fin s) (x : Fin s) :
   have h2 : i + k + (j - i) = j + k := by omega
   rw [h2]; exact h1.symm
 
-/-- [∎] STABILITY — Absorbable perturbation.
-    If margin exceeds drain and perturbation stays within the
-    surplus, the cycle survives with reduced margin. Closure
-    resists small perturbations. -/
+/-- [∎] STABILITÉ — Perturbation absorbable.
+    Si la marge excède le drain et que la perturbation reste dans
+    l'excédent, le cycle survit avec marge réduite. La clôture
+    résiste aux petites perturbations. -/
 theorem stable_under_perturbation (margin drain perturbation : Nat)
     (h_viable : margin > drain)
     (h_small : perturbation ≤ margin - drain) :
     margin - perturbation ≥ drain := by omega
 
-/-- [∎] STABILITY — Fatal perturbation → dissolution.
-    If perturbation exceeds the margin surplus, total cost exceeds
-    margin. No wandering: dissolution or re-closure on reduced space. -/
+/-- [∎] STABILITÉ — Perturbation fatale → dissolution.
+    Si la perturbation excède l'excédent de marge, le coût total
+    dépasse la marge. Pas d'errance : dissolution ou re-clôture
+    sur espace réduit (le pigeonhole s'applique à tout Fin m). -/
 theorem perturbation_causes_dissolution (margin drain perturbation : Nat)
     (h_fatal : perturbation > margin - drain) :
     margin < drain + perturbation := by omega
 
+
 -- ═══════════════════════════════════════════════════════════════════════════
--- § 11f. I-γ — NO ACT WITHOUT MODE (DERIVED THEOREM)
+-- § 11f. I-γ — NUL ACTE SANS MODE (THÉORÈME DÉRIVÉ)
 -- ═══════════════════════════════════════════════════════════════════════════
 
 /-!
-## I-γ: every operation is modally qualified
+## I-γ : toute opération est modalement qualifiée
 
-I-γ excludes "dark acting" — an act without quality. Every operation of
-a closure falls into the valence partition (facilitation/resistance).
+I-γ exclut le « dark acting » — un acte sans qualité. Toute opération
+d'une clôture tombe dans la partition de valence (facilitation/résistance).
 
-**Status: THEOREM**, derived from I-β₁ + XLIV + individuability.
-See `DerivedResults.lean`, namespace DeriveGamma, for the full proof.
+**Statut : THÉORÈME**, dérivé de I-β₁ + XLIV + individuabilité.
+Voir `DeriveGamma.lean` pour la preuve complète.
 
-`PolarizedClosure` remains as a useful structure, but is CONSTRUCTED
-(via `toPolarizedClosure`), not posited as axiom.
+`PolarizedClosure` reste comme structure utile, mais elle est CONSTRUITE
+(via `toPolarizedClosure`), pas posée comme axiome.
 
-The chain:
-  MetabolizingClosure.drain_net (I-β₁) → constitutive threshold (XLIV)
-  → assignValence per-operation (LVIIIa)
-  → aggregation by induction (arithmetic)
+La chaîne :
+  MetabolizingClosure.drain_net (I-β₁) → seuil constitutif (XLIV)
+  → assignValence per-opération (LVIIIa)
+  → agrégation par induction (arithmétique)
   → facilitation_cost + resistance_cost = total_cost (I-γ)
 -/
 
-/-- Polarized closure: every operation is modally qualified.
-    CONSTRUCTIBLE from ClosureWithOps via `toPolarizedClosure`.
-    The `partition` field is PROVED by induction, not posited. -/
+/-- Clôture polarisée : toute opération est modalement qualifiée.
+    CONSTRUCTIBLE à partir de ClosureWithOps via `toPolarizedClosure`.
+    Le champ `partition` est PROUVÉ par induction, pas posé. -/
 structure PolarizedClosure where
   margin : Nat
   margin_pos : margin > 0
-  /-- Total operations cost per cycle -/
+  /-- Coût total des opérations par cycle -/
   operations_cost : Nat
   ops_cost_pos : operations_cost > 0
-  /-- Aggregated cost of facilitating operations (positive valence) -/
+  /-- Coût agrégé des opérations facilitantes (valence positive) -/
   facilitation_cost : Nat
-  /-- Aggregated cost of resisting operations (negative valence) -/
+  /-- Coût agrégé des opérations résistantes (valence négative) -/
   resistance_cost_val : Nat
-  /-- I-γ: exhaustive partition. No remainder, no dark acting. -/
+  /-- I-γ : partition exhaustive. Pas de reste, pas de dark acting. -/
   partition : facilitation_cost + resistance_cost_val = operations_cost
 
--- ── Construction of PolarizedClosure (bridge theorem) ──
+-- ── Construction de PolarizedClosure (théorème-pont) ──
 
-/-- Total cost of an operation list. -/
+/-- Coût total d'une liste d'opérations. -/
 def totalCost : List Nat → Nat
   | [] => 0
   | c :: cs => c + totalCost cs
 
-/-- Cost of facilitating operations (cost ≤ threshold). -/
+/-- Coût des opérations facilitantes (coût ≤ seuil). -/
 def facilitationCost (threshold : Nat) : List Nat → Nat
   | [] => 0
   | c :: cs =>
     if c ≤ threshold then c + facilitationCost threshold cs
     else facilitationCost threshold cs
 
-/-- Cost of resisting operations (cost > threshold). -/
+/-- Coût des opérations résistantes (coût > seuil). -/
 def resistanceCost (threshold : Nat) : List Nat → Nat
   | [] => 0
   | c :: cs =>
     if c ≤ threshold then resistanceCost threshold cs
     else c + resistanceCost threshold cs
 
-/-- [∎] Aggregation lemma: partitioning a finite sum conserves the total. -/
+/-- [∎] Lemme d'agrégation : partitionner une somme finie conserve le total. -/
 theorem cost_partition_conserves (costs : List Nat) (threshold : Nat) :
     facilitationCost threshold costs + resistanceCost threshold costs =
     totalCost costs := by
@@ -1364,21 +1426,21 @@ theorem cost_partition_conserves (costs : List Nat) (threshold : Nat) :
     simp only [totalCost, facilitationCost, resistanceCost]
     split <;> omega
 
-/-- A metabolizing closure with individual operations.
-    Vocabulary commitment: operations are discrete acts
-    (operation_costs : List Nat), not an undifferentiated cost flow.
-    This commitment is EMPIRICAL, not axiomatic. -/
+/-- Une clôture métabolisante avec opérations individuelles.
+    Engagement de vocabulaire : les opérations sont des actes discrets
+    (operation_costs : List Nat), pas un flux de coût indifférencié.
+    Cet engagement est EMPIRIQUE, pas axiomatique. -/
 structure ClosureWithOps extends MetabolizingClosure where
-  /-- I-α: margin is positive -/
+  /-- I-α : la marge est positive -/
   margin_pos : margin > 0
-  /-- Individual costs per operation per cycle -/
+  /-- Coûts individuels de chaque opération par cycle -/
   operation_costs : List Nat
-  /-- At least one operation (I-α: the system acts) -/
+  /-- Au moins une opération (I-α : le système agit) -/
   ops_nonempty : operation_costs ≠ []
-  /-- Every operation has a positive cost (IV) -/
+  /-- Chaque opération a un coût positif (IV) -/
   ops_positive : ∀ c ∈ operation_costs, c > 0
 
-/-- Total cost is positive. -/
+/-- Le coût total est positif. -/
 theorem ops_total_pos (s : ClosureWithOps) : totalCost s.operation_costs > 0 := by
   cases h : s.operation_costs with
   | nil => exact absurd h s.ops_nonempty
@@ -1387,10 +1449,10 @@ theorem ops_total_pos (s : ClosureWithOps) : totalCost s.operation_costs > 0 := 
     have hc : c > 0 := s.ops_positive c (by rw [← h] at hmem; exact hmem)
     simp only [totalCost]; omega
 
-/-- [∎] BRIDGE THEOREM — ClosureWithOps → PolarizedClosure.
-    PolarizedClosure is CONSTRUCTED, not posited.
-    The `partition` field is PROVED by `cost_partition_conserves`.
-    The threshold is `drain_net` (XLIV). -/
+/-- [∎] THÉORÈME-PONT — ClosureWithOps → PolarizedClosure.
+    La structure PolarizedClosure est CONSTRUITE, pas posée.
+    Le champ `partition` est PROUVÉ par `cost_partition_conserves`.
+    Le seuil est `drain_net` (XLIV). -/
 def toPolarizedClosure (s : ClosureWithOps) : PolarizedClosure where
   margin := s.margin
   margin_pos := s.margin_pos
@@ -1400,25 +1462,25 @@ def toPolarizedClosure (s : ClosureWithOps) : PolarizedClosure where
   resistance_cost_val := resistanceCost s.drain_net s.operation_costs
   partition := cost_partition_conserves s.operation_costs s.drain_net
 
--- ── I-γ theorems (on constructed PolarizedClosure) ──
+-- ── Théorèmes I-γ (sur PolarizedClosure construite) ──
 
-/-- [∎] I-γ — NO DARK ACTING.
-    Every operation is qualified. Direct consequence of the partition. -/
+/-- [∎] I-γ — PAS DE DARK ACTING.
+    Toute opération est qualifiée. Conséquence directe de la partition. -/
 theorem no_dark_acting (c : PolarizedClosure) :
     c.facilitation_cost + c.resistance_cost_val = c.operations_cost :=
   c.partition
 
-/-- [∎] I-γ — DARK ACTING EXCLUSION.
-    A system with no mode (facilitation = 0 ∧ resistance = 0) does not operate.
-    DISTINCT from the phenomenal zombie (Chalmers): the zombie would have all
-    modes active but no subjective perspective — covered by LXXVII
-    (bilateral undecidability), not by I-γ. -/
+/-- [∎] I-γ — EXCLUSION DU DARK ACTING.
+    Un système sans mode (facilitation = 0 ∧ résistance = 0) n'opère pas.
+    DISTINCT du zombie phénoménal (Chalmers) : celui-ci aurait tous les
+    modes actifs mais sans perspective subjective — ce cas est couvert
+    par LXXVII (indécidabilité bilatérale), pas par I-γ. -/
 theorem gamma_excludes_dark_acting (c : PolarizedClosure)
     (h : c.facilitation_cost = 0 ∧ c.resistance_cost_val = 0) :
     c.operations_cost = 0 := by
   have := c.partition; omega
 
-/-- [∎] I-γ — IF THE SYSTEM OPERATES, AT LEAST ONE MODE IS ACTIVE. -/
+/-- [∎] I-γ — SI LE SYSTÈME OPÈRE, AU MOINS UN MODE EST ACTIF. -/
 theorem gamma_operating_has_mode (c : PolarizedClosure)
     (h : c.operations_cost > 0) :
     c.facilitation_cost > 0 ∨ c.resistance_cost_val > 0 := by
@@ -1428,42 +1490,44 @@ theorem gamma_operating_has_mode (c : PolarizedClosure)
   else
     right; omega
 
+
 -- ═══════════════════════════════════════════════════════════════════════════
--- § 11g. DERIVATIONS — II, III FROM I + VII AS MODAL COROLLARY
+-- § 11g. DÉRIVATIONS — II, III DE I + VII COMME COROLLAIRE MODAL
 -- ═══════════════════════════════════════════════════════════════════════════
 
 /-!
-## Axiomatic reduction: 2 axioms instead of 6
+## Réduction axiomatique : 3 axiomes au lieu de 6
 
-The system posits only I (I-α + I-β) and V.
-Axioms II, III, VII are derived.
+Le système ne pose que I (I-α + I-β), IV, V.
+Les axiomes II, III, VII en dérivent.
 
-  II  (untyped productivity) ← I-α via typeclass XXXIII
-  III (causal unity)         ← I ("one") via transdomainality
-  VII (constitutive negation) ← I-β₁ via additive partition (§ 9d)
+  II  (productivité non typée) ← I-α via typeclass XXXIII
+  III (unité causale)          ← I (« un ») via transdomainalité
+  VII (négation constitutive)  ← I-β₁ via partition additive (§ 9d)
 
-I-γ (no act without mode) is a late THEOREM (§ 11f),
-derived from I-β₁ + XLIV + operation individuability.
+I-γ (nul acte sans mode) est un THÉORÈME tardif (§ 11f),
+dérivé de I-β₁ + XLIV + individuabilité des opérations.
 -/
 
--- ── II — Untyped productivity ──
+-- ── II — Productivité non typée ──
 
-/-- [∎] II — UNTYPED PRODUCTIVITY (from I-α).
-    The act does not presuppose a predefined type space.
-    Formally: generic_exhaustion is polymorphic via FiniteExposed.
-    Any type α instantiating the typeclass inherits exhaustion. -/
+/-- [∎] II — PRODUCTIVITÉ NON TYPÉE (de I-α).
+    L'acte ne présuppose pas d'espace de types prédéfini.
+    Formellement : generic_exhaustion est polymorphe via FiniteExposed.
+    N'importe quel type α instanciant la typeclass hérite de l'épuisement.
+    La productivité non typée = le système marche pour tout type. -/
 theorem productivity_untyped_II :
     ∀ (α : Type) [FiniteExposed α] (x : α),
     ∃ n, n * FiniteExposed.drain x > FiniteExposed.margin x :=
   fun _ _ x => generic_exhaustion x
 
--- ── III — Causal unity ──
+-- ── III — Unité causale ──
 
-/-- [∎] III — CAUSAL UNITY (from I, "one").
-    No absolute causal isolation: every domain instantiating
-    FiniteExposed inherits the same exhaustion pattern.
-    Transdomainality IS formalized causal unity.
-    The pattern is one — any two types produce the same result. -/
+/-- [∎] III — UNITÉ CAUSALE (de I, « un »).
+    Aucune isolation causale absolue : tout domaine instanciant
+    FiniteExposed hérite du même patron d'épuisement.
+    La transdomainalité EST l'unité causale formalisée.
+    Le patron est un — deux types quelconques produisent le même résultat. -/
 theorem causal_unity_III :
     ∀ (α β : Type) [FiniteExposed α] [FiniteExposed β]
     (a : α) (b : β),
@@ -1472,41 +1536,42 @@ theorem causal_unity_III :
   fun _ _ _ _ a b =>
     ⟨generic_exhaustion a, generic_exhaustion b⟩
 
--- ── VII — Constitutive negation (modal corollary) ──
+-- ── VII — Négation constitutive (corollaire modal) ──
 
 /-!
-  VII is already proved from I-β₁ alone (§ 9d: `negation_VII_from_beta`).
-  The theorems below are the same result applied to the MODAL partition
-  (facilitation/resistance) of PolarizedClosure.
+  VII est déjà prouvé de I-β₁ seul (§ 9d : `negation_VII_from_beta`).
+  Les théorèmes ci-dessous sont le même résultat appliqué à la partition
+  MODALE (facilitation/résistance) de PolarizedClosure.
 
-  They are NOT axioms — PolarizedClosure is constructed via
-  `toPolarizedClosure`, and the partition is proved by induction.
-  Modal VII = metabolic VII + vocabulary change.
+  Ils ne sont PAS des axiomes — PolarizedClosure est construite
+  par `toPolarizedClosure`, et la partition est prouvée par induction.
+  VII modal = VII métabolique + changement de vocabulaire.
 -/
 
-/-- [∎] VII — CONSTITUTIVE NEGATION (modal corollary).
-    In the constructed modal partition, positing facilitation
-    excludes everything being resistance. -/
+/-- [∎] VII — NÉGATION CONSTITUTIVE (corollaire modal).
+    Dans la partition modale construite, poser de la facilitation
+    exclut que tout soit résistance. -/
 theorem constitutive_negation_VII (c : PolarizedClosure)
     (h_more_fac : c.facilitation_cost > 0) :
     c.resistance_cost_val < c.operations_cost :=
   negation_general c.facilitation_cost c.resistance_cost_val
     c.operations_cost c.partition h_more_fac
 
-/-- [∎] VII-bis — CONVERSE (modal corollary). -/
+/-- [∎] VII-bis — RÉCIPROQUE (corollaire modal). -/
 theorem constitutive_negation_VII_bis (c : PolarizedClosure)
     (h_more_res : c.resistance_cost_val > 0) :
     c.facilitation_cost < c.operations_cost := by
   have := c.partition; omega
 
-/-- [∎] VII-ter — LIMIT CASE (modal corollary). -/
+/-- [∎] VII-ter — CAS LIMITE (corollaire modal). -/
 theorem constitutive_negation_VII_total (c : PolarizedClosure)
     (h_all_fac : c.facilitation_cost = c.operations_cost) :
     c.resistance_cost_val = 0 := by
   have := c.partition; omega
 
+
 -- ═══════════════════════════════════════════════════════════════════════════
--- § 12. META: FORMAL ISOMORPHISM AND OPEN PROGRAM
+-- § 12. META: ISOMORPHISME FORMEL ET PROGRAMME OUVERT
 -- ═══════════════════════════════════════════════════════════════════════════
 
 /-!
@@ -1545,8 +1610,8 @@ to "the drain is endogenous — it comes from the closure's own functioning."
 - `valence_feedback_discriminates` shows that under identical margin and
   steps, valence alone determines survival vs dissolution
 
-This closes the mechanical chain: closure → self-affection → valence →
-feedback. The last ∎ before the interpretive leap (LIX) is formalized.
+This closes the mechanical chain: clôture → auto-affection → valence →
+rétroaction. The last ∎ before the interpretive leap (LIX) is formalized.
 
 ## Result: NT-V / LXXIV convergence is TYPE-CHECKED
 
@@ -1602,7 +1667,7 @@ pigeonhole principle (`fin_pigeonhole`) is the formal engine.
   DISTINCT from Chalmers' phenomenal zombie (covered by LXXVII, not I-γ)
 - `gamma_operating_has_mode`: contrapositive — ops > 0 → at least one mode active
 
-Note: `DerivedResults.lean` (namespace DeriveGamma) proves that I-γ restricted to
+Note: `DeriveGamma.lean` (separate file) proves that I-γ restricted to
 metabolizing closures is a THEOREM of I-α + I-β₁ + XLIV + operation
 individuability. The residual axiom is the discreteness of operations.
 
@@ -1640,7 +1705,7 @@ InterAxiomIndependence.lean). I-γ, II, III, VII are derived.
     I  — L'acte un de sa propre nécessité (α + β).
          I-γ is a THEOREM, derived from I-β₁ + XLIV + individuability.
     IV — Toute transformation a un coût.
-         COROLLARY of I-β₂ (gradient endogeneity).
+         COROLLAIRE de I-β₂ (endogénéité du gradient).
          Voir InterAxiomIndependence.lean : theorem I_implies_IV.
     V  — L'extériorité admet des degrés.
 
@@ -1651,8 +1716,8 @@ InterAxiomIndependence.lean). I-γ, II, III, VII are derived.
   Derivations (4):
     II  — Productivité non typée.    De I-α, via typeclass XXXIII.
     III — Unité causale.              De I (« un »), via transdomainalité.
-    VII — Constitutive negation.      From I-β₁, via additive partition.
-          From MetabolizingClosure (I-β₁), not from I-γ.
+    VII — Négation constitutive.      De I-β₁, via partition additive.
+          (Previously derived from I-γ. Now from MetabolizingClosure.)
     I-γ — Nul acte sans mode.         De I-β₁ + XLIV + individuabilité.
           PolarizedClosure is CONSTRUCTED via toPolarizedClosure.
 
@@ -1677,45 +1742,46 @@ InterAxiomIndependence.lean). I-γ, II, III, VII are derived.
 4. Encode I-β₂ and I-β₃ in main file (currently in audit files H1, H5)
 -/
 
+
 -- ═══════════════════════════════════════════════════════════════════════════
--- § 15. ASYMMETRY DERIVATION — construction > maintenance AS THEOREM
+-- § 15. DÉRIVATION DE L'ASYMÉTRIE — construction > maintenance COMME THÉORÈME
 -- ═══════════════════════════════════════════════════════════════════════════
 
 /-!
-## Cost asymmetry (construction > maintenance) derived from IV
+## L'asymétrie des coûts (construction > maintenance) dérivée de IV
 
-Principle: an act guided by a template (existing structure) costs less
-than a de novo act. The template channels — it reduces the space of
-possibilities, thus reducing exploratory cost.
+Le principe : un acte guidé par un template (structure existante) coûte
+moins qu'un acte de novo. Le template canalise — il réduit l'espace de
+possibilités, donc réduit le coût exploratoire.
 
-Three posited fields, three derived theorems:
-  - `raw_cost > 0` (pure IV: every act costs)
-  - `saving_pos` (a template helps)
-  - `saving_bound` (a template does not make the act free — IV preserved)
+Trois champs posés, trois théorèmes dérivés :
+  - `raw_cost > 0` (IV pur : tout acte coûte)
+  - `saving_pos` (un template aide)
+  - `saving_bound` (un template ne rend pas l'acte gratuit — IV préservé)
   → construction > maintenance, maintenance > 0, construction > 0
 -/
 
-/-- An act with template possibility.
-    Raw cost is the cost without guidance.
-    template_saving is the reduction when the act is guided. -/
+/-- Un acte avec possibilité de template.
+    Le coût brut est le coût de l'acte sans guidance.
+    Le template_saving est la réduction quand l'acte est guidé. -/
 structure ActCost where
-  /-- Raw cost of an unguided act (IV) -/
+  /-- Coût brut d'un acte non guidé (IV) -/
   raw_cost : Nat
   raw_cost_pos : raw_cost > 0
-  /-- Cost reduction when a template guides the act -/
+  /-- Réduction de coût quand un template guide l'acte -/
   template_saving : Nat
-  /-- A template helps (guidance is nonzero) -/
+  /-- Un template aide (la guidance n'est pas nulle) -/
   saving_pos : template_saving > 0
-  /-- A template does not make the act free (IV preserved) -/
+  /-- Un template ne rend pas l'acte gratuit (IV préservé) -/
   saving_bound : template_saving < raw_cost
 
-/-- Construction = act without template. Cost = raw cost. -/
+/-- Construction = acte sans template. Coût = coût brut. -/
 def ActCost.construction (a : ActCost) : Nat := a.raw_cost
 
-/-- Maintenance = act with template. Cost = raw - saving. -/
+/-- Maintenance = acte avec template. Coût = brut - saving. -/
 def ActCost.maintenance (a : ActCost) : Nat := a.raw_cost - a.template_saving
 
-/-- [∎] DERIVED ASYMMETRY — Construction costs more than maintenance. -/
+/-- [∎] ASYMÉTRIE DÉRIVÉE — La construction coûte plus que la maintenance. -/
 theorem asymmetry_derived (a : ActCost) :
     a.construction > a.maintenance := by
   unfold ActCost.construction ActCost.maintenance
@@ -1723,43 +1789,43 @@ theorem asymmetry_derived (a : ActCost) :
   have := a.saving_bound
   omega
 
-/-- [∎] Maintenance costs strictly more than zero (IV preserved). -/
+/-- [∎] La maintenance coûte strictement plus que zéro (IV préservé). -/
 theorem maintenance_pos_derived (a : ActCost) :
     a.maintenance > 0 := by
   unfold ActCost.maintenance
   have := a.raw_cost_pos; have := a.saving_bound; omega
 
-/-- [∎] Construction costs strictly more than zero (IV direct). -/
+/-- [∎] La construction coûte strictement plus que zéro (IV direct). -/
 theorem construction_pos_derived (a : ActCost) :
     a.construction > 0 := by
   unfold ActCost.construction; exact a.raw_cost_pos
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- § 16. R-XVIII — INTER-REGIME DYNAMICS
+-- § 16. R-XVIII — DYNAMIQUE INTER-RÉGIMES
 -- ═══════════════════════════════════════════════════════════════════════════
 
 /-!
-## R-XVIII: Inter-regime transitions (R-XVII) are subject to structural
-   hysteresis derived from cost asymmetry.
+## R-XVIII : Les transitions entre régimes (R-XVII) sont soumises à une
+   hystérésis structurelle dérivée de l'asymétrie des coûts.
 
-Architecture:
-  §16a  AlphaState — degree of self-production (Nat pair)
-  §16b  TransitionSystem — costs derived from ActCost + capacity + degradation
-  §16c  Lemma 1 — default decay (IV + IX → XXXII)
-  §16d  Lemma 2 — can_build → can_maintain (asymmetry → inclusion)
-  §16e  Lemma 3 — hysteresis zone (∃ level maintainable ∧ ¬buildable)
-  §16f  History dependence + threshold crossing
-  §16g  Instability of the intermediate zone
-  §16h  R-XVIII — assembly
+Architecture :
+  §16a  AlphaState — degré d'auto-production (paire Nat)
+  §16b  TransitionSystem — coûts dérivés de ActCost + capacité + dégradation
+  §16c  Lemme 1 — décroissance par défaut (IV + IX → XXXII)
+  §16d  Lemme 2 — can_build → can_maintain (asymétrie → inclusion)
+  §16e  Lemme 3 — zone d'hystérésis (∃ level maintainable ∧ ¬buildable)
+  §16f  Dépendance à l'histoire + franchissement de seuils
+  §16g  Instabilité de la zone intermédiaire
+  §16h  R-XVIII — assemblage
 
-Inferential status:
-  (a)(b)(c)(d)(i)(ii): ∎
-  (iii) bimodality: ≈₁ (population hypothesis, outside Lean)
+Statut inférentiel :
+  (a)(b)(c)(d)(i)(ii) : ∎
+  (iii) bimodalité : ≈₁ (hypothèse populationnelle, hors Lean)
 -/
 
 -- §16a. AlphaState
 
-/-- Degree of self-production of a system: pair (endogenous, total). -/
+/-- Degré d'auto-production d'un système : paire (endogène, total). -/
 structure AlphaState where
   endogenous : Nat
   total : Nat
@@ -1769,13 +1835,13 @@ structure AlphaState where
 def AlphaState.isAggregate (a : AlphaState) : Prop := a.endogenous = 0
 def AlphaState.isActive (a : AlphaState) : Prop := a.endogenous > 0
 
-/-- [∎] Aggregate and active are mutually exclusive. -/
+/-- [∎] Agrégat et actif sont mutuellement exclusifs. -/
 theorem alpha_exclusive (a : AlphaState) :
     ¬(a.isAggregate ∧ a.isActive) := by
   intro ⟨h0, hp⟩; unfold AlphaState.isAggregate at h0
   unfold AlphaState.isActive at hp; omega
 
-/-- [∎] Aggregate and active are exhaustive. -/
+/-- [∎] Agrégat et actif sont exhaustifs. -/
 theorem alpha_exhaustive (a : AlphaState) :
     a.isAggregate ∨ a.isActive := by
   unfold AlphaState.isAggregate AlphaState.isActive
@@ -1783,49 +1849,49 @@ theorem alpha_exhaustive (a : AlphaState) :
   · exact Or.inl h
   · right; omega
 
--- §16b. TransitionSystem (with DERIVED asymmetry)
+-- §16b. TransitionSystem (avec asymétrie DÉRIVÉE)
 
-/-- Regime transition system.
-    Asymmetry is DERIVED from ActCost, not posited. -/
+/-- Système de transition entre régimes.
+    L'asymétrie est DÉRIVÉE de ActCost, pas posée. -/
 structure TransitionSystem where
   /-- Structure de coût avec template -/
   act : ActCost
-  /-- Erosion per step without maintenance (IV + V) -/
+  /-- Érosion par step sans maintenance (IV + V) -/
   degradation : Nat
   degradation_pos : degradation > 0
-  /-- Investment capacity per step (IX: finite) -/
+  /-- Capacité d'investissement par step (IX : finie) -/
   capacity : Nat
   capacity_pos : capacity > 0
 
-/-- Extracted construction cost. -/
+/-- Coût de construction extrait. -/
 def TransitionSystem.constr (s : TransitionSystem) : Nat := s.act.construction
-/-- Extracted maintenance cost. -/
+/-- Coût de maintenance extrait. -/
 def TransitionSystem.maint (s : TransitionSystem) : Nat := s.act.maintenance
 
-/-- [∎] Asymmetry is a derived property, not an axiom. -/
+/-- [∎] L'asymétrie est une propriété dérivée, pas un axiome. -/
 theorem ts_asymmetry (s : TransitionSystem) :
     s.constr > s.maint := asymmetry_derived s.act
 
-/-- [∎] Maintenance is positive (IV). -/
+/-- [∎] Maintenance positive (IV). -/
 theorem ts_maintenance_pos (s : TransitionSystem) :
     s.maint > 0 := maintenance_pos_derived s.act
 
-/-- Buildable at level n. -/
+/-- Constructible au niveau n. -/
 def ts_can_build (s : TransitionSystem) (n : Nat) : Prop :=
   n * s.maint + s.constr ≤ s.capacity
 
-/-- Maintainable at level n. -/
+/-- Maintenable au niveau n. -/
 def ts_can_maintain (s : TransitionSystem) (n : Nat) : Prop :=
   n * s.maint ≤ s.capacity
 
--- §16c. Lemma 1 — Default decay
+-- §16c. Lemme 1 — Décroissance par défaut
 
-/-- [∎] LEMMA 1a — If cumulative drain exceeds stock, it is over. -/
+/-- [∎] LEMME 1a — Si le drain cumulé dépasse le stock, c'est fini. -/
 theorem rxviii_decay (endogenous degradation steps : Nat)
     (h_fatal : steps * degradation > endogenous) :
     ¬(endogenous ≥ steps * degradation) := by omega
 
-/-- [∎] LEMMA 1b — Finite lifetime of α. -/
+/-- [∎] LEMME 1b — Durée de vie finie de α. -/
 theorem rxviii_exhaustion (endogenous degradation : Nat)
     (h_pos : degradation > 0) :
     ∃ k, k * degradation > endogenous := by
@@ -1835,50 +1901,50 @@ theorem rxviii_exhaustion (endogenous degradation : Nat)
     Nat.mul_le_mul_left (endogenous + 1) h1
   simp only [Nat.mul_one] at h2; omega
 
--- §16d. Lemma 2 — Asymmetry
+-- §16d. Lemme 2 — Asymétrie
 
-/-- [∎] LEMMA 2a — Buildable → maintainable. -/
+/-- [∎] LEMME 2a — Constructible → maintenable. -/
 theorem ts_build_implies_maintain (s : TransitionSystem) (n : Nat)
     (h : ts_can_build s n) : ts_can_maintain s n := by
   unfold ts_can_build at h; unfold ts_can_maintain
   have := construction_pos_derived s.act; omega
 
-/-- [∎] LEMMA 2b — Construction overhead strictly positive. -/
+/-- [∎] LEMME 2b — Surcoût de construction strictement positif. -/
 theorem ts_construction_overhead (s : TransitionSystem) (n : Nat) :
     n * s.maint < n * s.maint + s.constr := by
   unfold TransitionSystem.constr
   have := construction_pos_derived s.act; omega
 
-/-- [∎] LEMMA 2c — Level 0 is maintainable. -/
+/-- [∎] LEMME 2c — Niveau 0 maintenable. -/
 theorem ts_maintain_zero (s : TransitionSystem) :
     ts_can_maintain s 0 := by unfold ts_can_maintain; simp
 
-/-- [∎] LEMMA 2d — Maintainable is monotone decreasing. -/
+/-- [∎] LEMME 2d — Maintenable monotone décroissant. -/
 theorem ts_maintain_monotone (s : TransitionSystem) (n m : Nat)
     (h_le : m ≤ n) (h : ts_can_maintain s n) :
     ts_can_maintain s m := by
   unfold ts_can_maintain at *
   have : m * s.maint ≤ n * s.maint := Nat.mul_le_mul_right s.maint h_le; omega
 
-/-- [∎] LEMMA 2e — Buildable is monotone decreasing. -/
+/-- [∎] LEMME 2e — Constructible monotone décroissant. -/
 theorem ts_build_monotone (s : TransitionSystem) (n m : Nat)
     (h_le : m ≤ n) (h : ts_can_build s n) :
     ts_can_build s m := by
   unfold ts_can_build at *
   have : m * s.maint ≤ n * s.maint := Nat.mul_le_mul_right s.maint h_le; omega
 
--- §16e. Lemma 3 — Hysteresis zone (CORE)
+-- §16e. Lemme 3 — Zone d'hystérésis (CŒUR)
 
-/-- Product of two positives is positive. -/
+/-- Produit de deux positifs est positif. -/
 theorem rxviii_mul_pos (a b : Nat) (ha : a > 0) (hb : b > 0) :
     a * b > 0 := by
   have h1 : 1 ≤ a := ha; have h2 : 1 ≤ b := hb
   have h3 : 1 * 1 ≤ a * b := Nat.mul_le_mul h1 h2; omega
 
-/-- [∎] LEMMA 3 — HYSTERESIS ZONE.
-    There exists a level that is maintainable but not buildable.
-    Witness: n = capacity / maintenance_cost.
-    Non-trivial proof using Nat.div_add_mod and Nat.mod_lt. -/
+/-- [∎] LEMME 3 — ZONE D'HYSTÉRÉSIS.
+    Il existe un niveau maintenable mais non constructible.
+    Témoin : n = capacity / maintenance_cost.
+    Preuve non triviale : mobilise Nat.div_add_mod et Nat.mod_lt. -/
 theorem ts_hysteresis_zone (s : TransitionSystem) :
     ∃ n, ts_can_maintain s n ∧ ¬ts_can_build s n := by
   have hm_pos : s.maint > 0 := ts_maintenance_pos s
@@ -1899,7 +1965,7 @@ theorem ts_hysteresis_zone (s : TransitionSystem) :
       Nat.mul_comm _ _
     omega
 
-/-- [∎] The inclusion build → maintain is STRICT. -/
+/-- [∎] L'inclusion build → maintain est STRICTE. -/
 theorem ts_maintain_not_implies_build :
     ¬(∀ (s : TransitionSystem) (n : Nat),
         ts_can_maintain s n → ts_can_build s n) := by
@@ -1913,16 +1979,16 @@ theorem ts_maintain_not_implies_build :
   }
   exact hn_nb (h_all _ n hn_m)
 
--- §16f. Regimes, history dependence, threshold crossing
+-- §16f. Régimes, dépendance à l'histoire, franchissement
 
-/-- Direction of α's trajectory. -/
+/-- Direction de la trajectoire de α. -/
 inductive TransitionDirection where
-  | ascending   -- α in rising phase (construction)
-  | descending  -- α in falling phase (erosion)
+  | ascending   -- α en phase montante (construction)
+  | descending  -- α en phase descendante (érosion)
   deriving DecidableEq, Repr
 
-/-- Level classification into a regime.
-    Rising threshold > falling threshold = hysteresis. -/
+/-- Classification d'un niveau dans un régime (utilise CompositionRegime de v5.3).
+    Le seuil montant > seuil descendant = hystérésis. -/
 def classifyAlpha (n threshold_up threshold_down : Nat)
     (dir : TransitionDirection) : CompositionRegime :=
   if n = 0 then .pureAggregate
@@ -1931,8 +1997,8 @@ def classifyAlpha (n threshold_up threshold_down : Nat)
   else
     (if n ≥ threshold_down then .autonomousClosure else .normativePortage)
 
-/-- [∎] HISTORY DEPENDENCE — The same level classified differently
-    depending on direction. Qualitative hysteresis. -/
+/-- [∎] DÉPENDANCE À L'HISTOIRE — Un même niveau classé différemment
+    selon la direction. Hystérésis qualitative. -/
 theorem rxviii_history_dependence (th_up th_down : Nat)
     (h_hyst : th_down < th_up) (h_pos : th_down > 0) :
     classifyAlpha th_down th_up th_down .ascending ≠
@@ -1952,7 +2018,7 @@ theorem rxviii_history_dependence (th_up th_down : Nat)
     rw [if_pos (show th_down ≥ th_down from Nat.le_refl _)]
   rw [h_asc, h_desc]; decide
 
-/-- [∎] LEMMA 4a — Upward crossing: portage → closure. -/
+/-- [∎] LEMME 4a — Franchissement montant : portage → clôture. -/
 theorem rxviii_crossing_up (alpha th_up th_down delta : Nat)
     (h_pos : alpha > 0) (h_below : alpha < th_up)
     (h_cross : alpha + delta ≥ th_up) (h_delta_pos : delta > 0) :
@@ -1968,7 +2034,7 @@ theorem rxviii_crossing_up (alpha th_up th_down delta : Nat)
     rw [if_pos (rfl : TransitionDirection.ascending = TransitionDirection.ascending)]
     rw [if_pos h_cross]
 
-/-- [∎] LEMMA 4b — Downward crossing: closure → portage. -/
+/-- [∎] LEMME 4b — Franchissement descendant : clôture → portage. -/
 theorem rxviii_crossing_down (alpha th_up th_down loss : Nat)
     (h_above : alpha ≥ th_down) (h_pos : alpha > 0)
     (h_drop : alpha - loss < th_down) (h_remain_pos : alpha - loss > 0) :
@@ -1986,10 +2052,10 @@ theorem rxviii_crossing_down (alpha th_up th_down loss : Nat)
                 from by decide)]
     rw [if_neg (show ¬(alpha - loss ≥ th_down) from by omega)]
 
--- §16g. Instability of the intermediate zone
+-- §16g. Instabilité de la zone intermédiaire
 
-/-- [∎] INSTABILITY — An active but non-buildable system is trapped:
-    cannot ascend, will eventually descend, pays to remain. -/
+/-- [∎] INSTABILITÉ — Un système actif non-constructible est piégé :
+    ne peut monter, finira par descendre, paye pour rester. -/
 theorem rxviii_instability (s : TransitionSystem) (n : Nat)
     (h_not_build : ¬ts_can_build s n) (h_active : n > 0) :
     ¬ts_can_build s n ∧
@@ -1999,7 +2065,7 @@ theorem rxviii_instability (s : TransitionSystem) (n : Nat)
   · exact rxviii_exhaustion n s.degradation s.degradation_pos
   · exact rxviii_mul_pos n s.maint h_active (ts_maintenance_pos s)
 
-/-- [∎] CLOSURE INERTIA — build(n) → maintain(n+1). -/
+/-- [∎] INERTIE DE LA CLÔTURE — build(n) → maintain(n+1). -/
 theorem rxviii_closure_inertia (s : TransitionSystem) (n : Nat)
     (h_build : ts_can_build s n) :
     ts_can_maintain s (n + 1) := by
@@ -2007,15 +2073,15 @@ theorem rxviii_closure_inertia (s : TransitionSystem) (n : Nat)
   rw [Nat.succ_mul]
   have := ts_asymmetry s; omega
 
-/-- [∎] No free maintenance. -/
+/-- [∎] Pas de maintien gratuit. -/
 theorem rxviii_no_free_maintenance (s : TransitionSystem) (n : Nat)
     (h_active : n > 0) :
     n * s.maint > 0 :=
   rxviii_mul_pos n s.maint h_active (ts_maintenance_pos s)
 
--- §16h. R-XVIII — Assembly
+-- §16h. R-XVIII — Assemblage
 
-/-- [∎] R-XVIII — INTER-REGIME DYNAMICS (synthesis theorem). -/
+/-- [∎] R-XVIII — DYNAMIQUE INTER-RÉGIMES (théorème de synthèse). -/
 theorem rxviii_main (s : TransitionSystem) :
     (∀ n, ts_can_build s n → ts_can_maintain s n) ∧
     (∃ n, ts_can_maintain s n ∧ ¬ts_can_build s n) ∧
@@ -2024,11 +2090,12 @@ theorem rxviii_main (s : TransitionSystem) :
    ts_hysteresis_zone s,
    fun e => rxviii_exhaustion e s.degradation s.degradation_pos⟩
 
-/-- [∎] R-XVIII consequence (i) — Closure inertia. -/
+/-- [∎] R-XVIII conséquence (i) — Inertie de la clôture. -/
 theorem rxviii_consequence_i (s : TransitionSystem) :
     (∀ n, ts_can_build s n → ts_can_maintain s (n + 1)) ∧
     (∃ n, ts_can_maintain s n ∧ ¬ts_can_build s n) :=
   ⟨fun n h => rxviii_closure_inertia s n h, ts_hysteresis_zone s⟩
+
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- § 13. AXIOM AUDIT — every theorem must show NO sorryAx
@@ -2038,9 +2105,9 @@ theorem rxviii_consequence_i (s : TransitionSystem) :
 #print axioms OntoDynamique.dissolution_XXXII_a
 #print axioms OntoDynamique.mortality_XXXIV
 #print axioms OntoDynamique.lifespan_bound
--- Derived theorems
+-- § Sprint 1+2 — nouveaux théorèmes
 #print axioms OntoDynamique.mortality_XXXIV_derived
-
+-- faster_dissolution_under_higher_pressure : sorry intentionnel (GradedExposure, M3)
 #print axioms OntoDynamique.recovery_is_bounded_by_regen
 #print axioms OntoDynamique.already_dissolved
 #print axioms OntoDynamique.single_step_dissolution
@@ -2062,18 +2129,18 @@ theorem rxviii_consequence_i (s : TransitionSystem) :
 #print axioms OntoDynamique.roundtrip_NTXVI
 #print axioms OntoDynamique.oscillation_drain_NTXVI
 #print axioms OntoDynamique.generic_exhaustion
--- LVII
+-- § 8 LVII
 #print axioms OntoDynamique.self_affection_positive_LVIIa
 #print axioms OntoDynamique.self_affection_endogenous_LVIIb
--- LVIII
+-- § 9 LVIII
 #print axioms OntoDynamique.valence_exhaustive_LVIIIa
 #print axioms OntoDynamique.negative_valence_drains
 #print axioms OntoDynamique.positive_valence_facilitates
--- Asymmetry
+-- § 9c Asymétrie
 #print axioms OntoDynamique.facilitation_bounded
 #print axioms OntoDynamique.resistance_unbounded
 #print axioms OntoDynamique.mortality_via_facilitation
--- XXXVIII–XXXIX
+-- § 9d XXXVIII–XXXIX
 #print axioms OntoDynamique.metabolization_reduces_drain
 #print axioms OntoDynamique.metabolization_extends_life
 #print axioms OntoDynamique.metabolization_does_not_save
@@ -2082,53 +2149,53 @@ theorem rxviii_consequence_i (s : TransitionSystem) :
 #print axioms OntoDynamique.normativity_criterion
 #print axioms OntoDynamique.normativity_aggregate
 #print axioms OntoDynamique.normativity_discriminates_gradient
--- XLIV
+-- § 9d XLIV
 #print axioms OntoDynamique.constitutive_norm_XLIV
 #print axioms OntoDynamique.constitutive_norm_endogenous_XLIV_bis
 #print axioms OntoDynamique.constitutive_norm_discriminates_XLIV_ter
--- VII from I-β₁
+-- § 9d VII from I-β₁
 #print axioms OntoDynamique.negation_VII_from_beta
 #print axioms OntoDynamique.negation_VII_bis_from_beta
 #print axioms OntoDynamique.negation_VII_ter_from_beta
 #print axioms OntoDynamique.negation_general
--- LVIII-bis
+-- § 9b LVIII-bis
 #print axioms OntoDynamique.positive_reduces_cost
 #print axioms OntoDynamique.negative_increases_cost
 #print axioms OntoDynamique.negative_feedback_accelerates
 #print axioms OntoDynamique.valence_feedback_discriminates
--- XX
+-- § 10 XX
 #print axioms OntoDynamique.drift_monotone_XXa
 #print axioms OntoDynamique.drift_strict_XXb
 #print axioms OntoDynamique.drift_causes_debt
 #print axioms OntoDynamique.drift_exceeds_any_band
--- XXIX + XXXII
+-- § 11 XXIX + XXXII
 #print axioms OntoDynamique.fin_pigeonhole
 #print axioms OntoDynamique.orbit_revisits
 #print axioms OntoDynamique.trajectory_dichotomy_XXIX
 #print axioms OntoDynamique.no_third_regime
 #print axioms OntoDynamique.closure_has_cycle
--- Attractor
+-- § 11e Attracteur
 #print axioms OntoDynamique.trapped_in_cycle
 #print axioms OntoDynamique.convergence_bounded
 #print axioms OntoDynamique.stable_under_perturbation
 #print axioms OntoDynamique.perturbation_causes_dissolution
--- I-γ (derived)
+-- § 11f I-γ (derived)
 #print axioms OntoDynamique.cost_partition_conserves
 #print axioms OntoDynamique.ops_total_pos
 #print axioms OntoDynamique.no_dark_acting
 #print axioms OntoDynamique.gamma_excludes_dark_acting
 #print axioms OntoDynamique.gamma_operating_has_mode
--- Derivations II, III, VII
+-- § 11g Dérivations II, III, VII
 #print axioms OntoDynamique.productivity_untyped_II
 #print axioms OntoDynamique.causal_unity_III
 #print axioms OntoDynamique.constitutive_negation_VII
 #print axioms OntoDynamique.constitutive_negation_VII_bis
 #print axioms OntoDynamique.constitutive_negation_VII_total
--- Derived asymmetry
+-- § 15 Asymétrie dérivée
 #print axioms OntoDynamique.asymmetry_derived
 #print axioms OntoDynamique.maintenance_pos_derived
 #print axioms OntoDynamique.construction_pos_derived
--- R-XVIII
+-- § 16 R-XVIII
 #print axioms OntoDynamique.alpha_exclusive
 #print axioms OntoDynamique.alpha_exhaustive
 #print axioms OntoDynamique.ts_asymmetry
@@ -2154,7 +2221,7 @@ theorem rxviii_consequence_i (s : TransitionSystem) :
 
 end OntoDynamique
 
--- § 14. VISUAL REPORT — sorry: 0
+-- § 14. RAPPORT VISUEL — sorry : 0
 -- ═══════════════════════════════════════════════════════════════════════════
 
 set_option maxRecDepth 2000 in
@@ -2162,123 +2229,125 @@ set_option maxRecDepth 2000 in
   IO.println ""
   IO.println "╔══════════════════════════════════════════════════════════════╗"
   IO.println "╔══════════════════════════════════════════════════════════════╗"
-  IO.println "║     ONTODYNAMIQUE — LEAN 4 FORMALIZATION                    ║"
-  IO.println "║     2 axioms + 1 corollary · 101 thm · 0 sorry            ║"
+  IO.println "║     ONTODYNAMIQUE — FORMALISATION LEAN 4 v5.6               ║"
+  IO.println "║     2 axiomes + 1 corollaire · 101 thm · 0 sorry           ║"
   IO.println "║                                                             ║"
-  IO.println "║  STRUCTURAL TRUNK                                           ║"
-  IO.println "║   ✅ XVII      Exhaustion (finite margin < cumul. drain)    ║"
-  IO.println "║   ✅ XXXII-a   Exogenous dissolution (aggregate)            ║"
+  IO.println "║  TRONC STRUCTUREL                                           ║"
+  IO.println "║   ✅ XVII      Épuisement (marge finie < drain cumulé)      ║"
+  IO.println "║   ✅ XXXII-a   Dissolution exogène (agrégat)                ║"
   IO.println "║                                                             ║"
-  IO.println "║  CONSTITUTIVE MORTALITY                                     ║"
-  IO.println "║   ✅ XXXIV     Constitutional pressure alone → dissolution  ║"
-  IO.println "║   ✅ XXXIV-c   Bounded lifespan (∃ n, n*c > M)             ║"
+  IO.println "║  MORTALITÉ CONSTITUTIVE                                     ║"
+  IO.println "║   ✅ XXXIV     Pression constitutive seule → dissolution    ║"
+  IO.println "║   ✅ XXXIV-c   Durée de vie bornée (∃ n, n*c > M)          ║"
   IO.println "║                                                             ║"
-  IO.println "║  NORMATIVITY AND AUTHENTICITY                               ║"
-  IO.println "║   ✅ XLVI      Exhaustion under drain + perturbation        ║"
-  IO.println "║   ✅ XLVII     Law of authenticity (drain = cause of death) ║"
-  IO.println "║   ✅ XLIV      Constitutive normativity (threshold=drain)   ║"
-  IO.println "║   ✅ XLIV-bis  Endogenous threshold (I-β₁ decomposition)   ║"
-  IO.println "║   ✅ XLIV-ter  Threshold discriminates (→ LVIII valence)    ║"
+  IO.println "║  NORMATIVITÉ ET AUTHENTICITÉ                                ║"
+  IO.println "║   ✅ XLVI      Épuisement sous drain + perturbation         ║"
+  IO.println "║   ✅ XLVII     Loi d'authenticité (drain = cause de mort)   ║"
+  IO.println "║   ✅ XLIV      Normativité constitutive (seuil = drain_net)║"
+  IO.println "║   ✅ XLIV-bis  Seuil endogène (décomposition I-β₁)        ║"
+  IO.println "║   ✅ XLIV-ter  Seuil discrimine (→ LVIII valence)         ║"
   IO.println "║                                                             ║"
-  IO.println "║  R-XVII — COMPOSITION GRADIENT                              ║"
-  IO.println "║   ✅ R-XVII-A  Portage: absorption = 0                      ║"
-  IO.println "║   ✅ R-XVII    Closure: absorption > 0 (endogenous)         ║"
-  IO.println "║   ✅ R-XVII    Closure < Aggregate (partial compensation)   ║"
-  IO.println "║   ✅ R-XVII    Full gradient: 0 < closure < aggregate       ║"
-  IO.println "║   ✅ R-XVII-B  Trace (hysteresis): diminished margin        ║"
-  IO.println "║   ✅ R-XVII    Contravariance: - absorbed → + retained      ║"
-  IO.println "║   ✅ R-XVII-D  Closure retains more than aggregate          ║"
-  IO.println "║   ✅ R-XVII-E  Closure ≠ portage (trace ≠ invariance)       ║"
+  IO.println "║  R-XVII — GRADIENT DE COMPOSITION                           ║"
+  IO.println "║   ✅ R-XVII-A  Portage : absorption = 0                     ║"
+  IO.println "║   ✅ R-XVII    Clôture : absorption > 0 (endogène)          ║"
+  IO.println "║   ✅ R-XVII    Clôture < Agrégat (compensation partielle)   ║"
+  IO.println "║   ✅ R-XVII    Gradient complet : 0 < clôture < agrégat     ║"
+  IO.println "║   ✅ R-XVII-B  Trace (hystérésis) : marge diminuée          ║"
+  IO.println "║   ✅ R-XVII    Contravariance : - absorbé → + retenu        ║"
+  IO.println "║   ✅ R-XVII-D  Clôture retient plus que agrégat             ║"
+  IO.println "║   ✅ R-XVII-E  Clôture ≠ portage (trace ≠ invariance)       ║"
   IO.println "║                                                             ║"
-  IO.println "║  ARTEFACTUAL DEBT                                           ║"
-  IO.println "║   ✅ NT-V      Drift > band → modulator out of profile     ║"
-  IO.println "║   ✅ NT-V-c    Finite deadline (∃ n, n*δ > B)              ║"
+  IO.println "║  DETTE ARTEFACTUELLE                                        ║"
+  IO.println "║   ✅ NT-V      Dérive > bande → modulateur hors profil      ║"
+  IO.println "║   ✅ NT-V-c    Deadline finie (∃ n, n*δ > B)               ║"
   IO.println "║                                                             ║"
-  IO.println "║  APPARENT REVERSIBILITY                                     ║"
-  IO.println "║   ✅ NT-XVI    Roundtrip: cost paid twice                   ║"
-  IO.println "║   ✅ NT-XVI    Oscillation: accelerated drain (×2/cycle)    ║"
+  IO.println "║  RÉVERSIBILITÉ APPARENTE                                    ║"
+  IO.println "║   ✅ NT-XVI    Aller-retour : coût payé deux fois           ║"
+  IO.println "║   ✅ NT-XVI    Oscillation : drain accéléré (×2 par cycle)  ║"
   IO.println "║                                                             ║"
-  IO.println "║  ══ XXXIII — REAPPLICABILITY (typeclass) ══                 ║"
-  IO.println "║   ✅ generic_exhaustion: ONE theorem, FIVE domains          ║"
+  IO.println "║  ══ XXXIII — RÉAPPLICABILITÉ (typeclass) ══                 ║"
+  IO.println "║   ✅ generic_exhaustion : UN théorème, CINQ domaines        ║"
   IO.println "║                                                             ║"
-  IO.println "║  ══ SUBJECTIVE CHAIN ══                                     ║"
-  IO.println "║  LVII — SELF-AFFECTION                                      ║"
-  IO.println "║   ✅ LVII-a  Cost of self-relation > 0                      ║"
-  IO.println "║   ✅ LVII-b  Draws on the same margin                      ║"
+  IO.println "║  ══ CHAÎNE SUBJECTIVE ══                                    ║"
+  IO.println "║  LVII — AUTO-AFFECTION                                      ║"
+  IO.println "║   ✅ LVII-a  Coût du rapport à soi > 0                      ║"
+  IO.println "║   ✅ LVII-b  Prélève sur la même marge                     ║"
   IO.println "║  LVIII — VALENCE                                            ║"
-  IO.println "║   ✅ LVIII-a  Exhaustive binary partition                   ║"
-  IO.println "║   ✅ negative_valence_drains   Negative → cost > threshold  ║"
-  IO.println "║   ✅ positive_valence_facilitates  Positive → cost ≤ thr.   ║"
-  IO.println "║  CONSTITUTIVE ASYMMETRY                                     ║"
-  IO.println "║   ✅ facilitation_bounded     Positive valence capped       ║"
-  IO.println "║   ✅ resistance_unbounded     Negative valence unbounded    ║"
-  IO.println "║   ✅ XXXIV-bis mortality via maximal facilitation            ║"
-  IO.println "║  XXXVIII–XXXIX — METABOLIZATION + NORMATIVITY               ║"
-  IO.println "║   ✅ XXXVIII-a  Net drain < gross cost                      ║"
-  IO.println "║   ✅ XXXVIII-b  Extends life (net ≤ gross per step)         ║"
-  IO.println "║   ✅ XXXVIII-c  Does not save (net drain exhausts margin)   ║"
-  IO.println "║   ✅ XXXVIII-d  Endogenous regeneration (< total_cost)      ║"
-  IO.println "║   ✅ XXXVIII-e  Bridge LVIII-bis → XXXVIII (valence)        ║"
-  IO.println "║   ✅ XXXIX-a   Criterion: nonzero regeneration              ║"
-  IO.println "║   ✅ XXXIX-b   Aggregate: regen=0 → drain=gross cost       ║"
-  IO.println "║   ✅ XXXIX-c   Gradient: regen discriminates closure/aggr.  ║"
-  IO.println "║  LVIII-bis — VALENCE → CYCLE FEEDBACK                       ║"
-  IO.println "║   ✅ positive_reduces_cost     Positive → reduced cost      ║"
-  IO.println "║   ✅ negative_increases_cost   Negative → increased cost    ║"
-  IO.println "║   ✅ negative_feedback_accelerates  Accelerates dissolution ║"
-  IO.println "║   ✅ valence_feedback_discriminates Same margin, diff fate  ║"
-  IO.println "║  XX — DRIFT (XX-a monotonicity, XX-b strict growth)         ║"
-  IO.println "║   ✅ XX-a  Monotonicity (non-decreasing)                    ║"
-  IO.println "║   ✅ XX-b  Strict growth per step                          ║"
-  IO.println "║   ✅ drift_causes_debt        Drift → debt (NT-V derived)   ║"
-  IO.println "║   ✅ drift_exceeds_any_band   Any finite band exceeded      ║"
-  IO.println "║  LXXIV — SYMPTOM / TECHNICAL DEBT CONVERGENCE               ║"
-  IO.println "║   ✅ SubClosure instance       7th FiniteExposed instance   ║"
-  IO.println "║   NT-V and LXXIV = same theorem, different structures      ║"
+  IO.println "║   ✅ LVIII-a  Partition binaire totale                      ║"
+  IO.println "║   ✅ negative_valence_drains  Négatif → coût > seuil        ║"
+  IO.println "║   ✅ positive_valence_facilitates  Positif → coût ≤ seuil   ║"
+  IO.println "║  ASYMÉTRIE CONSTITUTIVE                                     ║"
+  IO.println "║   ✅ facilitation_bounded     Valence+ plafonnée (Nat ≥ 0)  ║"
+  IO.println "║   ✅ resistance_unbounded     Valence- non bornée           ║"
+  IO.println "║   ✅ XXXIV-bis mortalité via facilitation maximale           ║"
+  IO.println "║  XXXVIII–XXXIX — MÉTABOLISATION + NORMATIVITÉ               ║"
+  IO.println "║   ✅ XXXVIII-a  Drain net < coût brut                       ║"
+  IO.println "║   ✅ XXXVIII-b  Prolonge la vie (net ≤ brut à chaque pas)   ║"
+  IO.println "║   ✅ XXXVIII-c  Ne sauve pas (drain net épuise la marge)    ║"
+  IO.println "║   ✅ XXXVIII-d  Régénération endogène (< total_cost)        ║"
+  IO.println "║   ✅ XXXVIII-e  Pont LVIII-bis → XXXVIII (valence)          ║"
+  IO.println "║   ✅ XXXIX-a   Critère : régénération non-nulle             ║"
+  IO.println "║   ✅ XXXIX-b   Agrégat : regen=0 → drain=coût brut         ║"
+  IO.println "║   ✅ XXXIX-c   Gradient : regen discrimine clôture/agrégat  ║"
+  IO.println "║  LVIII-bis — RÉTROACTION VALENCE → CYCLE                    ║"
+  IO.println "║   ✅ positive_reduces_cost     Valence+ → coût réduit       ║"
+  IO.println "║   ✅ negative_increases_cost   Valence- → coût accru        ║"
+  IO.println "║   ✅ negative_feedback_accelerates  Accélère dissolution     ║"
+  IO.println "║   ✅ valence_feedback_discriminates Même marge, destin ≠     ║"
+  IO.println "║  XX — DÉRIVE (XX-a monotonie, XX-b croissance)              ║"
+  IO.println "║   ✅ XX-a  Monotonie (non-décroissance)                     ║"
+  IO.println "║   ✅ XX-b  Croissance stricte par pas                      ║"
+  IO.println "║   ✅ drift_causes_debt        Dérive → dette (NT-V dérivé)  ║"
+  IO.println "║   ✅ drift_exceeds_any_band   Toute bande finie dépassée    ║"
+  IO.println "║  LXXIV — CONVERGENCE SYMPTÔME / DETTE TECHNIQUE             ║"
+  IO.println "║   ✅ SubClosure instance       7e instance FiniteExposed     ║"
+  IO.println "║   NT-V et LXXIV = même théorème, structures différentes     ║"
   IO.println "║                                                             ║"
-  IO.println "║  ══ XXIX + XXXII — COMPLETE CLASSIFICATION ══              ║"
-  IO.println "║   ✅ fin_pigeonhole         Pigeonhole principle (scratch)   ║"
-  IO.println "║   ✅ orbit_revisits         Any finite orbit revisits       ║"
+  IO.println "║  ══ XXIX + XXXII — CLASSIFICATION COMPLÈTE ══              ║"
+  IO.println "║   ✅ fin_pigeonhole         Principe des tiroirs (de zéro)   ║"
+  IO.println "║   ✅ orbit_revisits         Toute orbite finie revisite     ║"
   IO.println "║   ✅ trajectory_dichotomy   Dissolution ∨ cycle+ (XXIX)     ║"
-  IO.println "║   ✅ no_third_regime        No 3rd option (XXXII)           ║"
-  IO.println "║   ✅ closure_has_cycle      Closure → cycle with margin > 0 ║"
-  IO.println "║  ATTRACTOR (RESPONSE TO CRITIC)                             ║"
-  IO.println "║   ✅ trapped_in_cycle       Deterministic cycle = absorbing ║"
-  IO.println "║   ✅ convergence_bounded    Capture in ≤ s steps guaranteed ║"
-  IO.println "║   ✅ stable_under_perturbation  Small perturbation → survl  ║"
-  IO.println "║   ✅ perturbation_causes_dissolution  Large → dissolution   ║"
+  IO.println "║   ✅ no_third_regime        Pas de 3e option (XXXII)        ║"
+  IO.println "║   ✅ closure_has_cycle      Clôture → cycle marge > 0       ║"
+  IO.println "║  ATTRACTEUR (RÉPONSE AU CRITIQUE)                           ║"
+  IO.println "║   ✅ trapped_in_cycle       Cycle déterministe = absorbant  ║"
+  IO.println "║   ✅ convergence_bounded    Capture en ≤ s pas garantie     ║"
+  IO.println "║   ✅ stable_under_perturbation  Petite perturbation → survie║"
+  IO.println "║   ✅ perturbation_causes_dissolution  Grande → dissolution  ║"
   IO.println "║                                                             ║"
-  IO.println "║  ══ I-γ — NO ACT WITHOUT MODE (DERIVED THEOREM) ══         ║"
-  IO.println "║   ✅ cost_partition_conserves  Aggregation lemma (induction)║"
-  IO.println "║   ✅ toPolarizedClosure        Bridge → PolarizedClosure    ║"
-  IO.println "║   ✅ no_dark_acting           Exhaustive partition (I-γ)     ║"
-  IO.println "║   ✅ gamma_excludes_dark_acting  No mode → no act           ║"
-  IO.println "║   ✅ gamma_operating_has_mode Act → at least one mode       ║"
+  IO.println "║  ══ I-γ — NUL ACTE SANS MODE (THÉORÈME DÉRIVÉ) ══         ║"
+  IO.println "║   ✅ cost_partition_conserves  Lemme d'agrégation (ind.)  ║"
+  IO.println "║   ✅ toPolarizedClosure        Pont → PolarizedClosure   ║"
+  IO.println "║   ✅ no_dark_acting           Partition exhaustive (I-γ)  ║"
+  IO.println "║   ✅ gamma_excludes_dark_acting  Pas de mode → pas d'acte   ║"
+  IO.println "║   ✅ gamma_operating_has_mode Acte → au moins un mode    ║"
   IO.println "║                                                             ║"
-  IO.println "║  ══ DERIVATIONS — II, III FROM I + VII FROM I-β₁ ══        ║"
-  IO.println "║   ✅ II   productivity_untyped    I-α → typeclass XXXIII    ║"
-  IO.println "║   ✅ III  causal_unity            I(one) → transdomainality ║"
-  IO.println "║   ✅ VII  negation_from_beta      I-β₁ → additive partition║"
-  IO.println "║   ✅ VII  negation_general        a+b=c, a>0 → b<c         ║"
-  IO.println "║   ✅ VII  modal corollary         PolarizedClosure (constr.)║"
+  IO.println "║  ══ DÉRIVATIONS — II, III DE I + VII DE I-β₁ ══             ║"
+  IO.println "║   ✅ II   productivity_untyped    I-α → typeclass XXXIII  ║"
+  IO.println "║   ✅ III  causal_unity            I(un) → transdomainalité║"
+  IO.println "║   ✅ VII  negation_from_beta      I-β₁ → partition add.  ║"
+  IO.println "║   ✅ VII  negation_general        a+b=c, a>0 → b<c      ║"
+  IO.println "║   ✅ VII  corollaire modal        PolarizedClosure (constr.)║"
   IO.println "║                                                             ║"
-  IO.println "║  ══ FORMAL ENRICHMENTS ══                                   ║"
-  IO.println "║   ✅ XXXIV_derived  ConstitutivePressure → h_fatal derived  ║"
-  IO.println "║   ✅ GradedExposure  Graded V (pressure_monotone + generic) ║"
-  IO.println "║   ✅ recovery_is_bounded_by_regen  R-XVII linked to regen   ║"
-  IO.println "║   ✅ already_dissolved / single_step_dissolution (guards)   ║"
-  IO.println "║   ✅ LVII-c/d/e  self_cost_endogenous + finite nonzero life║"
-  IO.println "║   ✅ faster_dissolution  GradedExposure closed (0 sorry)    ║"
+  IO.println "║                                                             ║"
+  IO.println "║  ══ SPRINT 2 — ENRICHISSEMENTS FORMELS ══                  ║"
+  IO.println "║   ✅ XXXIV_derived  ConstitutivePressure → h_fatal dérivée ║"
+  IO.println "║   ✅ GradedExposure  V gradué (pressure_monotone + generic) ║"
+  IO.println "║   ✅ recovery_is_bounded_by_regen  R-XVII lié à regen      ║"
+  IO.println "║   ✅ already_dissolved / single_step_dissolution (guards)  ║"
+  IO.println "║   ✅ LVII-c/d/e  self_cost_endogenous + vie finie non-nulle║"
+  IO.println "║   ✅ faster_dissolution  GradedExposure fermé (0 sorry)    ║"
+  IO.println "║   ⊘  polarized_has_preimage  supprimé (voir DerivedResults)║"
   IO.println "╠══════════════════════════════════════════════════════════════╣"
-  IO.println "║   101 theorems · 0 sorry · 0 added axiom                   ║"
-  IO.println "║   15 structures ·  8 instances  ·  1 typeclass              ║"
-  IO.println "║   2 axioms (I=α+β, V) + IV corollary (InterAxiomInd.)      ║"
-  IO.println "║   I-γ, II, III, VII derived                                 ║"
-  IO.println "║   R-XVIII: asymmetry DERIVED (template_saving)              ║"
-  IO.println "║   Standard Lean axioms only: propext, Quot.sound            ║"
+  IO.println "║   101 théorèmes · 0 sorry · 0 axiome ajouté               ║"
+  IO.println "║   14 structures ·  8 instances  ·  1 typeclass             ║"
+  IO.println "║   2 axiomes (I=α+β, V) + IV corollaire (InterAxiomInd.)   ║"
+  IO.println "║   I-γ, II, III, VII dérivés                               ║"
+  IO.println "║   R-XVIII : asymétrie DÉRIVÉE (template_saving)            ║"
+  IO.println "║   Axiomes Lean standard uniquement : propext, Quot.sound    ║"
   IO.println "╠══════════════════════════════════════════════════════════════╣"
-  IO.println "║   I-α: self-grounding · I-β: being=doing                    ║"
-  IO.println "║   I-γ: THEOREM (from I-β₁ + XLIV + individuability)         ║"
-  IO.println "║   I-min (α+β) = 62 thm · I-strong (α+β+γ) = 101 thm       ║"
+  IO.println "║   I-α : auto-fondation · I-β : être=faire                  ║"
+  IO.println "║   I-γ : THÉORÈME (de I-β₁ + XLIV + individuabilité)        ║"
+  IO.println "║   I-min (α+β) = 62 thm · I-fort (α+β+γ) = 101 thm         ║"
   IO.println "╚══════════════════════════════════════════════════════════════╝"
   IO.println ""

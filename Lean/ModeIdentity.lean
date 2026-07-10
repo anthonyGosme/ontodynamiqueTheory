@@ -23,7 +23,7 @@ M2. Ce fichier ferme la marche arrière :
 l'identique de `ModeFlux.lean` (§1–§4), y compris la correction du cas
 dégénéré (`demand = 0 → aggregate`).
 
-## Statut : 16 théorèmes · 0 sorry · 0 import.
+## Statut : 16 théorèmes · 0 sorry · 0 import (Lean 4 core).
 -/
 
 namespace ModeIdentity
@@ -44,6 +44,7 @@ structure Entity where
   outflow     : Nat
 
 def netLoad (e : Entity) : Nat := (e.ownCost + e.outflow) - e.hostInflow
+
 def shockMargin (e : Entity) : Nat := e.self - netLoad e
 
 def dynamicRegime (e : Entity) (demand : Nat) : Regime :=
@@ -52,6 +53,7 @@ def dynamicRegime (e : Entity) (demand : Nat) : Regime :=
   else Regime.portage
 
 -- Lemmes de calcul (répliques des motifs de preuve de ModeFlux).
+
 theorem regime_closure_of_local (e : Entity) (d : Nat)
     (hd : d > 0) (h : d ≤ shockMargin e) :
     dynamicRegime e d = Regime.closure := by
@@ -97,20 +99,26 @@ theorem sameMode_of_margin_eq (e e' : Entity)
 /-- [∎] M1-b — MÊME MODE ⟹ MÊME MARGE.
     Réciproque, par choc séparateur : si les marges diffèrent, la demande
     `min(m,m') + 1` classe l'une clôture et l'autre portage. L'invariant est
-    donc COMPLET : rien de plus fin que la marge n'est observable au choc. -/
+    donc COMPLET : rien de plus fin que la marge n'est observable au choc.
+    (Core pur : trichotomie explicite, pas de by_contra/rcases.) -/
 theorem margin_eq_of_sameMode (e e' : Entity) (h : SameMode e e') :
     shockMargin e = shockMargin e' := by
-  by_contra hne
-  rcases Nat.lt_or_ge (shockMargin e) (shockMargin e') with hlt | hge
-  · have heq := h (shockMargin e + 1)
-    rw [regime_portage_of_overflow e _ (by omega) (by omega)] at heq
-    rw [regime_closure_of_local e' _ (by omega) (by omega)] at heq
-    exact absurd heq (by decide)
-  · have hlt' : shockMargin e' < shockMargin e := by omega
-    have heq := h (shockMargin e' + 1)
-    rw [regime_closure_of_local e _ (by omega) (by omega)] at heq
-    rw [regime_portage_of_overflow e' _ (by omega) (by omega)] at heq
-    exact absurd heq (by decide)
+  cases Nat.lt_trichotomy (shockMargin e) (shockMargin e') with
+  | inl hlt =>
+      -- margin e < margin e' : le choc (margin e)+1 déborde e, tient sur e'
+      have heq := h (shockMargin e + 1)
+      rw [regime_portage_of_overflow e _ (by omega) (by omega)] at heq
+      rw [regime_closure_of_local e' _ (by omega) (by omega)] at heq
+      exact absurd heq (by decide)
+  | inr h2 =>
+      cases h2 with
+      | inl heqm => exact heqm
+      | inr hgt =>
+          -- margin e' < margin e : symétrique
+          have heq := h (shockMargin e' + 1)
+          rw [regime_closure_of_local e _ (by omega) (by omega)] at heq
+          rw [regime_portage_of_overflow e' _ (by omega) (by omega)] at heq
+          exact absurd heq (by decide)
 
 /-- [∎] M1 — LE MODE EST LA MARGE.
     L'identité comportementale (bisimulation de coût) coïncide exactement avec
@@ -129,9 +137,11 @@ def canonical (m : Nat) : Entity :=
   { self := m + 1, ownCost := 1, ownCost_pos := by omega,
     hostInflow := 0, outflow := 0 }
 
-/-- [∎] Le canonique réalise sa marge : shockMargin (canonical m) = m. -/
+/-- [∎] Le canonique réalise sa marge : shockMargin (canonical m) = m.
+    Calcul : (m+1) − ((1+0) − 0) = m. Réduction forcée par `show`, puis omega. -/
 theorem canonical_margin (m : Nat) : shockMargin (canonical m) = m := by
-  unfold shockMargin netLoad canonical; omega
+  show m + 1 - ((1 + 0) - 0) = m
+  omega
 
 /-- [∎] M2-a — RÉALISATION : toute marge est un mode habité. -/
 theorem M2_realization (m : Nat) : ∃ e : Entity, shockMargin e = m :=
@@ -217,7 +227,8 @@ theorem profiles_strictly_finer_than_modes :
     subsidizedOrganism.outflow ≠ relayEntity.outflow := by
   constructor
   · apply sameMode_of_margin_eq
-    unfold shockMargin netLoad subsidizedOrganism relayEntity; decide
+    show (5 : Nat) - ((3 + 0) - 3) = 5 - ((3 + 3) - 10)
+    omega
   · decide
 
 end ModeIdentity
